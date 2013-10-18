@@ -1,4 +1,4 @@
-(ns test.service
+(ns berest-service.service
     (:require [io.pedestal.service.http :as bootstrap]
               [io.pedestal.service.http.route :as route]
               [io.pedestal.service.http.body-params :as body-params]
@@ -11,7 +11,7 @@
 
 (defn home-page
   [request]
-  (ring-resp/response "Hello World!"))
+  (ring-resp/response "Hello berest service!!!"))
 
 #_(defroutes routes
   [[["/" {:get home-page}
@@ -53,5 +53,7 @@
 
 (defn service-with [port]
   (assoc service ::bootstrap/port port))
+
+
 
 

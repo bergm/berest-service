@@ -1,2 +1,4 @@
-web: lein run -m test.server $PORT
+web: lein run -m berest-service.server $PORT
+
+
 

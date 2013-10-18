@@ -1,7 +1,7 @@
-(ns test.server
+(ns berest-service.server
   (:gen-class) ; for -main method in uberjar
   (:require [io.pedestal.service-tools.server :as server]
-            [test.service :as service]
+            [berest-service.service :as service]
             [io.pedestal.service-tools.dev :as dev]))
 
 (defn run-dev
@@ -30,4 +30,6 @@
 
 (defn servlet-service [this servlet-req servlet-resp]
   (server/servlet-service this servlet-req servlet-resp))
+
+
 

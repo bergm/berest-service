@@ -1,5 +1,5 @@
-(defproject test "0.0.1-SNAPSHOT"
-  :description "FIXME: write description"
+(defproject berest-service "0.0.1-SNAPSHOT"
+  :description "BEREST pedestal based web service"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
@@ -14,16 +14,17 @@
                  ]
   :min-lein-version "2.0.0"
   :resource-paths ["config", "resources"]
-  :aliases {"run-dev" ["trampoline" "run" "-m" "test.server/run-dev"]}
+  :aliases {"run-dev" ["trampoline" "run" "-m" "berest-service.server/run-dev"]}
   :repl-options  {:init-ns user
                   :init (try
                           (use 'io.pedestal.service-tools.dev)
-                          (require 'test.service)
+                          (require 'berest-service.service)
                           ;; Nasty trick to get around being unable to reference non-clojure.core symbols in :init
-                          (eval '(init test.service/service #'test.service/routes))
+                          (eval '(init berest-service.service/service #'berest-service.service/routes))
                           (catch Throwable t
                             (println "ERROR: There was a problem loading io.pedestal.service-tools.dev")
                             (clojure.stacktrace/print-stack-trace t)
                             (println)))
                   :welcome (println "Welcome to pedestal-service! Run (tools-help) to see a list of useful functions.")}
-  :main ^{:skip-aot true} test.server)
+  :main ^{:skip-aot true} berest-service.server)
+
