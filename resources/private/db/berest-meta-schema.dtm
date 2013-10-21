@@ -1,0 +1,14 @@
+[
+ ;information about used units
+ {:db/id #db/id[:db.part/db]
+  :db/ident :meta/unit
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/many
+  :db.install/_attribute :db.part/db}
+ 
+ ;language some entity is in
+ {:db/id #db/id[:db.part/db]
+  :db/ident :meta/language
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/one
+  :db.install/_attribute :db.part/db}]

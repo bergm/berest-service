@@ -17,4 +17,18 @@
 (defn doy-to-date [doy]
   (ctc/plus (ctc/date-time 2010 1 1) (ctc/days (dec doy))))
 
+(def sum (partial reduce + 0))
 
+(defn scalar-op [op scalar vector]
+  (map #(op scalar %) vector))
+
+(def s-add (partial scalar-op +))
+
+(def s-mult (partial scalar-op *))
+
+(defn dot-op [op vec1 vec2]
+  (map #(op %1 %2) vec1 vec2))
+
+(def dot-add (partial +))
+
+(def dot-mult (partial *))

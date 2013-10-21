@@ -2,7 +2,6 @@
   (:require [clojure.math.numeric-tower :as nt]
             [clojure.java.io :as cjio]
             clojure.set
-            [incanter.core :as ic]
             [clojure.string :as str]
             [clojure.pprint :as pp]
             [clj-time
@@ -12,17 +11,20 @@
              [datomic :as bd]
              [util :as bu]]
             [clojure-csv.core :as csv]
-            [clojure.tools.macro :as ctm]
             [datomic.api :as d]
-            #_[clojure.algo.generic.arithmetic :as caga]
 
-            )
-  (:use [weberest.helper :only [defnk defnk- |* |-> |<- --< --<*] :as bh]
-        [let-else :only [let?]]
-        [clojure.core.incubator :only [-?>]]
-        [clojure.algo.generic.functor :only [fmap]]
-        clojure.test
-        [taoensso.timbre :as timbre :only [trace debug info warn error fatal spy]]))
+            [berest-service.berest.helper :as bh
+             :refer [defnk defnk- |* |-> |<- --< --<*]]
+            [let-else :as le
+             :refer [let?]]
+            [clojure.algo.generic.functor :as cagf
+             :refer [fmap]]
+            [taoensso.timbre :as timbre
+             :refer [trace debug info warn error fatal spy]]
+
+            #_[clojure.tools.macro :as ctm]
+            #_[clojure.algo.generic.arithmetic :as caga]
+            #_[incanter.core :as ic]))
 
 (timbre/set-level! :info)
 (timbre/set-config! [:timestamp-pattern] ""#_"yyyy-MMM-dd HH:mm:ss ZZ")
@@ -770,14 +772,14 @@
   (let [;we search within the layers above and equal to extraction-depth-cm
         search-layer-depths (take-while (partial >= extraction-depth-cm) (layer-depths))
         ;create a list of [f1-koitzsch-result] for every possible layer depth in use
-        ffs (for [max-depth search-layer-depths]
+        ffss (for [max-depth search-layer-depths]
               (->> (f1-koitzsch max-depth true)
                    (aggregate-layers + *layer-sizes* ,,,)))
         ;calculate the gj and store the sum of all layers to find out the maximum later
-        gis (map (fn [depth-cm, ff]
-                   (let [gj (ic/mult reduction-factors ff)
-                         rij (ic/sum gj)]
-                     {:depth-cm depth-cm, :rij rij, :gj gj})) search-layer-depths ffs)
+        gis (map (fn [depth-cm ffs]
+                   (let [gj (bu/dot-mult reduction-factors ffs)
+                         rij (bu/sum gj)]
+                     {:depth-cm depth-cm, :rij rij, :gj gj})) search-layer-depths ffss)
         ;sort gis according to ascending rij and then descending depth-cm
         gis-sorted (sort-by identity
                             (fn [{l-rij :rij, l-depth :depth-cm} {r-rij :rij, r-depth :depth-cm}]
@@ -864,9 +866,9 @@
                              ;calculate same as gi-koitzsch for a depth of 60cm but uncovered soil
                              (->> (f1-koitzsch 60 false)
                                   (aggregate-layers + *layer-sizes* ,,,)
-                                  (ic/mult evaporation
-                                           (uncovered-reduction-factors fcs pwps sms+surface-water)
-                                           ,,,)))
+                                  (bu/s-mult evaporation
+                                             (uncovered-reduction-factors fcs pwps sms+surface-water)
+                                             ,,,)))
 
         ;for at least partly covered ground
         [aet, water-abstractions*]
@@ -879,9 +881,9 @@
                       (covered-reduction-factors extraction-depth-cm fcs pwps sms+surface-water pet)
                       (repeat (no-of-soil-layers) 1))
                 gi (gi-koitzsch extraction-depth-cm* rfs)]
-            [(ic/sum (ic/mult pet gi)),
-             (ic/plus (ic/mult (- 1 cover-degree) water-abstractions)
-                      (ic/mult pet cover-degree gi))]))
+            [(bu/sum (bu/s-mult pet gi)),
+             (bu/dot-add (bu/s-mult (- 1 cover-degree) water-abstractions)
+                         (bu/s-mult (* pet cover-degree) gi))]))
 
         {groundwater-infiltration :infiltration-into-next-layer
          sms* :soil-moistures}
@@ -1712,9 +1714,9 @@
                                     (:aet7pet rres)
                                     (:qu-target rres)
                                     (:groundwater-infiltration rres)
-                                    (ic/sum (subvec (vec (:soil-moistures rres)) 0 4))
-                                    (ic/sum (subvec (vec (:soil-moistures rres)) 4 7))
-                                    (ic/sum (subvec (vec (:soil-moistures rres)) 7 10))
+                                    (bu/sum (subvec (vec (:soil-moistures rres)) 0 4))
+                                    (bu/sum (subvec (vec (:soil-moistures rres)) 4 7))
+                                    (bu/sum (subvec (vec (:soil-moistures rres)) 7 10))
                                     (nth (:soil-moistures rres) 0)
                                     (nth (:soil-moistures rres) 1)
                                     (nth (:soil-moistures rres) 2)
@@ -1736,11 +1738,11 @@
                                     (nth (:soil-moistures rres) 18)
                                     (nth (:soil-moistures rres) 19)
                                     (nth (:soil-moistures rres) 20)
-                                    (ic/sum (subvec (vec (:soil-moistures rres)) 0 2))
-                                    (ic/sum (subvec (vec (:soil-moistures rres)) 2 4))
-                                    (ic/sum (subvec (vec (:soil-moistures rres)) 4 7))
-                                    (ic/sum (subvec (vec (:soil-moistures rres)) 7 11))
-                                    (ic/sum (subvec (vec (:soil-moistures rres)) 11 16))
+                                    (bu/sum (subvec (vec (:soil-moistures rres)) 0 2))
+                                    (bu/sum (subvec (vec (:soil-moistures rres)) 2 4))
+                                    (bu/sum (subvec (vec (:soil-moistures rres)) 4 7))
+                                    (bu/sum (subvec (vec (:soil-moistures rres)) 7 11))
+                                    (bu/sum (subvec (vec (:soil-moistures rres)) 11 16))
                                     (:effective-precipitation rres)
                                     (:effective-irrigation rres)
                                     (:effective-irrigation-uncovered rres)

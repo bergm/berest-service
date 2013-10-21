@@ -7,7 +7,7 @@
             [clojure.java.io :as cjio])
   (:use [datomic.api :as d :only [q db]]
         [berest-service.berest.helper :only [|* |->]]
-        [clojure.core.incubator :only [-?> -?>>]]))
+        #_[clojure.core.incubator :only [-?> -?>>]]))
 
 #_(def datomic-base-uri "datomic:free://localhost:4334/")
 (def datomic-base-uri "datomic:free://humane-spaces.cloudapp.net:4334/")
@@ -18,8 +18,8 @@
        d/connect))
 
 (defn current-db [db-id & [uri]]
-  (-?>> (datomic-connection db-id (or uri datomic-base-uri))
-        d/db))
+  (some->> (datomic-connection db-id (or uri datomic-base-uri))
+           d/db))
 
 (defn apply-schema-to-db [datomic-connection]
   (->> ["private/db/berest-meta-schema.dtm"
