@@ -60,12 +60,11 @@
 
 
 (defroutes routes
-  [[:test
+  [[:home
     ["/" {:get home-page} ^:interceptors [bootstrap/html-body]]]
    [:rest
     ["/rest/farms/:farm-id" {:get get-rest-farm}
-     ["/plots"
-      ["/" {:get get-rest-plot-ids}]
+     ["/plots" {:get get-rest-plot-ids}
       ["/:plot-id-format" {:get get-rest-plot-id}]]]]])
 
 

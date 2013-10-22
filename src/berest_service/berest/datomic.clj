@@ -1,13 +1,16 @@
 (ns berest-service.berest.datomic
   (:require clojure.set
-            [berest-service.berest.util :as bu]
+
             [clojure.string :as cstr]
             [clojure.pprint :as pp]
             [clj-time.core :as ctc]
-            [clojure.java.io :as cjio])
-  (:use [datomic.api :as d :only [q db]]
-        [berest-service.berest.helper :only [|* |->]]
-        #_[clojure.core.incubator :only [-?> -?>>]]))
+            [clojure.java.io :as cjio]
+            [datomic.api :as d
+             :refer [q db]]
+            [berest-service.berest
+             [util :as bu]
+             [helper :as bh
+              :refer [|->]]]))
 
 #_(def datomic-base-uri "datomic:free://localhost:4334/")
 (def datomic-base-uri "datomic:free://humane-spaces.cloudapp.net:4334/")
@@ -25,7 +28,7 @@
   (->> ["private/db/berest-meta-schema.dtm"
         "private/db/berest-schema.dtm"]
        (map (|-> cjio/resource slurp read-string) ,,,)
-       (map (|* d/transact datomic-connection) ,,,)
+       (map (partial d/transact datomic-connection) ,,,)
 			 dorun))
 
 (defn create-db [db-id & [uri]]
@@ -36,7 +39,6 @@
 
 (defn delete-db [db-id & [uri]]
   (d/delete-database (str (or uri datomic-base-uri) db-id)))
-
 
 (defn new-entity-ids [] (repeatedly #(d/tempid :db.part/user)))
 (defn new-entity-id [] (first (new-entity-ids)))
