@@ -866,8 +866,9 @@
                              ;calculate same as gi-koitzsch for a depth of 60cm but uncovered soil
                              (->> (f1-koitzsch 60 false)
                                   (aggregate-layers + *layer-sizes* ,,,)
+                                  (bu/dot-mult (uncovered-reduction-factors fcs pwps sms+surface-water)
+                                               ,,,)
                                   (bu/s-mult evaporation
-                                             (uncovered-reduction-factors fcs pwps sms+surface-water)
                                              ,,,)))
 
         ;for at least partly covered ground

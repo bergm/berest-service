@@ -29,6 +29,6 @@
 (defn dot-op [op vec1 vec2]
   (map #(op %1 %2) vec1 vec2))
 
-(def dot-add (partial +))
+(def dot-add (partial dot-op +))
 
-(def dot-mult (partial *))
+(def dot-mult (partial dot-op *))
