@@ -328,19 +328,19 @@
                                  :irrigation/area :area
                                  :irrigation/amount :amount}))
 
-(defn db-read-irrigation-donations [db plot-no]
+#_(defn db-read-irrigation-donations [db plot-no]
   (->> (d/q '[:find ?donation-e
               :in $ ?plot-no
               :where
               [?plot-e :plot/number ?plot-no]
-              [?plot-e :plot/irrigation-water-donations ?donation-e]]
+              [?plot-e :plot.yearly/irrigation-water-donations ?donation-e]]
             db plot-no)
        (map #(-> %
                  first
                  (bd/get-entity ,,,))
             ,,,)))
 
-(defn db-create-irrigation-donation
+#_(defn db-create-irrigation-donation
   [datomic-connection plot-no abs-start-day abs-end-day area amount]
   (let [plot-id (ffirst (d/q '[:find ?plot :in $ ?plot-no
                                :where [?plot :plot/number ?plot-no]]
@@ -354,7 +354,7 @@
               :plot/irrigation-water-donations (bd/get-entity-id donation)}]
     (d/transact datomic-connection (flatten [donation plot]))))
 
-(defn read-irrigation-donations [db plot-no irrigation-area]
+#_(defn read-irrigation-donations [db plot-no irrigation-area]
   (->> (db-read-irrigation-donations db plot-no)
        (filter #(and (>= (:irrigation/abs-end-day %) (:irrigation/abs-start-day %))
                      (> (:irrigation/area %) (* 0.5 irrigation-area)))
@@ -560,8 +560,8 @@
                        :in $ ?plot-id ?year
                        :where
                        [?plot-e-id :plot/number ?plot-id]
-                       [?plot-e-id :plot/yearly-values ?yv-e-id]
-                       [?yv-e-id :plot/year ?year]]
+                       [?plot-e-id :plot/yearly ?yv-e-id]
+                       [?yv-e-id :plot.yearly/year ?year]]
                      db plot-id year))
          :else nil
 
@@ -583,12 +583,12 @@
          pwps (->> pwps-cm
                    (aggregate-layers + *layer-sizes* ,,,))
 
-         sms (->> (:plot/initial-soil-moistures plot-yv)
+         sms (->> (:plot.yearly/initial-soil-moistures plot-yv)
                   (bd/create-map-from-entities :soil/upper-boundary-depth
                                                :soil/soil-moisture
                                                ,,,)
                   (user-input-soil-moisture-to-cm-layers
-                   fcs-cm pwps-cm (->> (:plot/initial-sm-unit plot-yv)
+                   fcs-cm pwps-cm (->> (:plot.yearly/initial-sm-unit plot-yv)
                                        remove-namespace-from-keyword))
                   (aggregate-layers + *layer-sizes* ,,,))
 
@@ -605,23 +605,23 @@
                        (clojure.walk/postwalk (fn [item]
                                                 (if (vector? item)
                                                   (let [[kw db-crop-data-map] item]
-                                                    (if (= kw :crop-instance/template)
+                                                    (if (= kw :crop.instance/template)
                                                       [kw (db-crop-data-map->crop db-crop-data-map)]
                                                       item))
                                                   item))
                                               ,,,))]
 
         (-> (entity->map db plot)
-            (dissoc ,,, :db/id :plot/yearly-values)
+            (dissoc ,,, :db/id :plot/yearly)
             (merge ,,, (dissoc plot-yv* :db/id))
             (assoc ,,,
-              :plot/initial-soil-moistures sms
+              :plot.yearly/initial-soil-moistures sms
               :plot/field-capacities fcs
               :plot/permanent-wilting-points pwps
               :lambda-without-correction lwc
               :fallow fallow))))
 
-(defn db-store-initial-soil-moisture
+#_(defn db-store-initial-soil-moisture
   [datomic-connection plot-no depths soil-moistures units]
   (let [plot-id (ffirst (d/q '[:find ?plot :in $ ?plot-no
                                :where [?plot :plot/number ?plot-no]]
@@ -1006,13 +1006,13 @@
   (dc-assertions and the crop template, thus the dc-to-rel-dc-day curve)"
   [crop-instance]
   (let? [dc-assertions* (->> crop-instance
-                             :crop-instance/dc-assertions
+                             :crop.instance/dc-assertions
                              (sort-by :assertion/at-abs-day ,,,))
          :is-not empty?
          ;_ (println dc-assertions*)
 
          sorted-dc-to-rel-dc-days (->> crop-instance
-                                       :crop-instance/template
+                                       :crop.instance/template
                                        :crop/dc-to-rel-dc-days
                                        (into (sorted-map) ,,,))
          ;_ (println sorted-dc-to-rel-dc-days)
@@ -1132,7 +1132,7 @@
                           (assoc m abs-dc-day ,,,)
                           ;create accumulator for next reduce call
                           (#(hash-map :m %
-                                      :last-crop-instance (:crop-instance %)
+                                      :last-crop-instance (:crop.instance %)
                                       :crop-canceled? true) ,,,))
                      ;ignore crop/crop-data if its from previous crop
                      ;and only if crop has been canceled before by other crop
@@ -1164,7 +1164,7 @@
         ]
     (if-let [{dc :dc
               rel-dc-day :rel-dc-day
-              {crop :crop-instance/template} :crop-instance}
+              {crop :crop.instance/template} :crop-instance}
              (get abs-dc-day-to-crop-instance-data abs-dc-day)]
       {:dc dc
        :rel-dc-day rel-dc-day
@@ -1172,12 +1172,12 @@
       (let [{[l-abs-dc-day
               {l-dc :dc
                l-rel-dc-day :rel-dc-day
-               {l-crop :crop-instance/template} :crop-instance
+               {l-crop :crop.instance/template} :crop-instance
                :as lower}] :lower
              [u-abs-dc-day
               {u-dc :dc
                u-rel-dc-day :rel-dc-day
-               {u-crop :crop-instance/template} :crop-instance
+               {u-crop :crop.instance/template} :crop-instance
                :as upper}] :upper}
             (adjacent-kv-pairs abs-dc-day-to-crop-instance-data abs-dc-day)]
         (cond
@@ -1270,7 +1270,7 @@
                        sorted-weather-map
                        irrigation-donations
                        irrigation-mode)
-       (drop (dec (:plot/abs-day-of-initial-soil-moisture-measurement plot)) ,,,)
+       (drop (dec (:plot.yearly/abs-day-of-initial-soil-moisture-measurement plot)) ,,,)
        (take-while #(<= (:abs-day %) until-abs-day) ,,,)))
 
 (defnk calc-soil-moistures*
@@ -1771,13 +1771,13 @@
         inputs-7 (drop-last 7 inputs)
         prognosis-inputs (take-last 7 inputs)
 
-        sms-7* (calc-soil-moistures* inputs-7 (:plot/initial-soil-moistures plot))
+        sms-7* (calc-soil-moistures* inputs-7 (:plot.yearly/initial-soil-moistures plot))
         _ (println "soil-moistures-7:" \newline "----------------------")
         _ (pp/pprint sms-7*)
         _ (println "----------------------")
         {soil-moistures-7 :soil-moistures
          :as sms-7} (last sms-7*)
-        #_(calc-soil-moistures inputs-7 (:plot/initial-soil-moistures plot))
+        #_(calc-soil-moistures inputs-7 (:plot.yearly/initial-soil-moistures plot))
 
         prognosis* (calc-soil-moisture-prognosis* 7 prognosis-inputs soil-moistures-7)
         _ (println "prognosis:" \newline "----------------------")
@@ -1787,7 +1787,7 @@
         #_(calc-soil-moisture-prognosis 7 prognosis-inputs soil-moistures-7)
 
         {:keys [recommendation-text recommended-donation-amount]
-         :as rec} (calc-recommendation (:plot/slope plot) (:plot/technology plot)
+         :as rec} (calc-recommendation (:plot/slope plot) (:plot.yearly/technology plot)
                                        prognosis-inputs soil-moistures-7)
         _ (println "recommendation:" \newline "----------------------")
         _ (pp/pprint rec)
@@ -1795,7 +1795,7 @@
         ]
     (spit "out.csv" (csv/write-csv (create-csv-output inputs (concat sms-7* prognosis*))))))
 
-(defn -main
+#_(defn -main
   "main function for commandline use"
   [& args]
 

@@ -318,21 +318,21 @@
                                                               [[26 8] 15.0]
                                                               [[27 8] 15.0]])
         crop-instances [{:db/id (bd/new-entity-id)
-                         :crop-instance/template (bd/unique-query-for-db-id (d/db datomic-connection) :crop/id "0801/1/0")
-                         :crop-instance/name "Zuckerrübe - 801/1/0"
-                         :crop-instance/dc-assertions (bd/get-entity-ids dc-assertions)
-                         :crop-instance/irrigation-donations (bd/get-entity-ids irrigation-donations)}]
+                         :crop.instance/template (bd/unique-query-for-db-id (d/db datomic-connection) :crop/id "0801/1/0")
+                         :crop.instance/name "Zuckerrübe - 801/1/0"
+                         :crop.instance/dc-assertions (bd/get-entity-ids dc-assertions)
+                         :crop.instance/irrigation-donations (bd/get-entity-ids irrigation-donations)}]
         initial-sms (bd/create-entities :soil/upper-boundary-depth :soil/soil-moisture
                                         [30 80.0, 60 90.0, 90 100.0, 150 100.0])
         plot* {:db/id (bd/new-entity-id)
-               :plot/year year
-               :plot/abs-day-of-initial-soil-moisture-measurement (bu/date-to-doy 31 3 year)
-               :plot/initial-soil-moistures (bd/get-entity-ids initial-sms)
-               :plot/initial-sm-unit :soil-moisture-unit/pFK
-               :plot/technology (bd/get-entity-id technology)
-               :plot/crop-instances (bd/get-entity-ids crop-instances)}
+               :plot.yearly/year year
+               :plot.yearly/abs-day-of-initial-soil-moisture-measurement (bu/date-to-doy 31 3 year)
+               :plot.yearly/initial-soil-moistures (bd/get-entity-ids initial-sms)
+               :plot.yearly/initial-sm-unit :soil-moisture.unit/pFK
+               :plot.yearly/technology (bd/get-entity-id technology)
+               :plot.yearly/crop-instance (bd/get-entity-ids crop-instances)}
         plot {:db/id plot-e-id
-              :plot/yearly-values (bd/get-entity-id plot*)}]
+              :plot/yearly (bd/get-entity-id plot*)}]
     (d/transact datomic-connection (flatten [technology
                                              dc-assertions
                                              irrigation-donations
@@ -363,21 +363,21 @@
                                                               [[1 7] 10.0]
                                                               [[5 7] 11.0]])
         crop-instances [{:db/id (bd/new-entity-id)
-                         :crop-instance/template (bd/unique-query-for-db-id (d/db datomic-connection) :crop/id "0101/1/0")
-                         :crop-instance/name "Winterweizen/EJ - 0101/1/0"
-                         :crop-instance/dc-assertions (bd/get-entity-ids dc-assertions)
-                         :crop-instance/irrigation-donations (bd/get-entity-ids irrigation-donations)}]
+                         :crop.instance/template (bd/unique-query-for-db-id (d/db datomic-connection) :crop/id "0101/1/0")
+                         :crop.instance/name "Winterweizen/EJ - 0101/1/0"
+                         :crop.instance/dc-assertions (bd/get-entity-ids dc-assertions)
+                         :crop.instance/irrigation-donations (bd/get-entity-ids irrigation-donations)}]
         initial-sms (bd/create-entities :soil/upper-boundary-depth :soil/soil-moisture
                                         [30 60.74, 60 57.04, 90 50.38])
         plot* {:db/id (bd/new-entity-id)
-               :plot/year year
-               :plot/abs-day-of-initial-soil-moisture-measurement (bu/date-to-doy 8 3 year)
-               :plot/initial-soil-moistures (bd/get-entity-ids initial-sms)
-               :plot/initial-sm-unit :soil-moisture-unit/mm
-               :plot/technology (bd/get-entity-id technology)
-               :plot/crop-instances (bd/get-entity-ids crop-instances)}
+               :plot.yearly/year year
+               :plot.yearly/abs-day-of-initial-soil-moisture-measurement (bu/date-to-doy 8 3 year)
+               :plot.yearly/initial-soil-moistures (bd/get-entity-ids initial-sms)
+               :plot.yearly/initial-sm-unit :soil-moisture.unit/mm
+               :plot.yearly/technology (bd/get-entity-id technology)
+               :plot.yearly/crop-instance (bd/get-entity-ids crop-instances)}
         plot {:db/id plot-e-id
-              :plot/yearly-values (bd/get-entity-id plot*)}]
+              :plot/yearly (bd/get-entity-id plot*)}]
     (d/transact datomic-connection (flatten [technology
                                              dc-assertions
                                              irrigation-donations
@@ -402,21 +402,21 @@
         irrigation-donations (bd/create-irrigation-donations year
                                                              [[[30 6] 10.0]])
         crop-instances [{:db/id (bd/new-entity-id)
-                         :crop-instance/template (bd/unique-query-for-db-id (d/db datomic-connection) :crop/id "0120/1/0")
-                         :crop-instance/name "Wintergerste/EJ - 0120/1/0"
-                         :crop-instance/dc-assertions (bd/get-entity-ids dc-assertions)
-                         :crop-instance/irrigation-donations (bd/get-entity-ids irrigation-donations)}]
+                         :crop.instance/template (bd/unique-query-for-db-id (d/db datomic-connection) :crop/id "0120/1/0")
+                         :crop.instance/name "Wintergerste/EJ - 0120/1/0"
+                         :crop.instance/dc-assertions (bd/get-entity-ids dc-assertions)
+                         :crop.instance/irrigation-donations (bd/get-entity-ids irrigation-donations)}]
         initial-sms (bd/create-entities :soil/upper-boundary-depth :soil/soil-moisture
                                         [30 42.94, 60 37.64, 90 43.91])
         plot* {:db/id (bd/new-entity-id)
-               :plot/year year
-               :plot/abs-day-of-initial-soil-moisture-measurement (bu/date-to-doy 13 3 year)
-               :plot/initial-soil-moistures (bd/get-entity-ids initial-sms)
-               :plot/initial-sm-unit :soil-moisture-unit/mm
-               :plot/technology (bd/get-entity-id technology)
-               :plot/crop-instances (bd/get-entity-ids crop-instances)}
+               :plot.yearly/year year
+               :plot.yearly/abs-day-of-initial-soil-moisture-measurement (bu/date-to-doy 13 3 year)
+               :plot.yearly/initial-soil-moistures (bd/get-entity-ids initial-sms)
+               :plot.yearly/initial-sm-unit :soil-moisture.unit/mm
+               :plot.yearly/technology (bd/get-entity-id technology)
+               :plot.yearly/crop-instance (bd/get-entity-ids crop-instances)}
         plot {:db/id plot-e-id
-              :plot/yearly-values (bd/get-entity-id plot*)}]
+              :plot/yearly (bd/get-entity-id plot*)}]
     (d/transact datomic-connection (flatten [technology
                                              dc-assertions
                                              irrigation-donations
@@ -444,21 +444,21 @@
                                                               [[25 6] 10.0]
                                                               [[27 6] 10.0]])
         crop-instances [{:db/id (bd/new-entity-id)
-                         :crop-instance/template (bd/unique-query-for-db-id (d/db datomic-connection) :crop/id "0110/1/0")
-                         :crop-instance/name "Winterroggen/EJ - 0110/1/0"
-                         :crop-instance/dc-assertions (bd/get-entity-ids dc-assertions)
-                         :crop-instance/irrigation-donations (bd/get-entity-ids irrigation-donations)}]
+                         :crop.instance/template (bd/unique-query-for-db-id (d/db datomic-connection) :crop/id "0110/1/0")
+                         :crop.instance/name "Winterroggen/EJ - 0110/1/0"
+                         :crop.instance/dc-assertions (bd/get-entity-ids dc-assertions)
+                         :crop.instance/irrigation-donations (bd/get-entity-ids irrigation-donations)}]
         initial-sms (bd/create-entities :soil/upper-boundary-depth :soil/soil-moisture
                                         [30 80.0, 60 90.0, 90 100.0, 150 100.0])
         plot* {:db/id (bd/new-entity-id)
-               :plot/year year
-               :plot/abs-day-of-initial-soil-moisture-measurement (bu/date-to-doy 31 3 year)
-               :plot/initial-soil-moistures (bd/get-entity-ids initial-sms)
-               :plot/initial-sm-unit :soil-moisture-unit/pFK
-               :plot/technology (bd/get-entity-id technology)
-               :plot/crop-instances (bd/get-entity-ids crop-instances)}
+               :plot.yearly/year year
+               :plot.yearly/abs-day-of-initial-soil-moisture-measurement (bu/date-to-doy 31 3 year)
+               :plot.yearly/initial-soil-moistures (bd/get-entity-ids initial-sms)
+               :plot.yearly/initial-sm-unit :soil-moisture.unit/pFK
+               :plot.yearly/technology (bd/get-entity-id technology)
+               :plot.yearly/crop-instance (bd/get-entity-ids crop-instances)}
         plot {:db/id plot-e-id
-              :plot/yearly-values (bd/get-entity-id plot*)}]
+              :plot/yearly (bd/get-entity-id plot*)}]
     (d/transact datomic-connection (flatten [technology
                                              dc-assertions
                                              irrigation-donations
@@ -493,21 +493,21 @@
                                                               [[22 8] 40.0]
                                                               [[28 8] 25.0]])
         crop-instances [{:db/id (bd/new-entity-id)
-                         :crop-instance/template (bd/unique-query-for-db-id (d/db datomic-connection) :crop/id "0801/1/0")
-                         :crop-instance/name "Zuckerrübe - 801/1/0"
-                         :crop-instance/dc-assertions (bd/get-entity-ids dc-assertions)
-                         :crop-instance/irrigation-donations (bd/get-entity-ids irrigation-donations)}]
+                         :crop.instance/template (bd/unique-query-for-db-id (d/db datomic-connection) :crop/id "0801/1/0")
+                         :crop.instance/name "Zuckerrübe - 801/1/0"
+                         :crop.instance/dc-assertions (bd/get-entity-ids dc-assertions)
+                         :crop.instance/irrigation-donations (bd/get-entity-ids irrigation-donations)}]
         initial-sms (bd/create-entities :soil/upper-boundary-depth :soil/soil-moisture
                                         [30 80.0, 60 90.0, 90 100.0, 150 100.0])
         plot* {:db/id (bd/new-entity-id)
-               :plot/year year
-               :plot/abs-day-of-initial-soil-moisture-measurement (bu/date-to-doy 31 3 year)
-               :plot/initial-soil-moistures (bd/get-entity-ids initial-sms)
-               :plot/initial-sm-unit :soil-moisture-unit/pFK
-               :plot/technology (bd/get-entity-id technology)
-               :plot/crop-instances (bd/get-entity-ids crop-instances)}
+               :plot.yearly/year year
+               :plot.yearly/abs-day-of-initial-soil-moisture-measurement (bu/date-to-doy 31 3 year)
+               :plot.yearly/initial-soil-moistures (bd/get-entity-ids initial-sms)
+               :plot.yearly/initial-sm-unit :soil-moisture.unit/pFK
+               :plot.yearly/technology (bd/get-entity-id technology)
+               :plot.yearly/crop-instance (bd/get-entity-ids crop-instances)}
         plot {:db/id plot-e-id
-              :plot/yearly-values (bd/get-entity-id plot*)}]
+              :plot/yearly (bd/get-entity-id plot*)}]
     (d/transact datomic-connection (flatten [technology
                                              dc-assertions
                                              irrigation-donations
@@ -536,21 +536,21 @@
                                                               [[24 6] 20.0]
                                                               [[3 7] 20.0]])
         crop-instances [{:db/id (bd/new-entity-id)
-                         :crop-instance/template (bd/unique-query-for-db-id (d/db datomic-connection) :crop/id "0101/1/0")
-                         :crop-instance/name "Winterweizen/EJ - 0101/1/0"
-                         :crop-instance/dc-assertions (bd/get-entity-ids dc-assertions)
-                         :crop-instance/irrigation-donations (bd/get-entity-ids irrigation-donations)}]
+                         :crop.instance/template (bd/unique-query-for-db-id (d/db datomic-connection) :crop/id "0101/1/0")
+                         :crop.instance/name "Winterweizen/EJ - 0101/1/0"
+                         :crop.instance/dc-assertions (bd/get-entity-ids dc-assertions)
+                         :crop.instance/irrigation-donations (bd/get-entity-ids irrigation-donations)}]
         initial-sms (bd/create-entities :soil/upper-boundary-depth :soil/soil-moisture
                                         [30 80.0, 60 90.0, 90 100.0, 150 100.0])
         plot* {:db/id (bd/new-entity-id)
-               :plot/year year
-               :plot/abs-day-of-initial-soil-moisture-measurement (bu/date-to-doy 31 3 year)
-               :plot/initial-soil-moistures (bd/get-entity-ids initial-sms)
-               :plot/initial-sm-unit :soil-moisture-unit/pFK
-               :plot/technology (bd/get-entity-id technology)
-               :plot/crop-instances (bd/get-entity-ids crop-instances)}
+               :plot.yearly/year year
+               :plot.yearly/abs-day-of-initial-soil-moisture-measurement (bu/date-to-doy 31 3 year)
+               :plot.yearly/initial-soil-moistures (bd/get-entity-ids initial-sms)
+               :plot.yearly/initial-sm-unit :soil-moisture.unit/pFK
+               :plot.yearly/technology (bd/get-entity-id technology)
+               :plot.yearly/crop-instance (bd/get-entity-ids crop-instances)}
         plot {:db/id plot-e-id
-              :plot/yearly-values (bd/get-entity-id plot*)}]
+              :plot/yearly (bd/get-entity-id plot*)}]
     (d/transact datomic-connection (flatten [technology
                                              dc-assertions
                                              irrigation-donations
@@ -576,9 +576,9 @@
               :plot/stt 6212
               :plot/slope 1
               :plot/field-capacities (bd/get-entity-ids fcs)
-              :plot/fc-unit :soil-moisture-unit/volP
+              :plot/fc-unit :soil-moisture.unit/volP
               :plot/permanent-wilting-points (bd/get-entity-ids pwps)
-              :plot/pwp-unit :soil-moisture-unit/volP
+              :plot/pwp-unit :soil-moisture.unit/volP
               :plot/groundwaterlevel 300
               :plot/damage-compaction-depth 300
               :plot/damage-compaction-area 0.0}
