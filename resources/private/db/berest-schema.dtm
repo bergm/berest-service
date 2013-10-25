@@ -369,7 +369,7 @@
  ;; plot attributes. If a plot has more than one yearly entity per year, then
  ;; this will be treated as splitted plots (sub-plots) and the yearly entities will
  ;; have the necessary plot attributes repeated to describe the sub-plots
- ;; e.g. id, number, description, crop-area, irrigation-area etc.
+ ;; e.g. id, number, description, crop-area, irrigation-area, note etc.
  ;;-----------------------------------------------------------------------------------------------
 
  {:db/id #db/id[:db.part/db]
@@ -911,7 +911,7 @@
 
   {:db/id #db/id[:db.part/db]
   :db/ident :geo-coord/gk5-h
-  :db/valueType :db.type/int
+  :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one
   :db/doc "A geocoords gauss-krueger-5 height value"
   :db.install/_attribute :db.part/db}

@@ -328,12 +328,13 @@
                                  :irrigation/area :area
                                  :irrigation/amount :amount}))
 
-#_(defn db-read-irrigation-donations [db plot-no]
+(defn db-read-irrigation-donations [db plot-no]
   (->> (d/q '[:find ?donation-e
               :in $ ?plot-no
               :where
-              [?plot-e :plot/number ?plot-no]
-              [?plot-e :plot.yearly/irrigation-water-donations ?donation-e]]
+              [?plot-e-id :plot/number ?plot-no]
+              [?plot-e-id :plot/yearly ?yv-e-id]
+              [?yv-e-id :plot.yearly/irrigation-water-donations ?donation-e]]
             db plot-no)
        (map #(-> %
                  first
@@ -354,7 +355,7 @@
               :plot/irrigation-water-donations (bd/get-entity-id donation)}]
     (d/transact datomic-connection (flatten [donation plot]))))
 
-#_(defn read-irrigation-donations [db plot-no irrigation-area]
+(defn read-irrigation-donations [db plot-no irrigation-area]
   (->> (db-read-irrigation-donations db plot-no)
        (filter #(and (>= (:irrigation/abs-end-day %) (:irrigation/abs-start-day %))
                      (> (:irrigation/area %) (* 0.5 irrigation-area)))
@@ -1216,7 +1217,7 @@
   - lazy sequence as long as weather is available"
   [plot sorted-weather-map irrigation-donations irrigation-mode]
   (let [abs-dc-day-to-crop-instance-data
-        (->> (:plot/crop-instances plot)
+        (->> (:plot.yearly/crop-instance plot)
              dc-to-abs+rel-dc-day-from-plot-dc-assertions
              index-localized-crop-instance-curves-by-abs-dc-day
              merge-abs-dc-day-to-crop-data-maps
