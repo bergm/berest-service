@@ -13,7 +13,7 @@
                  [io.pedestal/pedestal.jetty "0.2.2"]
                  ;; [io.pedestal/pedestal.tomcat "0.2.1"]
 
-                 [org.infinispan/infinispan-client-hotrod "6.0.0.CR1"]
+                 #_[org.infinispan/infinispan-client-hotrod "6.0.0.CR1"]
                  [com.datomic/datomic-pro "0.8.4270"]
                  #_[com.datomic/datomic-free "0.8.4218"]
 
