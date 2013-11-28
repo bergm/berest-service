@@ -302,10 +302,7 @@
                                        {:stroke color :fill color}))])))]]))
 
 (defn- plot-content [user-id id until]
-  (let? [db (some->> user-id
-              (str bd/datomic-base-uri ,,,)
-              d/connect
-              d/db)
+  (let? [db (bd/current-db user-id)
          :else [:div#error "Fehler: Konnte keine Verbindung zur Datenbank herstellen!"]
 
          plot (bc/db-read-plot db id 2012)
@@ -697,10 +694,7 @@
                            ]
                           [csv-delimiter] :csv-delimiter
                           :as test-data}]
-  (let? [db (some->> user-id
-              (str bd/datomic-base-uri ,,,)
-              d/connect
-              d/db)
+  (let? [db (bd/current-db user-id)
          :else [:div#error "Fehler: Konnte keine Verbindung zur Datenbank herstellen!"]
 
          plot (bc/db-read-plot db plot-id 2012)
@@ -746,10 +740,10 @@
          prognosis-inputs (take-last 7 inputs)
          days (range (-> inputs first :abs-day) (+ until-julian-day* 7 1))
 
-         sms-7* (bc/calc-soil-moistures* inputs-7 (:plot.yearly/initial-soil-moistures plot))
+         sms-7* (bc/calc-soil-moistures* inputs-7 (:plot.annual/initial-soil-moistures plot))
          {soil-moistures-7 :soil-moistures
          :as sms-7} (last sms-7*)
-         #_(bc/calc-soil-moistures inputs-7 (:plot.yearly/initial-soil-moistures plot))
+         #_(bc/calc-soil-moistures inputs-7 (:plot.annual/initial-soil-moistures plot))
 
          prognosis* (bc/calc-soil-moisture-prognosis* 7 prognosis-inputs soil-moistures-7)
          prognosis (last prognosis*)
@@ -823,10 +817,10 @@
          prognosis-inputs (take-last 7 inputs)
          days (range (-> inputs first :abs-day) (+ until-julian-day 7 1))
 
-         sms-7* (bc/calc-soil-moistures* inputs-7 (:plot.yearly/initial-soil-moistures plot))
+         sms-7* (bc/calc-soil-moistures* inputs-7 (:plot.annual/initial-soil-moistures plot))
          {soil-moistures-7 :soil-moistures
          :as sms-7} (last sms-7*)
-         #_(bc/calc-soil-moistures inputs-7 (:plot.yearly/initial-soil-moistures plot))
+         #_(bc/calc-soil-moistures inputs-7 (:plot.annual/initial-soil-moistures plot))
 
          prognosis* (bc/calc-soil-moisture-prognosis* 7 prognosis-inputs soil-moistures-7)
          prognosis (last prognosis*)
@@ -882,11 +876,11 @@
 
          days (range (-> inputs first :abs-day) (+ until-julian-day 1))
 
-         sms* (bc/calculate-soil-moistures-by-auto-donations* inputs (:plot.yearly/initial-soil-moistures plot)
-                                                              (:plot/slope plot) (:plot.yearly/technology plot) 5)
+         sms* (bc/calculate-soil-moistures-by-auto-donations* inputs (:plot.annual/initial-soil-moistures plot)
+                                                              (:plot/slope plot) (:plot.annual/technology plot) 5)
          {soil-moistures :soil-moistures
           :as sms} (last sms*)
-         #_(bc/calc-soil-moistures inputs-7 (:plot.yearly/initial-soil-moistures plot))
+         #_(bc/calc-soil-moistures inputs-7 (:plot.annual/initial-soil-moistures plot))
 
          ;_ (map pp/pprint sms*)
          ]

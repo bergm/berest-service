@@ -7,6 +7,8 @@
               [berest-service.berest
                [plot :as plot]
                [farm :as farm]]
+              [berest-service.rest
+               [farm :as rfarm]]
               [clojure.string :as cs]))
 
 (defn about-page
@@ -23,10 +25,7 @@
      ^:interceptors [(body-params/body-params) bootstrap/html-body]
      ["/about" {:get about-page}]]]])
 
-(defn get-rest-farm [req]
-  {:status 200 :body (str "Farm no: " (get-in req [:path-params :farm-id]))})
-
-(defn get-rest-plot-ids [req]
+(defn get-rest-plots [req]
   (let [farm-id (get-in req [:path-params :farm-id])
         user-id "admin"]
     (-> (plot/rest-plot-ids :edn user-id farm-id)
@@ -38,7 +37,7 @@
       (#(split-at (-> % count dec (max 1 ,,,)) %) ,,,)
       (#(map (partial cs/join ".") %) ,,,)))
 
-(defn get-rest-plot-id [req]
+(defn get-rest-plot [req]
   (let [{sim :sim
          format :format
          :as data} (get-in req [:query-params])
@@ -63,9 +62,12 @@
   [[:home
     ["/" {:get home-page} ^:interceptors [bootstrap/html-body]]]
    [:rest
-    ["/rest/farms/:farm-id" {:get get-rest-farm}
-     ["/plots" {:get get-rest-plot-ids}
-      ["/:plot-id-format" {:get get-rest-plot-id}]]]]])
+    ["/rest/farms" {:get rfarm/get-farms
+                    :post rfarm/create-new-farm}
+     ["/:farm-id" {:get rfarm/get-farm
+                   :put rfarm/update-farm}
+      ["/plots" {:get get-rest-plots}
+       ["/:plot-id-format" {:get get-rest-plot}]]]]]])
 
 
 
@@ -100,6 +102,12 @@
 
 (defn service-with [port]
   (assoc service ::bootstrap/port port))
+
+
+
+
+
+
 
 
 

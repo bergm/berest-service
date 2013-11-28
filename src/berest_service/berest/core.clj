@@ -333,8 +333,8 @@
               :in $ ?plot-no
               :where
               [?plot-e-id :plot/number ?plot-no]
-              [?plot-e-id :plot/yearly ?yv-e-id]
-              [?yv-e-id :plot.yearly/irrigation-water-donations ?donation-e]]
+              [?plot-e-id :plot/annuals ?yv-e-id]
+              [?yv-e-id :plot.annual/irrigation-water-donations ?donation-e]]
             db plot-no)
        (map #(-> %
                  first
@@ -556,17 +556,17 @@
 (defn db-read-plot
   "read a plot with id 'plot-id' completely given the db-value 'db' with associated data from year 'year'"
   [db plot-id year]
-  (let? [[plot-e-id yearly-values-e-id]
+  (let? [[plot-e-id annual-values-e-id]
          (first (d/q '[:find ?plot-e-id ?yv-e-id
                        :in $ ?plot-id ?year
                        :where
                        [?plot-e-id :plot/number ?plot-id]
-                       [?plot-e-id :plot/yearly ?yv-e-id]
-                       [?yv-e-id :plot.yearly/year ?year]]
+                       [?plot-e-id :plot/annuals ?yv-e-id]
+                       [?yv-e-id :plot.annual/year ?year]]
                      db plot-id year))
          :else nil
 
-         [plot plot-yv] (map (partial bd/get-entity db) [plot-e-id yearly-values-e-id])
+         [plot plot-yv] (map (partial bd/get-entity db) [plot-e-id annual-values-e-id])
 
          fcs-cm (->> (:plot/field-capacities plot)
                      (bd/create-map-from-entities :soil/upper-boundary-depth
@@ -584,12 +584,12 @@
          pwps (->> pwps-cm
                    (aggregate-layers + *layer-sizes* ,,,))
 
-         sms (->> (:plot.yearly/initial-soil-moistures plot-yv)
+         sms (->> (:plot.annual/initial-soil-moistures plot-yv)
                   (bd/create-map-from-entities :soil/upper-boundary-depth
                                                :soil/soil-moisture
                                                ,,,)
                   (user-input-soil-moisture-to-cm-layers
-                   fcs-cm pwps-cm (->> (:plot.yearly/initial-sm-unit plot-yv)
+                   fcs-cm pwps-cm (->> (:plot.annual/initial-sm-unit plot-yv)
                                        remove-namespace-from-keyword))
                   (aggregate-layers + *layer-sizes* ,,,))
 
@@ -613,10 +613,10 @@
                                               ,,,))]
 
         (-> (entity->map db plot)
-            (dissoc ,,, :db/id :plot/yearly)
+            (dissoc ,,, :db/id :plot/annuals)
             (merge ,,, (dissoc plot-yv* :db/id))
             (assoc ,,,
-              :plot.yearly/initial-soil-moistures sms
+              :plot.annual/initial-soil-moistures sms
               :plot/field-capacities fcs
               :plot/permanent-wilting-points pwps
               :lambda-without-correction lwc
@@ -1217,7 +1217,7 @@
   - lazy sequence as long as weather is available"
   [plot sorted-weather-map irrigation-donations irrigation-mode]
   (let [abs-dc-day-to-crop-instance-data
-        (->> (:plot.yearly/crop-instance plot)
+        (->> (:plot.annual/crop-instance plot)
              dc-to-abs+rel-dc-day-from-plot-dc-assertions
              index-localized-crop-instance-curves-by-abs-dc-day
              merge-abs-dc-day-to-crop-data-maps
@@ -1271,7 +1271,7 @@
                        sorted-weather-map
                        irrigation-donations
                        irrigation-mode)
-       (drop (dec (:plot.yearly/abs-day-of-initial-soil-moisture-measurement plot)) ,,,)
+       (drop (dec (:plot.annual/abs-day-of-initial-soil-moisture-measurement plot)) ,,,)
        (take-while #(<= (:abs-day %) until-abs-day) ,,,)))
 
 (defnk calc-soil-moistures*
@@ -1772,13 +1772,13 @@
         inputs-7 (drop-last 7 inputs)
         prognosis-inputs (take-last 7 inputs)
 
-        sms-7* (calc-soil-moistures* inputs-7 (:plot.yearly/initial-soil-moistures plot))
+        sms-7* (calc-soil-moistures* inputs-7 (:plot.annual/initial-soil-moistures plot))
         _ (println "soil-moistures-7:" \newline "----------------------")
         _ (pp/pprint sms-7*)
         _ (println "----------------------")
         {soil-moistures-7 :soil-moistures
          :as sms-7} (last sms-7*)
-        #_(calc-soil-moistures inputs-7 (:plot.yearly/initial-soil-moistures plot))
+        #_(calc-soil-moistures inputs-7 (:plot.annual/initial-soil-moistures plot))
 
         prognosis* (calc-soil-moisture-prognosis* 7 prognosis-inputs soil-moistures-7)
         _ (println "prognosis:" \newline "----------------------")
@@ -1788,7 +1788,7 @@
         #_(calc-soil-moisture-prognosis 7 prognosis-inputs soil-moistures-7)
 
         {:keys [recommendation-text recommended-donation-amount]
-         :as rec} (calc-recommendation (:plot/slope plot) (:plot.yearly/technology plot)
+         :as rec} (calc-recommendation (:plot/slope plot) (:plot.annual/technology plot)
                                        prognosis-inputs soil-moistures-7)
         _ (println "recommendation:" \newline "----------------------")
         _ (pp/pprint rec)

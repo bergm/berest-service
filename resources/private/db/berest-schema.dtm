@@ -490,18 +490,18 @@
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :plot/yearly
+  :db/ident :plot/annuals
   :db/valueType :db.type/ref
   :db/isComponent true
   :db/cardinality :db.cardinality/many
-  :db/doc "The 'potentially' yearly changing parts/data of the plot"
+  :db/doc "The 'potentially' anually changing parts/data of the plot"
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
   :db/ident :plot/weather-station
   :db/valueType :db.type/ref
   :db/isComponent true
-  :db/cardinality :db.cardinality/many
+  :db/cardinality :db.cardinality/one
   :db/doc "A weather station used either solely for this plot or shared by multiple plots. This stations data
   take precedence over farm data, but have lower precedence than the ones from :plot/weather-data."
   :db.install/_attribute :db.part/db}
@@ -516,7 +516,7 @@
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :plot/location
+  :db/ident :plot/location-coords
   :db/valueType :db.type/ref
   :db/isComponent true
   :db/cardinality :db.cardinality/many
@@ -524,7 +524,7 @@
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :plot/note
+  :db/ident :plot/notes
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/many
   :db/doc "A list of notes for the plot."
@@ -572,11 +572,11 @@
   :db/doc "A reference to the well used for this plots irrigation water."
   :db.install/_attribute :db.part/db}
 
- ;; plot.yearly - the changing parts of a plot
+ ;; plot.annual - the changing parts of a plot
  ;;-----------------------------------------------------------------------------------------------
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :plot.yearly/year
+  :db/ident :plot.annual/year
   :db/valueType :db.type/long
   :meta/unit :1
   :db/cardinality :db.cardinality/one
@@ -584,7 +584,7 @@
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :plot.yearly/abs-day-of-initial-soil-moisture-measurement
+  :db/ident :plot.annual/abs-day-of-initial-soil-moisture-measurement
   :db/valueType :db.type/long
   :meta/unit :day
   :db/cardinality :db.cardinality/one
@@ -592,7 +592,7 @@
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :plot.yearly/initial-soil-moistures
+  :db/ident :plot.annual/initial-soil-moistures
   :db/valueType :db.type/ref
   :db/isComponent true
   :db/cardinality :db.cardinality/many
@@ -600,14 +600,14 @@
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :plot.yearly/initial-sm-unit
+  :db/ident :plot.annual/initial-sm-unit
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/one
   :db/doc "The unit of the soil-moisture"
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :plot.yearly/technology
+  :db/ident :plot.annual/technology
   :db/valueType :db.type/ref
   :db/isComponent true
   :db/cardinality :db.cardinality/one
@@ -615,7 +615,7 @@
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :plot.yearly/crop-instance
+  :db/ident :plot.annual/crop-instances
   :db/valueType :db.type/ref
   :db/isComponent true
   :db/cardinality :db.cardinality/many
@@ -631,6 +631,8 @@
   :db/unique :db.unique/identity
   :db/cardinality :db.cardinality/one
   :db/doc "A farms unique but user referable id"
+  :ui/order-no 1
+  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -638,41 +640,38 @@
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
   :db/doc "A farms name"
+  :ui/order-no 2
+  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :farm/phone
-  :db/valueType :db.type/string
-  :db/cardinality :db.cardinality/one
-  :db/doc "A farms main phone number"
-  :db.install/_attribute :db.part/db}
-
- {:db/id #db/id[:db.part/db]
-  :db/ident :farm/fax
-  :db/valueType :db.type/string
-  :db/cardinality :db.cardinality/one
-  :db/doc "A farms main fax number"
-  :db.install/_attribute :db.part/db}
-
- {:db/id #db/id[:db.part/db]
-  :db/ident :farm/email
-  :db/valueType :db.type/string
-  :db/cardinality :db.cardinality/one
-  :db/doc "A farms main email"
-  :db.install/_attribute :db.part/db}
-
- {:db/id #db/id[:db.part/db]
-  :db/ident :farm/main-contact
+  :db/ident :farm/addresses
   :db/valueType :db.type/ref
-  :db/cardinality :db.cardinality/one
-  :db/doc "A farms main contact person"
+  :db/isComponent true
+  :db/cardinality :db.cardinality/many
+  :db/doc "Addresses of the farm, potentially multiple addresses, even if unlikely"
+  :ui/order-no 3
+  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :farm/contact
+  :db/ident :farm/com-connections
   :db/valueType :db.type/ref
+  :db/isComponent true
+  :db/cardinality :db.cardinality/many
+  :db/doc "Communication connections of the farm"
+  :ui/order-no 4
+  :ui/groups :farm
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :farm/contacts
+  :db/valueType :db.type/ref
+  :db/isComponent true
   :db/cardinality :db.cardinality/many
   :db/doc "A farms contacts"
+  :ui/order-no 5
+  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -681,17 +680,21 @@
   :db/isComponent true
   :db/cardinality :db.cardinality/one
   :db/doc "A farms contract"
+  :ui/order-no 6
+  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :farm/note
+  :db/ident :farm/notes
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/many
   :db/doc "Custom notes regarding a farm"
+  :ui/order-no 7
+  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :farm/plot
+  :db/ident :farm/plots
   :db/valueType :db.type/ref
   :db/isComponent true
   :db/cardinality :db.cardinality/many
@@ -706,6 +709,8 @@
   :db/doc "An authorative weather station associated with the farm, which applies automatically to all plots.
   Is usually an official climate station like the german DWD climate stations and weather data will be pulled
   from an online service automatically. These information have the lowest precedence of all weather data."
+  :ui/order-no 8
+  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -716,6 +721,8 @@
   :db/doc "A weather station associated with the farm, which applies automatically to all plots.
   Might be a farm local weather station. This stations data (if available) have second lowest precedence of all
   possibly available weather data."
+  :ui/order-no 9
+  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -725,6 +732,8 @@
   :db/cardinality :db.cardinality/many
   :db/doc "Single weather data information which are supplied farm-wide and will apply automatically to all plots.
   These data have highest precedence amongst the farm weather data, but can/will be overwritten by plot local weather data."
+  :ui/order-no 10
+  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  ;; contract
@@ -759,30 +768,71 @@
  ;;-----------------------------------------------------------------------------------------------
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :address/address
-  :db/valueType :db.type/ref
-  :db/isComponent true
-  :db/cardinality :db.cardinality/many
-  :db/doc "Address of some entity (e.g. farm)"
-  :db.install/_attribute :db.part/db}
-
- {:db/id #db/id[:db.part/db]
   :db/ident :address/street
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
   :db/doc "Street name and number etc."
   :db.install/_attribute :db.part/db}
 
- ;; communication connections
- ;;-----------------------------------------------------------------------------------------------
+ {:db/id #db/id[:db.part/db]
+  :db/ident :address/postal-code
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "Postal code."
+  :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :com-con/connection
-  :db/valueType :db.type/ref
-  :db/isComponent true
-  :db/cardinality :db.cardinality/many
-  :db/doc "a communication connection"
+  :db/ident :address/city
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "City, town or village name"
   :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :address/city-part
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "Usually optional city part, or suburb name"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :address/municipality
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "Name of regional organizational unit, usually above city level."
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :address/state
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "State the city and municipality is located in, highest organizational unit below country."
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :address/state-short
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "A states short form, usually a two or three letter symbol."
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :address/country
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "Country name."
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :address/country-short
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "A countries short name or symbol."
+  :db.install/_attribute :db.part/db}
+
+
+ ;; communication connections
+ ;;-----------------------------------------------------------------------------------------------
 
  {:db/id #db/id[:db.part/db]
   :db/ident :com-con/id
@@ -805,13 +855,6 @@
  [:db/add #db/id[:db.part/user] :db/ident :com-con.type/email]
  [:db/add #db/id[:db.part/user] :db/ident :com-con.type/instant-messaging]
  [:db/add #db/id[:db.part/user] :db/ident :com-con.type/uri]
-
- {:db/id #db/id[:db.part/db]
-  :db/ident :com-con/default-for-type
-  :db/valueType :db.type/ref
-  :db/cardinality :db.cardinality/one
-  :db/doc "this entitiy is the default-for the type"
-  :db.install/_attribute :db.part/db}
 
  ;;person
  ;;-----------------------------------------------------------------------------------------------
@@ -838,7 +881,7 @@
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :person/com-con
+  :db/ident :person/com-connections
   :db/valueType :db.type/ref
   :db/isComponent true
   :db/cardinality :db.cardinality/many
@@ -846,10 +889,24 @@
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :person/role
+  :db/ident :person/roles
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/many
   :db/doc "the roles a person can play"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :person/is-main-contact
+  :db/valueType :db.type/boolean
+  :db/cardinality :db.cardinality/one
+  :db/doc "is the person the main contact of the farm"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :person/notes
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/many
+  :db/doc "Custom notes regarding a person"
   :db.install/_attribute :db.part/db}
 
  ;; weather-station

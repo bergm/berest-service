@@ -5,10 +5,34 @@
   :db/valueType :db.type/keyword
   :db/cardinality :db.cardinality/many
   :db.install/_attribute :db.part/db}
- 
+
  ;language some entity is in
  {:db/id #db/id[:db.part/db]
   :db/ident :meta/language
   :db/valueType :db.type/keyword
   :db/cardinality :db.cardinality/one
-  :db.install/_attribute :db.part/db}]
+  :db.install/_attribute :db.part/db}
+
+ ;ui relevenat meta information
+ {:db/id #db/id[:db.part/db]
+  :db/ident :ui/order
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :ui/order-no
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one
+  :db/doc "if displayed in the ui, the order where the entity will appear"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :ui/groups
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/many
+  :db/doc "a list if groups this entity will belong to in the ui, might be a web page for example"
+  :db.install/_attribute :db.part/db}
+
+ ]
+
