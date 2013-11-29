@@ -29,6 +29,8 @@
                  [com.keminglabs/c2 "0.2.3"]
                  [hiccup "1.0.4"]
                  [formative "0.3.2"]
+                 [com.velisco/clj-ftp "0.3.0"]
+                 [instaparse "1.2.12"]
 
                  ]
 
