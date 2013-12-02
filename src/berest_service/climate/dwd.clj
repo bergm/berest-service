@@ -85,6 +85,7 @@
 
 (comment "instarepl debug code"
 
+  ;real ftp seams to be not necessary for just getting data (at least for anonymous access and co)
   (def t (ftp/with-ftp [client "ftp://anonymous:pwd@tran.zalf.de/pub/net/wetter"]
                        (ftp/client-get-stream client (make-prognosis-filename (ctc/date-time 2013 6 3)))))
 
@@ -95,18 +96,18 @@
 
 (defn import-dwd-data-into-datomic [kind & [date]]
   (let [date* (or date (ctc/today))
-        url "ftp://anonymous:pwd@tran.zalf.de/pub/net/wetter/"
+        url "ftp://tran.zalf.de/pub/net/wetter/"
         url* (str url (case kind
                         :prognosis (make-prognosis-filename date*)
                         :measured (make-measured-filename date*)))
         data (slurp url*)
         transaction-data (case kind
                            :prognosis (parse-prognosis-data data)
-                           :measured (parse-measured-data data))
+                           :measured (parse-measured-data data))]
+    transaction-data
+    #_(d/transact (bd/current-db "berest") transaction-data)))
 
-        ]
-    (d/transact (bd/current-db "berest") transaction-data)))
 
+#_(import-dwd-data-into-datomic :prognosis (ctc/date-time 2013 6 6))
 
-#_(import-dwd-data-into-datomic :prognosis (ctc/date-time 2013 6 3))
 
