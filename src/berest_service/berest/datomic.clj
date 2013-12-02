@@ -1,9 +1,9 @@
 (ns berest-service.berest.datomic
   (:require clojure.set
-
             [clojure.string :as cstr]
             [clojure.pprint :as pp]
             [clj-time.core :as ctc]
+            [clj-time.coerce :as ctcoe]
             [clojure.java.io :as cjio]
             [datomic.api :as d
              :refer [q db]]
@@ -59,6 +59,24 @@
        datomic-connection-string
        d/delete-database))
 
+(comment "instarepl debugging code"
+
+  (delete-db "berest")
+  (create-db "berest")
+  (d/create-database (datomic-connection-string "berest"))
+
+  (apply-schemas-to-db (d/connect (datomic-connection-string "berest")))
+
+  (def ms (first berest-datomic-schemas))
+  (def s (second berest-datomic-schemas))
+
+  (def ms* ((bh/rcomp cjio/resource slurp read-string) ms))
+  (d/transact (datomic-connection "berest") ms*)
+  (def s* ((bh/rcomp cjio/resource slurp read-string) s))
+  (d/transact (datomic-connection "berest") s*)
+
+  )
+
 (defn new-entity-ids [] (repeatedly #(d/tempid :db.part/user)))
 (defn new-entity-id [] (first (new-entity-ids)))
 (defn temp-entity-id [value] (d/tempid :db.part/user value))
@@ -72,9 +90,11 @@
 
 (defn create-inline-entities
   ([key value kvs]
-   (map (fn [[k v]] {key k, value v}) (apply array-map kvs)))
+   (map (fn [[k v]] {key k, value v})
+        (apply array-map kvs)))
   ([ks-to-vss]
-   (map #(zipmap (keys ks-to-vss) %) (apply map vector (vals ks-to-vss)))))
+   (map #(zipmap (keys ks-to-vss) %)
+        (apply map vector (vals ks-to-vss)))))
 
 (defn get-entity-ids [entities] (map :db/id entities))
 (defn get-entity-id [entity] (:db/id entity))
@@ -162,3 +182,68 @@
 
 
 
+;;transaction functions
+
+(defn add-weather-data
+  "transaction function to insert only unique precip and evap values per station and date into db
+  because no unique/identity constraints for multi-value keys are allowed (yet), but would be needed
+  as these values are unique for station/date combination"
+  [db station-id date evap precip]
+  (let [q (datomic.api/q '[:find ?se ?e
+                           :in $ ?station-id ?date
+                           :where
+                           [?se :weather-station/id ?station-id]
+                           [?se :weather-station/data ?e]
+                           [?e :weather-data/date ?date]]
+                         db station-id date)
+        [station-entity-id data-entity-id] (first q)]
+    [{:db/id (datomic.api/tempid :db.part/user) ;always create a temporary db/id, will be upsert if station exists already
+      :weather-station/id station-id
+      :weather-station/data (merge (if data-entity-id
+                                     {:db/id data-entity-id} ;assign new values to known existing entity
+                                     {:weather-data/date date}) ;create implicitly new entity with this date
+                                   (when precip {:weather-data/precipitation precip})
+                                   (when evap {:weather-data/evaporation evap}))}]))
+
+(comment "instarepl debugging code"
+
+  (datomic.api/q '[:find ?d ?p ?tx ?in
+                   :in $
+                   :where
+                   [_ :weather-station/id "1111"]
+                   [?e :weather-station/data ?d]
+                   [?d :weather-data/precipitation ?p ?tx]
+                   [?tx :db/txInstant ?in]]
+                 (d/as-of (current-db "berest") #inst "2013-12-02T15:00:11.601-00:00"))
+
+  (datomic.api/q '[:find ?d ?p ?tx ?in
+                   :in $
+                   :where
+                   [_ :weather-station/id "1111"]
+                   [?e :weather-station/data ?d]
+                   [?d :weather-data/precipitation ?p ?tx]
+                   [?tx :db/txInstant ?in]]
+                 (current-db "berest"))
+
+
+  (ctc/days 1)
+
+  (datomic.api/q '[:find ?se ?e
+                   :in $ ?station-id ?date
+                   :where
+                   [?se :weather-station/id ?station-id]
+                   [?se :weather-station/data ?e]
+                   [?e :weather-data/date ?date]]
+                 (current-db "berest") "1111" (ctcoe/to-date (ctc/minus (ctc/today) (ctc/days 1))))
+
+  (ctc/today)
+
+  (add-weather-data (current-db "berest") "1111" (ctcoe/to-date (ctc/minus (ctc/today) (ctc/days 1))) 3.0 21.0)
+
+  (def con (datomic-connection "berest"))
+
+  (d/transact (datomic-connection "berest") [(add-weather-data (current-db "berest") "1111" (ctcoe/to-date (ctc/plus (ctc/today) (ctc/days 1))) 5.0 30.0)])
+
+  (d/transact (datomic-connection "berest") [[:weather-station/add-data "1111" (ctcoe/to-date (ctc/today)) 3.0 15.0]])
+
+  )

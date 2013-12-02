@@ -375,7 +375,6 @@
  {:db/id #db/id[:db.part/db]
   :db/ident :plot/id
   :db/valueType :db.type/string
-  :db/unique :db.unique/identity
   :db/cardinality :db.cardinality/one
   :db/doc "A plots id, e.g. the german Feldblock-ID."
   :db.install/_attribute :db.part/db}
@@ -383,7 +382,6 @@
  {:db/id #db/id[:db.part/db]
   :db/ident :plot/number
   :db/valueType :db.type/string
-  :db/unique :db.unique/identity
   :db/cardinality :db.cardinality/one
   :db/doc "A plots number."
   :db.install/_attribute :db.part/db}
@@ -914,6 +912,7 @@
 
  {:db/id #db/id[:db.part/db]
   :db/ident :weather-station/id
+  :db/unique :db.unique/identity
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
   :db/doc "A stations human identifiable id"
@@ -942,7 +941,70 @@
   :db/doc "A stations actual weather data"
   :db.install/_attribute :db.part/db}
 
- ;; geo-coord
+ {:db/id #db/id [:db.part/user]
+  :db/ident :weather-station/add-data
+  :db/doc "A transaction function creating data and just allowing unique data per station and day"
+  :db/fn #db/fn {:lang "clojure"
+                 :params [db station-id date evap precip]
+                 :code "(let [q (datomic.api/q '[:find ?se ?e
+                 :in $ ?station-id ?date
+                 :where
+                 [?se :weather-station/id ?station-id]
+                 [?se :weather-station/data ?e]
+                 [?e :weather-data/date ?date]]
+                 db station-id date)
+                 [station-entity-id data-entity-id] (first q)]
+                 [{:db/id (datomic.api/tempid :db.part/user) ;always create a temporary db/id, will be upsert if station exists already
+                 :weather-station/id station-id
+                 :weather-station/data (merge (if data-entity-id
+                 {:db/id data-entity-id} ;assign new values to known existing entity
+                 {:weather-data/date date}) ;create implicitly new entity with this date
+                 (when precip {:weather-data/precipitation precip})
+                 (when evap {:weather-data/evaporation evap}))}])"}}
+
+ ;; weather-data
+ ;;-----------------------------------------------------------------------------------------------
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :weather-data/date
+  :db/valueType :db.type/instant
+  :db/cardinality :db.cardinality/one
+  :db/doc "A weather data record's date"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :weather-data/global-radiation
+  :db/valueType :db.type/double
+  :meta/unit :Jpcm2
+  :db/cardinality :db.cardinality/one
+  :db/doc "A weather data record's global radiation"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :weather-data/average-temperature
+  :db/valueType :db.type/double
+  :meta/unit :degree-celsius
+  :db/cardinality :db.cardinality/one
+  :db/doc "A weather data record's average temperature"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :weather-data/precipitation
+  :db/valueType :db.type/double
+  :meta/unit :mm
+  :db/cardinality :db.cardinality/one
+  :db/doc "A weather data record's precipitation"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :weather-data/evaporation
+  :db/valueType :db.type/double
+  :meta/unit :mm
+  :db/cardinality :db.cardinality/one
+  :db/doc "A weather data record's turc-wendling evaporation"
+  :db.install/_attribute :db.part/db}
+
+;; geo-coord
  ;;-----------------------------------------------------------------------------------------------
 
  {:db/id #db/id[:db.part/db]
@@ -972,63 +1034,6 @@
   :db/cardinality :db.cardinality/one
   :db/doc "A geocoords gauss-krueger-5 height value"
   :db.install/_attribute :db.part/db}
-
- ;; weather-data
- ;;-----------------------------------------------------------------------------------------------
-
- {:db/id #db/id[:db.part/db]
-  :db/ident :weather-data/day
-  :db/valueType :db.type/long
-  :db/cardinality :db.cardinality/one
-  :db/doc "A weather data records day"
-  :db.install/_attribute :db.part/db}
-
- {:db/id #db/id[:db.part/db]
-  :db/ident :weather-data/month
-  :db/valueType :db.type/long
-  :db/cardinality :db.cardinality/one
-  :db/doc "A weather data records month"
-  :db.install/_attribute :db.part/db}
-
- {:db/id #db/id[:db.part/db]
-  :db/ident :weather-data/year
-  :db/valueType :db.type/long
-  :db/cardinality :db.cardinality/one
-  :db/doc "A weather data records year"
-  :db.install/_attribute :db.part/db}
-
- {:db/id #db/id[:db.part/db]
-  :db/ident :weather-data/global-radiation
-  :db/valueType :db.type/double
-  :meta/unit :Jpcm2
-  :db/cardinality :db.cardinality/one
-  :db/doc "A weather data records global radiation"
-  :db.install/_attribute :db.part/db}
-
- {:db/id #db/id[:db.part/db]
-  :db/ident :weather-data/average-temperature
-  :db/valueType :db.type/double
-  :meta/unit :degree-celsius
-  :db/cardinality :db.cardinality/one
-  :db/doc "A weather data records average temperature"
-  :db.install/_attribute :db.part/db}
-
- {:db/id #db/id[:db.part/db]
-  :db/ident :weather-data/precipitation
-  :db/valueType :db.type/double
-  :meta/unit :mm
-  :db/cardinality :db.cardinality/one
-  :db/doc "A weather data records precipitation"
-  :db.install/_attribute :db.part/db}
-
- {:db/id #db/id[:db.part/db]
-  :db/ident :weather-data/turc-wendling-evaporation
-  :db/valueType :db.type/double
-  :meta/unit :mm
-  :db/cardinality :db.cardinality/one
-  :db/doc "A weather data records turc-wendling evaporation"
-  :db.install/_attribute :db.part/db}
-
 
 
 

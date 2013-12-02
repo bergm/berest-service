@@ -1,0 +1,22 @@
+Datenlieferung IRRIGAMA
+Vorhersage der Verdunstung nach Turc/Wendling
+Erstellung am Montag, den 03.06.2013, 10:00 Uhr GZ 
+
+** Bei Rückfragen (034297/989-275) bitte Produktbezeichnung angeben:
+** FYDL60 DWLA 031000
+
+Kennung/    10162    10264    10267    10270    10291    10359    10361    10368    10376    10379    10382    10393    10469    10474    10480    10490    10499     B488     F143     F419     F431     F475     F707     F742     F951     N652
+Datum
+03062013      4,9      4,7      4,4      4,0      4,1      4,4      4,1      3,4      3,3      3,4      3,6      2,1      2,3      2,8      1,4      1,3      0,5      4,5      4,4      3,8      3,8      2,9      2,9      1,7      1,0      3,4
+04062013      3,8      3,3      2,8      3,0      2,7      2,0      1,7      1,9      1,9      1,9      2,0      1,8      1,2      1,5      0,9      1,1      0,9      3,2      3,1      2,1      2,6      2,3      1,8      1,3      1,0      1,4 
+05062013      5,2      5,4      5,4      5,4      5,4      5,4      5,5      5,5      5,4      5,6      5,6      5,4      5,5      5,5      5,3      5,4      5,2      5,4      5,4      5,5      5,5      5,4      5,5      5,4      5,3      5,5 
+06062013      4,7      4,7      4,7      4,6      3,7      4,7      4,8      4,6      3,9      4,5      4,3      3,9      4,7      4,7      4,5      3,9      3,2      4,2      4,7      4,5      4,1      3,9      4,5      4,1      4,1      4,7 
+07062013      4,5      4,7      4,4      4,5      4,0      4,3      4,2      4,3      3,8      4,2      4,1      3,9      3,9      4,0      3,7      3,8      3,2      4,2      4,5      4,3      4,2      3,6      4,0      3,8      3,7      4,1 
+
+
+Erläuterungen:
+Kenn = Stationskennung DWD
+Dat = Datum der Vorhersage (TagMonatJahr)
+potentielle Verdunstung, Turc/Wendling (mm)
+
+DWD Abt. Agrarmeteorologie
