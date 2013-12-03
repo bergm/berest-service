@@ -8,7 +8,8 @@
              [datomic :as bd]
              [util :as bu]]
             [datomic.api :as d]
-            #_[miner.ftp :as ftp]))
+            #_[miner.ftp :as ftp]
+            [clojure.tools.logging :as log]))
 
 (defn parse-german-double [text]
   (.. java.text.NumberFormat (getInstance java.util.Locale/GERMAN) (parse text)))
@@ -66,7 +67,7 @@
           (-> d :weather-station/data :weather-data/precipitation)])
        data))
 
-(comment "instarep debugging code"
+(comment "instarepl debugging code"
 
   (def mdata (slurp "FY60DWLB-20130526_0815.txt"))
   (def mdata* (parse-measured-data mdata))
@@ -81,9 +82,10 @@
 (defn make-measured-filename [date]
   (str "FY60DWLB-" (ctf/unparse (ctf/formatter "yyyyMMdd") date) "_0815.txt"))
 
-(make-prognosis-filename (ctc/date-time 2013 6 3))
 
 (comment "instarepl debug code"
+
+  (make-prognosis-filename (ctc/date-time 2013 6 3))
 
   ;real ftp seams to be not necessary for just getting data (at least for anonymous access and co)
   (def t (ftp/with-ftp [client "ftp://anonymous:pwd@tran.zalf.de/pub/net/wetter"]
@@ -94,20 +96,37 @@
   )
 
 
-(defn import-dwd-data-into-datomic [kind & [date]]
-  (let [date* (or date (ctc/today))
-        url "ftp://tran.zalf.de/pub/net/wetter/"
-        url* (str url (case kind
-                        :prognosis (make-prognosis-filename date*)
-                        :measured (make-measured-filename date*)))
-        data (slurp url*)
-        transaction-data (case kind
-                           :prognosis (parse-prognosis-data data)
-                           :measured (parse-measured-data data))]
-    transaction-data
-    #_(d/transact (bd/current-db "berest") transaction-data)))
+(defn import-dwd-data-into-datomic
+  "import the requested kind [:prognosis | :measured] dwd data into datomic"
+  [kind & [date]]
+  (try
+    (let [date* (or date (ctc/now))
+          url "ftp://tran.zalf.de/pub/net/wetter/"
+          url* (str url (case kind
+                          :prognosis (make-prognosis-filename date*)
+                          :measured (make-measured-filename date*)))
+          data (try
+                 (slurp url*)
+                 (catch Exception e
+                   (log/info (str "Couldn't read " (name kind) " file from ftp server! URL was " url*))
+                   (throw e)))
+          transaction-data (case kind
+                             :prognosis (parse-prognosis-data data)
+                             :measured (parse-measured-data data))]
+      (try
+        (d/transact (bd/datomic-connection "berest") transaction-data)
+        (catch Exception e
+          (log/info "Couldn't write dwd data to datomic! data: [\n" transaction-data "\n]")
+          (throw e)))
+      true)
+    (catch Exception _ false)))
 
+(comment
 
-#_(import-dwd-data-into-datomic :prognosis (ctc/date-time 2013 6 6))
+  (import-dwd-data-into-datomic :prognosis (ctc/date-time 2013 6 6))
+
+)
+
+#_(import-dwd-data-into-datomic :prognosis (ctc/date-time 2013 6 3))
 
 

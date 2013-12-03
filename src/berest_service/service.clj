@@ -62,8 +62,8 @@
   [[:home
     ["/" {:get home-page} ^:interceptors [bootstrap/html-body]]]
    [:rest
-    ["/rest/farms" {:get rfarm/get-farms
-                    :post rfarm/create-new-farm}
+    ["/farms" {:get rfarm/get-farms
+               :post rfarm/create-new-farm}
      ["/:farm-id" {:get rfarm/get-farm
                    :put rfarm/update-farm}
       ["/plots" {:get get-rest-plots}

@@ -11,7 +11,7 @@
 (defn get-farms [req]
   (let [url 1 #_((:url-for req) ::get-farms)]
     (rur/response
-     (str "aaaaaablalbjalbj" url)
+     (str "bbbbbbbbbaaaaaablalbjalbj" url)
      #_(rc/layout ""
                 [:div
                  [:h3 (str "GET | POST " url)]
@@ -71,6 +71,10 @@
       (hf/text-field "name" "")]
     #_(login-fields user)
     (hf/submit-button "Betrieb erstellen")))
+
+
+
+
 
 
 
