@@ -629,8 +629,6 @@
   :db/unique :db.unique/identity
   :db/cardinality :db.cardinality/one
   :db/doc "A farms unique but user referable id"
-  :ui/order-no 1
-  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -638,8 +636,6 @@
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
   :db/doc "A farms name"
-  :ui/order-no 2
-  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -648,8 +644,6 @@
   :db/isComponent true
   :db/cardinality :db.cardinality/many
   :db/doc "Addresses of the farm, potentially multiple addresses, even if unlikely"
-  :ui/order-no 3
-  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -658,8 +652,6 @@
   :db/isComponent true
   :db/cardinality :db.cardinality/many
   :db/doc "Communication connections of the farm"
-  :ui/order-no 4
-  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -668,8 +660,6 @@
   :db/isComponent true
   :db/cardinality :db.cardinality/many
   :db/doc "A farms contacts"
-  :ui/order-no 5
-  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -678,8 +668,6 @@
   :db/isComponent true
   :db/cardinality :db.cardinality/one
   :db/doc "A farms contract"
-  :ui/order-no 6
-  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -687,8 +675,6 @@
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/many
   :db/doc "Custom notes regarding a farm"
-  :ui/order-no 7
-  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -707,8 +693,6 @@
   :db/doc "An authorative weather station associated with the farm, which applies automatically to all plots.
   Is usually an official climate station like the german DWD climate stations and weather data will be pulled
   from an online service automatically. These information have the lowest precedence of all weather data."
-  :ui/order-no 8
-  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -719,8 +703,6 @@
   :db/doc "A weather station associated with the farm, which applies automatically to all plots.
   Might be a farm local weather station. This stations data (if available) have second lowest precedence of all
   possibly available weather data."
-  :ui/order-no 9
-  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
@@ -730,8 +712,6 @@
   :db/cardinality :db.cardinality/many
   :db/doc "Single weather data information which are supplied farm-wide and will apply automatically to all plots.
   These data have highest precedence amongst the farm weather data, but can/will be overwritten by plot local weather data."
-  :ui/order-no 10
-  :ui/groups :farm
   :db.install/_attribute :db.part/db}
 
  ;; contract
@@ -798,6 +778,13 @@
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
   :db/doc "Name of regional organizational unit, usually above city level."
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :address/municipality-short
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "A municipalities short form."
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]

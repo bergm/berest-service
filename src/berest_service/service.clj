@@ -11,13 +11,15 @@
                [farm :as rfarm]]
               [clojure.string :as cs]))
 
+
+
 (defn about-page
   [request]
   (ring-resp/response (format "Clojure %s" (clojure-version))))
 
 (defn home-page
   [request]
-  (ring-resp/response "Hello berest service!!!"))
+  (ring-resp/response "Hello berest service!!!!!!!"))
 
 #_(defroutes routes
   [[["/" {:get home-page}
@@ -25,17 +27,21 @@
      ^:interceptors [(body-params/body-params) bootstrap/html-body]
      ["/about" {:get about-page}]]]])
 
+
 (defn get-rest-plots [req]
   (let [farm-id (get-in req [:path-params :farm-id])
         user-id "admin"]
     (-> (plot/rest-plot-ids :edn user-id farm-id)
         bootstrap/edn-response)))
 
+
 (defn- split-plot-id-format [plot-id-format]
   (-> plot-id-format
       (cs/split ,,, #"\.")
       (#(split-at (-> % count dec (max 1 ,,,)) %) ,,,)
       (#(map (partial cs/join ".") %) ,,,)))
+
+
 
 (defn get-rest-plot [req]
   (let [{sim :sim
@@ -71,6 +77,8 @@
 
 
 
+
+
 ;; You can use this fn or a per-request fn via io.pedestal.service.http.route/url-for
 (def url-for (route/url-for-routes routes))
 
@@ -102,6 +110,10 @@
 
 (defn service-with [port]
   (assoc service ::bootstrap/port port))
+
+
+
+
 
 
 

@@ -1,35 +1,77 @@
 (ns berest-service.rest.farm
   (:require [berest-service.berest.core :as bc]
             [berest-service.rest.common :as rc]
+            [berest-service.berest.datomic :as bd]
+            #_[berest-service.service :as bs]
+            [datomic.api :as d]
+            [io.pedestal.service.http.route :as route]
             [ring.util.response :as rur]
-            [hiccup
-             [element :as he]
-             [def :as hd]
-             [form :as hf]
-             [page :as hp]]))
+            [hiccup.element :as he]
+            [hiccup.def :as hd]
+            [hiccup.form :as hf]
+            [hiccup.page :as hp]))
+
+(comment "for instarepl"
+
+  (require '[berest-service.service :as s])
+
+  ::get-farms
+
+  )
+
+
+#_(map rc/create-form-element (rc/get-ui-entities :farm))
+
+#_(rc/create-form-element (first (rc/get-ui-entities :farm)))
+
+(defn create-farms-layout []
+  [:div.container
+   (for [e (rc/get-ui-entities :farm)]
+     (rc/create-form-element e))
+
+   (hf/submit-button "Betrieb erstellen")])
+
+(defn get-farm-entities []
+  (let [db (bd/current-db "berest")
+        result (d/q '[:find ?farm-e
+                      :in $
+                      :where
+                      [?farm-e :farm/id _]]
+                    db)]
+    (->> result
+         (map first ,,,)
+         (map (partial d/entity db) ,,,))))
+
+(defn get-farms-layout [url]
+  (rc/layout ""
+             [:div.container
+              [:h3 (str "GET | POST " url)]
+
+              [:div
+               [:h4 (str "Betriebe (GET " url ")")]
+               [:p "Hier werden alle in der Datenbank gespeicherten Betriebe angezeigt."]
+               [:hr]
+               [:ul#farms
+                (for [fe (get-farm-entities)]
+                  [:li [:a {:href (str url "/" (:farm/id fe))} (or (:farm/name fe) (:farm/id fe))]])
+                ]
+               [:hr]
+               [:h4 "application/edn"]
+               [:code "blabla"]
+               [:hr]
+               ]
+
+              [:div
+               [:h4 (str "Neuen Betrieb erstellen: (POST " url ")")]
+               [:div
+                (hf/form-to [:post url] (create-farms-layout))]
+               ]]))
 
 (defn get-farms [req]
-  (let [url 1 #_((:url-for req) ::get-farms)]
-    (rur/response
-     (str "bbbbbbbbbaaaaaablalbjalbj" url)
-     #_(rc/layout ""
-                [:div
-                 [:h3 (str "GET | POST " url)]
-
-                 [:div "list here all farms"]
-
-                 [:div "create new farm"
-                  (hf/form-to [:post url]
-                              [:div
-                               (hf/label "id" "Betriebsnummer")
-                               (hf/text-field "id" "111")]
-                              [:div
-                               (hf/label "name" "Betriebsname:")
-                               (hf/text-field "name" "")]
-                              #_(login-fields user)
-                              (hf/submit-button "Betrieb erstellen"))]
-
-                 (str "and the footer of all farms")]))))
+  (let [url ((:url-for req) ::get-farms :app-name :rest)]
+    (-> (get-farms-layout url)
+        rur/response
+        (rur/content-type ,,, "text/html"))))
 
 (defn create-new-farm [req]
   (rur/response "post to create a new farm"))
@@ -71,6 +113,10 @@
       (hf/text-field "name" "")]
     #_(login-fields user)
     (hf/submit-button "Betrieb erstellen")))
+
+
+
+
 
 
 

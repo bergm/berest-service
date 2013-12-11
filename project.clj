@@ -32,6 +32,7 @@
                  [com.velisco/clj-ftp "0.3.0"]
                  [instaparse "1.2.12"]
                  [org.clojure/tools.logging "0.2.6"]
+                 [org.clojure/tools.namespace "0.2.4"]
 
                  ]
 
@@ -50,6 +51,8 @@
                             (println)))
                   :welcome (println "Welcome to pedestal-service! Run (tools-help) to see a list of useful functions.")}
   :main ^{:skip-aot true} berest-service.server)
+
+
 
 
 

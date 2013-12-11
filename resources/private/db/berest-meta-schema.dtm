@@ -13,26 +13,62 @@
   :db/cardinality :db.cardinality/one
   :db.install/_attribute :db.part/db}
 
- ;ui relevenat meta information
+ ;rest.ui relevenat meta information
  {:db/id #db/id[:db.part/db]
-  :db/ident :ui/order
-  :db/valueType :db.type/long
+  :db/ident :rest.ui/label
+  :db/valueType :db.type/ref
+  :db/isComponent true
   :db/cardinality :db.cardinality/one
+  :db/doc "The label the ui element will have,
+  referencing an entity containing :lang/xx strings."
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :ui/order-no
+  :db/ident :rest.ui/placeholder
+  :db/valueType :db.type/ref
+  :db/isComponent true
+  :db/cardinality :db.cardinality/one
+  :db/doc "The placeholder which could be displayed in an empty ui element.
+  References a :lang/xx entity"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :rest.ui/order-no
   :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one
   :db/doc "if displayed in the ui, the order where the entity will appear"
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :ui/groups
+  :db/ident :rest.ui/groups
   :db/valueType :db.type/keyword
   :db/cardinality :db.cardinality/many
   :db/doc "a list if groups this entity will belong to in the ui, might be a web page for example"
   :db.install/_attribute :db.part/db}
 
+ {:db/id #db/id[:db.part/db]
+  :db/ident :rest.ui/ref-group
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/one
+  :db/doc "Tells which group a reference points to."
+  :db.install/_attribute :db.part/db}
+
+ ;; language attributes
+ {:db/id #db/id[:db.part/db]
+  :db/ident :lang/en
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "assigning an english language string to an entity"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :lang/de
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "assigning a german language string to an entity"
+  :db.install/_attribute :db.part/db}
+
  ]
+
+
 

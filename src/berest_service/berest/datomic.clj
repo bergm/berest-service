@@ -40,7 +40,8 @@
            d/db))
 
 (def berest-datomic-schemas ["private/db/berest-meta-schema.dtm"
-                             "private/db/berest-schema.dtm"])
+                             "private/db/berest-schema.dtm"
+                             "private/db/rest-ui-description.dtm"])
 
 (defn apply-schemas-to-db [datomic-connection & schemas]
   (->> (or schemas berest-datomic-schemas)
@@ -63,17 +64,22 @@
 
   (delete-db "berest")
   (create-db "berest")
+
   (d/create-database (datomic-connection-string "berest"))
 
   (apply-schemas-to-db (d/connect (datomic-connection-string "berest")))
 
   (def ms (first berest-datomic-schemas))
-  (def s (second berest-datomic-schemas))
-
   (def ms* ((bh/rcomp cjio/resource slurp read-string) ms))
   (d/transact (datomic-connection "berest") ms*)
+
+  (def s (second berest-datomic-schemas))
   (def s* ((bh/rcomp cjio/resource slurp read-string) s))
   (d/transact (datomic-connection "berest") s*)
+
+  (def rui (nthnext berest-datomic-schemas 2))
+  (def rui* ((bh/rcomp cjio/resource slurp read-string) rui))
+  (d/transact (datomic-connection "berest") rui)
 
   )
 

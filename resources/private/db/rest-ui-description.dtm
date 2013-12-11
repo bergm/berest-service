@@ -1,0 +1,139 @@
+[
+ ;; farm
+
+ {:db/id :farm/id
+  :rest.ui/order-no 1
+  :rest.ui/label {:lang/en "Id"
+                  :lang/de "Id"}
+  :rest.ui/placeholder {:lang/en "unique id"
+                        :lang/de "Eindeutige Betriebs-Id"}
+  :rest.ui/groups :farm}
+
+ {:db/id :farm/name
+  :rest.ui/order-no 2
+  :rest.ui/label {:lang/en "name"
+                  :lang/de "Name"}
+  :rest.ui/placeholder {:lang/en "farm name"
+                        :lang/de "Betriebsname"}
+  :rest.ui/groups :farm}
+
+ {:db/id :farm/addresses
+  :rest.ui/order-no 3
+  :rest.ui/label {:lang/en "address"
+                  :lang/de "Adressen"}
+  :rest.ui/groups :farm
+  :rest.ui/ref-group :address}
+
+ {:db/id :farm/com-connections
+  :rest.ui/order-no 4
+  :rest.ui/label {:lang/en "communication channels"
+                  :lang/de "Kommunikation"}
+  :rest.ui/groups :farm}
+
+ {:db/id :farm/contacts
+  :rest.ui/order-no 5
+  :rest.ui/label {:lang/en "contacts"
+                  :lang/de "Kontakte"}
+  :rest.ui/groups :farm}
+
+ {:db/id :farm/contract
+  :rest.ui/order-no 6
+  :rest.ui/label {:lang/en "contract state"
+                  :lang/de "Vertragsstatus"}
+  :rest.ui/groups :farm}
+
+ {:db/id :farm/notes
+  :rest.ui/order-no 7
+  :rest.ui/label {:lang/en "notes"
+                  :lang/de "Notizen"}
+  :rest.ui/placeholder {:lang/en "some note"
+                        :lang/de "Hinweis/Notiz"}
+  :rest.ui/groups :farm}
+
+ {:db/id :farm/plots
+  :rest.ui/order-no 8
+  :rest.ui/label {:lang/en "plots"
+                  :lang/de "Schläge"}}
+
+ {:db/id :farm/authorative-weather-station
+  :rest.ui/order-no 9
+  :rest.ui/label {:lang/en "DWD weather station"
+                  :lang/de "DWD Wetterstation"}
+  :rest.ui/groups :farm}
+
+ {:db/id :farm/weather-station
+  :rest.ui/order-no 10
+  :rest.ui/label {:lang/en "local weather station"
+                  :lang/de "Lokale Wetterstation"}
+  :rest.ui/groups :farm}
+
+ #_{:db/id :farm/weather-data
+  }
+
+ ;; address
+
+ {:db/id :address/street
+  :rest.ui/order-no 1
+  :rest.ui/label {:lang/en "street"
+                  :lang/de "Strasse"}
+  :rest.ui/groups :address}
+
+ {:db/id :address/postal-code
+  :rest.ui/order-no 2
+  :rest.ui/label {:lang/en "postal code"
+                  :lang/de "PLZ"}
+  :rest.ui/groups :address}
+
+ {:db/id :address/city
+  :rest.ui/order-no 3
+  :rest.ui/label {:lang/en "city"
+                  :lang/de "Stadt"}
+  :rest.ui/groups :address}
+
+ {:db/id :address/city-part
+  :rest.ui/order-no 4
+  :rest.ui/label {:lang/en "city part"
+                  :lang/de "Stadtteil"}
+  :rest.ui/groups :address}
+
+ {:db/id :address/municipality
+  :rest.ui/order-no 5
+  :rest.ui/label {:lang/en "municipality"
+                  :lang/de "Gemeinde/Landkreis"}
+  :rest.ui/groups :address}
+
+  {:db/id :address/municipality-short
+  :rest.ui/order-no 6
+  :rest.ui/label {:lang/en "mun. code"
+                  :lang/de "LK Zeichen"}
+  :rest.ui/groups :address}
+
+ {:db/id :address/state
+  :rest.ui/order-no 7
+  :rest.ui/label {:lang/en "state"
+                  :lang/de "Bundesland"}
+  :rest.ui/groups :address}
+
+ {:db/id :address/state-short
+  :rest.ui/order-no 8
+  :rest.ui/label {:lang/en "state code"
+                  :lang/de "BL Zeichen"}
+  :rest.ui/groups :address}
+
+ {:db/id :address/country
+  :rest.ui/order-no 9
+  :rest.ui/label {:lang/en "country"
+                  :lang/de "Land"}
+  :rest.ui/groups :address}
+
+ {:db/id :address/country-short
+  :rest.ui/order-no 10
+  :rest.ui/label {:lang/en "country code"
+                  :lang/de "Landeskennzeichen"}
+  :rest.ui/groups :address}
+
+
+
+ ]
+
+
