@@ -688,7 +688,6 @@
  {:db/id #db/id[:db.part/db]
   :db/ident :farm/authorative-weather-station
   :db/valueType :db.type/ref
-  :db/isComponent true
   :db/cardinality :db.cardinality/one
   :db/doc "An authorative weather station associated with the farm, which applies automatically to all plots.
   Is usually an official climate station like the german DWD climate stations and weather data will be pulled

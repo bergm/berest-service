@@ -40,7 +40,8 @@
   :rest.ui/order-no 6
   :rest.ui/label {:lang/en "contract state"
                   :lang/de "Vertragsstatus"}
-  :rest.ui/groups :farm}
+  :rest.ui/groups :farm
+  :rest.ui/ref-group :contract}
 
  {:db/id :farm/notes
   :rest.ui/order-no 7
@@ -48,6 +49,7 @@
                   :lang/de "Notizen"}
   :rest.ui/placeholder {:lang/en "some note"
                         :lang/de "Hinweis/Notiz"}
+  :rest.ui/type :rest.ui.type/multi-line-text
   :rest.ui/groups :farm}
 
  {:db/id :farm/plots
@@ -59,7 +61,9 @@
   :rest.ui/order-no 9
   :rest.ui/label {:lang/en "DWD weather station"
                   :lang/de "DWD Wetterstation"}
-  :rest.ui/groups :farm}
+  :rest.ui/groups :farm
+  :rest.ui/type :rest.ui.type/ref-list
+  :rest.ui/list :weather-station/id}
 
  {:db/id :farm/weather-station
   :rest.ui/order-no 10
@@ -76,6 +80,8 @@
   :rest.ui/order-no 1
   :rest.ui/label {:lang/en "street"
                   :lang/de "Strasse"}
+  :rest.ui/placeholder {:lang/en "example street 12"
+                        :lang/de "Beispielstrasse 12"}
   :rest.ui/groups :address}
 
  {:db/id :address/postal-code
@@ -132,6 +138,70 @@
                   :lang/de "Landeskennzeichen"}
   :rest.ui/groups :address}
 
+ ;; contract
+
+ {:db/id :contract/state
+  :rest.ui/type :rest.ui.type/enum-list
+  :rest.ui/list :contract-state
+  :rest.ui/order-no 1
+  :rest.ui/label {:lang/en "contract state"
+                  :lang/de "Vertragsstatus"}
+  :rest.ui/groups :contract}
+
+ {:db/id :contract/start
+  :rest.ui/order-no 2
+  :rest.ui/label {:lang/en "contract start"
+                  :lang/de "Vertragsbeginn"}
+  :rest.ui/groups :contract}
+
+ {:db/id :contract/end
+  :rest.ui/order-no 3
+  :rest.ui/label {:lang/en "contract end"
+                  :lang/de "Vertragsende"}
+  :rest.ui/groups :contract}
+
+;; contract state
+
+ {:db/id :contract.state/contact
+  :rest.ui/list :contract-state
+  :rest.ui/order-no 1
+  :rest.ui/label {:lang/en "contact"
+                  :lang/de "Kontakt"}}
+
+ {:db/id :contract.state/consulting
+  :rest.ui/list :contract-state
+  :rest.ui/order-no 2
+  :rest.ui/label {:lang/en "consulting"
+                  :lang/de "Beratung"}}
+
+ {:db/id :contract.state/repeated
+  :rest.ui/list :contract-state
+  :rest.ui/order-no 3
+  :rest.ui/label {:lang/en "repeated"
+                  :lang/de "Wiederholung"}}
+
+
+
+
+
+
+
+
+
+
+
+
+ ;;some test data
+
+ {:db/id #db/id[:db.part/db]
+  :weather-station/id "AAAA"}
+
+ {:db/id #db/id[:db.part/db]
+  :weather-station/id "BBBB"}
+
+ {:db/id #db/id[:db.part/db]
+  :weather-station/id "cccc"
+  :weather-station/name "name of ccccc"}
 
 
  ]

@@ -9,36 +9,59 @@
 
 (def ^:dynamic *lang* :lang/de)
 
+(defn- ns-key->id [ns-keyword]
+  (str (namespace ns-keyword) "_" (name ns-keyword)))
+
 ;; html5 inputs
 
-(defn- input-field
-  "Creates a new <input> element."
-  [type name value]
-  [:input {:type  type
-           :name  (hu/as-str name)
-           :id    (hu/as-str name)
-           :value value}])
+(defn input-field [type* ui-entity]
+  (let [id (-> ui-entity :db/ident ns-key->id)
+        label (-> ui-entity :rest.ui/label *lang*)
+        ph (some-> ui-entity :rest.ui/placeholder *lang*)]
+    [:div.form-group
+     [:label.col-sm-3.control-label {:for id} label]
+     [:div.col-sm-9
+      [:input.form-control {:type type*
+                            :id id
+                            :placeholder ph}]]]))
 
-(hd/defelem date-field
-            "html5 date input"
-            ([name] (date-field name nil))
-            ([name value] (input-field "date" name value)))
+(defn select-field [ui-entity list-entries]
+  (let [id (-> ui-entity :db/ident ns-key->id)
+        label (-> ui-entity :rest.ui/label *lang*)]
+    [:div.form-group
+     [:label.col-sm-3.control-label {:for id} label]
+     [:div.col-sm-9
+      [:select.form-control
+       (for [e list-entries]
+         [:option {:value (:value e)} (:label e)])]]]))
 
-(hd/defelem number-field
-            "html5 number input"
-            ([name] (number-field name nil))
-            ([name value] (input-field "number" name value)))
+(defn textarea-field [ui-entity rows]
+  (let [id (-> ui-entity :db/ident ns-key->id)
+        label (-> ui-entity :rest.ui/label *lang*)
+        ph (some-> ui-entity :rest.ui/placeholder *lang*)]
+    [:div.form-group
+     [:label.col-sm-3.control-label {:for id} label]
+     [:div.col-sm-9
+      [:textarea.form-control {:id id
+                               :placeholder ph
+                               :rows rows}]]]))
 
 
 ;; create rest ui from db entities
 
-(defn get-ui-entities [ui-group]
+(defn get-ui-entities [attr & [value]]
   (let [db (bd/current-db "berest")
-        result (d/q '[:find ?ui-e
-                      :in $ ?uig
-                      :where
-                      [?ui-e :rest.ui/groups ?uig]]
-                    db ui-group)]
+        result (if value
+                 (d/q '[:find ?ui-e
+                        :in $ ?attr ?value
+                        :where
+                        [?ui-e ?attr ?value]]
+                      db attr value)
+                 (d/q '[:find ?ui-e
+                        :in $ ?attr
+                        :where
+                        [?ui-e ?attr]]
+                      db attr))]
     (->> result
          (map first ,,,)
          (map (partial d/entity db) ,,,)
@@ -46,68 +69,94 @@
          #_(map d/touch ,,,))))
 
 
-(defn- ns-key->id [ns-keyword]
-  (str (namespace ns-keyword) "_" (name ns-keyword)))
 
-(defmulti create-form-element #(vector (:db/valueType %) (:db/cardinality %)))
+(defmulti create-form-element
+  #(select-keys %1 [:db/valueType
+                    :db/cardinality
+                    :rest.ui/type]))
+
 
 ;;simple string input field
-(defmethod create-form-element [:db.type/string :db.cardinality/one] [ui-entity]
-  (let [id (-> ui-entity :db/ident ns-key->id)
-        label (-> ui-entity :rest.ui/label *lang*)
-        ph (some-> ui-entity :rest.ui/placeholder *lang*)]
-    [:div.row
-     [:label.col-md-3 {:name id} label]
-     [:input.col-md-4 {:type :text :placeholder ph :id id :name id}]]))
+(defmethod create-form-element {:db/valueType :db.type/string
+                                :db/cardinality :db.cardinality/one}
+  [ui-entity]
+  (input-field :text ui-entity))
 
-(defmethod create-form-element [:db.type/string :db.cardinality/many] [ui-entity]
-  (let [id (-> ui-entity :db/ident ns-key->id)
-        label (-> ui-entity :rest.ui/label *lang*)
-        ph (some-> ui-entity :rest.ui/placeholder *lang*)]
-    [:div.row
-     [:label.col-md-3 {:name id} label]
-     [:input.col-md-4 {:type :text :placeholder ph :id id :name id}]]))
+(defmethod create-form-element {:db/valueType :db.type/string
+                                :db/cardinality :db.cardinality/one
+                                :rest.ui/type :rest.ui.type/email}
+  [ui-entity]
+  (input-field :email ui-entity))
+
+(defmethod create-form-element {:db/valueType :db.type/string
+                                :db/cardinality :db.cardinality/one
+                                :rest.ui/type :rest.ui.type/multi-line-text}
+  [ui-entity]
+  (textarea-field ui-entity 3))
+
+(defmethod create-form-element {:db/valueType :db.type/string
+                                :db/cardinality :db.cardinality/many
+                                :rest.ui/type :rest.ui.type/multi-line-text}
+  [ui-entity]
+  (textarea-field ui-entity 3))
+
+(defmethod create-form-element {:db/valueType :db.type/string
+                                :db/cardinality :db.cardinality/many}
+  [ui-entity]
+  (input-field :text ui-entity))
 
 ;;date input field
-(defmethod create-form-element [:db.type/instant :db.cardinality/one] [ui-entity]
-  [:div
-   (hf/label (-> ui-entity :rest.ui/label :lang/de))
-   (date-field (if-let [p (:rest.ui/placeholder ui-entity)]
-                 {:rest.ui/placeholder (:lang/de p)}
-                 {})
-               (-> ui-entity :db/ident ns-key->id))])
+(defmethod create-form-element {:db/valueType :db.type/instant
+                                :db/cardinality :db.cardinality/one}
+  [ui-entity]
+  (input-field :date ui-entity))
 
 ;;number input field
-(defmethod create-form-element [:db.type/long :db.cardinality/one] [ui-entity]
-  [:fieldset
-   [:legend (-> ui-entity :rest.ui/label :lang/de)]
-   (number-field (if-let [p (:rest.ui/placeholder ui-entity)]
-                   {:rest.ui/placeholder (:lang/de p)}
-                   {})
-                 (-> ui-entity :db/ident ns-key->id))])
+(defmethod create-form-element {:db/valueType :db.type/long
+                                :db/cardinality :db.cardinality/one}
+  [ui-entity]
+  (input-field :number ui-entity))
 
 ;;refs to composite fields (just one)
-(defmethod create-form-element [:db.type/ref :db.cardinality/one] [ui-entity]
+(defmethod create-form-element {:db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/one} [ui-entity]
   [:fieldset
    [:legend (-> ui-entity :rest.ui/label :lang/de)]
    (when-let [ref-group (:rest.ui/ref-group ui-entity)]
-     (for [e (get-ui-entities ref-group)]
+     (for [e (get-ui-entities :rest.ui/groups ref-group)]
        (create-form-element e)))])
 
 ;;might be multiple input fields (actually just doable by using javascript/clojurscript)
-(defmethod create-form-element [:db.type/ref :db.cardinality/many] [ui-entity]
+(defmethod create-form-element {:db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/many} [ui-entity]
   [:fieldset
    [:legend (-> ui-entity :rest.ui/label :lang/de)]
    (when-let [ref-group (:rest.ui/ref-group ui-entity)]
-     (for [e (get-ui-entities ref-group)]
+     (for [e (get-ui-entities :rest.ui/groups ref-group)]
        (create-form-element e)))])
 
+(defmethod create-form-element {:db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/one
+                                :rest.ui/type :rest.ui.type/enum-list} [ui-entity]
+  (select-field ui-entity (map (fn [e] {:label (-> e :rest.ui/label *lang*)
+                                        :value (:db/ident e)})
+                               (get-ui-entities :rest.ui/list (:rest.ui/list ui-entity)))))
+
+(defmethod create-form-element {:db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/one
+                                :rest.ui/type :rest.ui.type/ref-list} [ui-entity]
+  (let [id-attr (:rest.ui/list ui-entity)
+        id-attr-ns (namespace id-attr)]
+    (select-field ui-entity (map (fn [e]
+                                   (let [id (id-attr e)
+                                         name-attr (keyword id-attr-ns "name")
+                                         label (or (name-attr e) id)]
+                                     {:label label
+                                      :value id}))
+                                 (get-ui-entities (:rest.ui/list ui-entity))))))
 
 
-
-
-
-#_(first (map create-form-element (get-ui-entities :address)))
+#_(first (map create-form-element (get-ui-entities :rest.ui/groups :address)))
 
 
 

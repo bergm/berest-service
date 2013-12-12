@@ -20,13 +20,13 @@
   )
 
 
-#_(map rc/create-form-element (rc/get-ui-entities :farm))
+#_(map rc/create-form-element (rc/get-ui-entities :rest.ui/groups :farm))
 
-#_(rc/create-form-element (first (rc/get-ui-entities :farm)))
+#_(rc/create-form-element (first (rc/get-ui-entities :rest.ui/groups :farm)))
 
 (defn create-farms-layout []
   [:div.container
-   (for [e (rc/get-ui-entities :farm)]
+   (for [e (rc/get-ui-entities :rest.ui/groups :farm)]
      (rc/create-form-element e))
 
    (hf/submit-button "Betrieb erstellen")])
@@ -63,7 +63,9 @@
 
               [:div
                [:h4 (str "Neuen Betrieb erstellen: (POST " url ")")]
-               [:div
+               [:form.form-horizontal {:role :form
+                                       :method :post}
+
                 (hf/form-to [:post url] (create-farms-layout))]
                ]]))
 

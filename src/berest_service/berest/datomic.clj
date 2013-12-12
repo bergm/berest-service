@@ -60,6 +60,7 @@
        datomic-connection-string
        d/delete-database))
 
+
 (comment "instarepl debugging code"
 
   (delete-db "berest")
@@ -77,9 +78,9 @@
   (def s* ((bh/rcomp cjio/resource slurp read-string) s))
   (d/transact (datomic-connection "berest") s*)
 
-  (def rui (nthnext berest-datomic-schemas 2))
+  (def rui (nth berest-datomic-schemas 2))
   (def rui* ((bh/rcomp cjio/resource slurp read-string) rui))
-  (d/transact (datomic-connection "berest") rui)
+  (d/transact (datomic-connection "berest") rui*)
 
   )
 
