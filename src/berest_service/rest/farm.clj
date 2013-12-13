@@ -9,7 +9,8 @@
             [hiccup.element :as he]
             [hiccup.def :as hd]
             [hiccup.form :as hf]
-            [hiccup.page :as hp]))
+            [hiccup.page :as hp]
+            [clojure.edn :as edn]))
 
 (comment "for instarepl"
 
@@ -19,17 +20,30 @@
 
   )
 
+(defn vocab
+  "translatable vocabulary for this page"
+  [element & [lang]]
+  (get-in {:farms {:lang/de "Betriebe"
+                   :lang/en "farms"}
+           :show {:lang/de "Hier werden alle in der Datenbank
+                  gespeicherten Betriebe angezeigt."
+                  :lang/en "Here will be displayed all farms
+                  stored in the database."}
+           :create {:lang/de "Neuen Betrieb erstellen:"
+                    :lang/en "Create new farm:"}
+           :create-button {:lang/de "Erstellen"
+                           :lang/en "Create"}
 
-#_(map rc/create-form-element (rc/get-ui-entities :rest.ui/groups :farm))
+           }
+          [element (or lang rc/*lang*)] "UNKNOWN element"))
 
-#_(rc/create-form-element (first (rc/get-ui-entities :rest.ui/groups :farm)))
 
 (defn create-farms-layout []
   [:div.container
    (for [e (rc/get-ui-entities :rest.ui/groups :farm)]
      (rc/create-form-element e))
 
-   (hf/submit-button "Betrieb erstellen")])
+   [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])
 
 (defn get-farm-entities []
   (let [db (bd/current-db "berest")
@@ -43,13 +57,13 @@
          (map (partial d/entity db) ,,,))))
 
 (defn get-farms-layout [url]
-  (rc/layout ""
+  (rc/layout (str "GET | POST " url)
              [:div.container
               [:h3 (str "GET | POST " url)]
 
               [:div
-               [:h4 (str "Betriebe (GET " url ")")]
-               [:p "Hier werden alle in der Datenbank gespeicherten Betriebe angezeigt."]
+               [:h4 (str (vocab :farms) " (GET " url ")")]
+               [:p (vocab :show)]
                [:hr]
                [:ul#farms
                 (for [fe (get-farm-entities)]
@@ -57,16 +71,16 @@
                 ]
                [:hr]
                [:h4 "application/edn"]
-               [:code "blabla"]
+               [:code (pr-str (map :farm/id (get-farm-entities)))]
                [:hr]
                ]
 
               [:div
-               [:h4 (str "Neuen Betrieb erstellen: (POST " url ")")]
+               [:h4 (str (vocab :create)" (POST " url ")")]
                [:form.form-horizontal {:role :form
-                                       :method :post}
-
-                (hf/form-to [:post url] (create-farms-layout))]
+                                       :method :post
+                                       :action url}
+                (create-farms-layout)]
                ]]))
 
 (defn get-farms [req]

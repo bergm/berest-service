@@ -4,11 +4,11 @@
               [io.pedestal.service.http.body-params :as body-params]
               [io.pedestal.service.http.route.definition :refer [defroutes]]
               [ring.util.response :as ring-resp]
-              [berest-service.berest
-               [plot :as plot]
-               [farm :as farm]]
-              [berest-service.rest
-               [farm :as rfarm]]
+              [berest-service.berest.plot :as plot]
+              [berest-service.berest.farm :as farm]
+              [berest-service.rest.farm :as rfarm]
+              [berest-service.rest.home :as rhome]
+              [berest-service.rest.weather-station :as rwstation]
               [clojure.string :as cs]))
 
 
@@ -65,16 +65,19 @@
 
 
 (defroutes routes
-  [[:home
+  [#_[:home
     ["/" {:get home-page} ^:interceptors [bootstrap/html-body]]]
    [:rest
-    ["/farms" {:get rfarm/get-farms
-               :post rfarm/create-new-farm}
-     ["/:farm-id" {:get rfarm/get-farm
-                   :put rfarm/update-farm}
-      ["/plots" {:get get-rest-plots}
-       ["/:plot-id-format" {:get get-rest-plot}]]]]]])
-
+    ["/" ^:interceptors [(body-params/body-params) bootstrap/html-body]
+     {:get rhome/get-home}
+     ["/farms" {:get rfarm/get-farms
+                :post rfarm/create-new-farm}
+      ["/:farm-id" {:get rfarm/get-farm
+                    :put rfarm/update-farm}
+       ["/plots" {:get get-rest-plots}
+        ["/:plot-id-format" {:get get-rest-plot}]]]]
+     ["/weather-stations" {:get rwstation/get-weather-stations
+                           :post rwstation/create-weather-station}]]]])
 
 
 

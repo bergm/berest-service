@@ -1,5 +1,6 @@
 (ns berest-service.rest.common
-  (:require [hiccup.element :as he]
+  (:require [clojure.string :as cs]
+            [hiccup.element :as he]
             [hiccup.form :as hf]
             [hiccup.page :as hp]
             [hiccup.def :as hd]
@@ -9,8 +10,14 @@
 
 (def ^:dynamic *lang* :lang/de)
 
-(defn- ns-key->id [ns-keyword]
+(defn ns-key->id [ns-keyword]
   (str (namespace ns-keyword) "_" (name ns-keyword)))
+
+(defn id->ns-key [id]
+  (apply keyword (cs/split id #"_")))
+
+#_(id->ns-key "geo-coord_longitude")
+
 
 ;; html5 inputs
 
@@ -22,7 +29,20 @@
      [:label.col-sm-3.control-label {:for id} label]
      [:div.col-sm-9
       [:input.form-control {:type type*
-                            :id id
+                            :id id :name id
+                            :placeholder ph}]]]))
+
+(defn double-field [ui-entity]
+  (let [id (-> ui-entity :db/ident ns-key->id)
+        label (-> ui-entity :rest.ui/label *lang*)
+        ph (some-> ui-entity :rest.ui/placeholder *lang*)]
+    [:div.form-group
+     [:label.col-sm-3.control-label {:for id} label]
+     [:div.col-sm-9
+      [:input.form-control {:type :number
+                            :step "any"
+                            :pattern "[0-9]+([,\\.][0-9]+)?"
+                            :id id :name id
                             :placeholder ph}]]]))
 
 (defn select-field [ui-entity list-entries]
@@ -31,7 +51,7 @@
     [:div.form-group
      [:label.col-sm-3.control-label {:for id} label]
      [:div.col-sm-9
-      [:select.form-control
+      [:select.form-control {:id id :name id}
        (for [e list-entries]
          [:option {:value (:value e)} (:label e)])]]]))
 
@@ -42,7 +62,7 @@
     [:div.form-group
      [:label.col-sm-3.control-label {:for id} label]
      [:div.col-sm-9
-      [:textarea.form-control {:id id
+      [:textarea.form-control {:id id :name id
                                :placeholder ph
                                :rows rows}]]]))
 
@@ -116,6 +136,12 @@
                                 :db/cardinality :db.cardinality/one}
   [ui-entity]
   (input-field :number ui-entity))
+
+;;number input field
+(defmethod create-form-element {:db/valueType :db.type/double
+                                :db/cardinality :db.cardinality/one}
+  [ui-entity]
+  (double-field ui-entity))
 
 ;;refs to composite fields (just one)
 (defmethod create-form-element {:db/valueType :db.type/ref
