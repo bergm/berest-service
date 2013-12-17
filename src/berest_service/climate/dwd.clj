@@ -4,9 +4,8 @@
             [clj-time.core :as ctc]
             [clj-time.format :as ctf]
             [clj-time.coerce :as ctcoe]
-            [berest-service.berest
-             [datomic :as bd]
-             [util :as bu]]
+            [berest-service.berest.datomic :as bd]
+            [berest-service.berest.util :as bu]
             [datomic.api :as d]
             #_[miner.ftp :as ftp]
             [clojure.tools.logging :as log]))
@@ -128,5 +127,7 @@
 )
 
 #_(import-dwd-data-into-datomic :prognosis (ctc/date-time 2013 6 3))
+
+
 
 

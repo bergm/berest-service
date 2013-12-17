@@ -6,23 +6,22 @@
             [hiccup.def :as hd]
             [hiccup.util :as hu]
             [datomic.api :as d]
-            [berest-service.berest.datomic :as bd]))
+            [berest-service.berest.datomic :as bd]
+            [berest-service.rest.queries :as rq]))
 
 (def ^:dynamic *lang* :lang/de)
 
-(defn ns-key->id [ns-keyword]
+(defn ns-attr->id [ns-keyword]
   (str (namespace ns-keyword) "_" (name ns-keyword)))
 
-(defn id->ns-key [id]
+(defn id->ns-attr [id]
   (apply keyword (cs/split id #"_")))
-
-#_(id->ns-key "geo-coord_longitude")
 
 
 ;; html5 inputs
 
 (defn input-field [type* ui-entity]
-  (let [id (-> ui-entity :db/ident ns-key->id)
+  (let [id (-> ui-entity :db/ident ns-attr->id)
         label (-> ui-entity :rest.ui/label *lang*)
         ph (some-> ui-entity :rest.ui/placeholder *lang*)]
     [:div.form-group
@@ -33,7 +32,7 @@
                             :placeholder ph}]]]))
 
 (defn double-field [ui-entity]
-  (let [id (-> ui-entity :db/ident ns-key->id)
+  (let [id (-> ui-entity :db/ident ns-attr->id)
         label (-> ui-entity :rest.ui/label *lang*)
         ph (some-> ui-entity :rest.ui/placeholder *lang*)]
     [:div.form-group
@@ -46,7 +45,7 @@
                             :placeholder ph}]]]))
 
 (defn select-field [ui-entity list-entries]
-  (let [id (-> ui-entity :db/ident ns-key->id)
+  (let [id (-> ui-entity :db/ident ns-attr->id)
         label (-> ui-entity :rest.ui/label *lang*)]
     [:div.form-group
      [:label.col-sm-3.control-label {:for id} label]
@@ -56,7 +55,7 @@
          [:option {:value (:value e)} (:label e)])]]]))
 
 (defn textarea-field [ui-entity rows]
-  (let [id (-> ui-entity :db/ident ns-key->id)
+  (let [id (-> ui-entity :db/ident ns-attr->id)
         label (-> ui-entity :rest.ui/label *lang*)
         ph (some-> ui-entity :rest.ui/placeholder *lang*)]
     [:div.form-group
@@ -69,24 +68,7 @@
 
 ;; create rest ui from db entities
 
-(defn get-ui-entities [attr & [value]]
-  (let [db (bd/current-db "berest")
-        result (if value
-                 (d/q '[:find ?ui-e
-                        :in $ ?attr ?value
-                        :where
-                        [?ui-e ?attr ?value]]
-                      db attr value)
-                 (d/q '[:find ?ui-e
-                        :in $ ?attr
-                        :where
-                        [?ui-e ?attr]]
-                      db attr))]
-    (->> result
-         (map first ,,,)
-         (map (partial d/entity db) ,,,)
-         (sort-by :rest.ui/order-no ,,,)
-         #_(map d/touch ,,,))))
+
 
 
 
@@ -149,7 +131,7 @@
   [:fieldset
    [:legend (-> ui-entity :rest.ui/label :lang/de)]
    (when-let [ref-group (:rest.ui/ref-group ui-entity)]
-     (for [e (get-ui-entities :rest.ui/groups ref-group)]
+     (for [e (rq/get-ui-entities :rest.ui/groups ref-group)]
        (create-form-element e)))])
 
 ;;might be multiple input fields (actually just doable by using javascript/clojurscript)
@@ -158,7 +140,7 @@
   [:fieldset
    [:legend (-> ui-entity :rest.ui/label :lang/de)]
    (when-let [ref-group (:rest.ui/ref-group ui-entity)]
-     (for [e (get-ui-entities :rest.ui/groups ref-group)]
+     (for [e (rq/get-ui-entities :rest.ui/groups ref-group)]
        (create-form-element e)))])
 
 (defmethod create-form-element {:db/valueType :db.type/ref
@@ -166,7 +148,7 @@
                                 :rest.ui/type :rest.ui.type/enum-list} [ui-entity]
   (select-field ui-entity (map (fn [e] {:label (-> e :rest.ui/label *lang*)
                                         :value (:db/ident e)})
-                               (get-ui-entities :rest.ui/list (:rest.ui/list ui-entity)))))
+                               (rq/get-ui-entities :rest.ui/list (:rest.ui/list ui-entity)))))
 
 (defmethod create-form-element {:db/valueType :db.type/ref
                                 :db/cardinality :db.cardinality/one
@@ -179,7 +161,7 @@
                                          label (or (name-attr e) id)]
                                      {:label label
                                       :value id}))
-                                 (get-ui-entities (:rest.ui/list ui-entity))))))
+                                 (rq/get-ui-entities (:rest.ui/list ui-entity))))))
 
 
 #_(first (map create-form-element (get-ui-entities :rest.ui/groups :address)))

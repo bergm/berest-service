@@ -927,7 +927,7 @@
   :db/doc "A stations actual weather data"
   :db.install/_attribute :db.part/db}
 
- {:db/id #db/id [:db.part/user]
+ {:db/id #db/id[:db.part/user]
   :db/ident :weather-station/add-data
   :db/doc "A transaction function creating data and just allowing unique data per station and day"
   :db/fn #db/fn {:lang "clojure"

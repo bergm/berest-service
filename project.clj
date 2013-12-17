@@ -30,7 +30,7 @@
                  [hiccup "1.0.4"]
                  [formative "0.3.2"]
                  [com.velisco/clj-ftp "0.3.0"]
-                 [instaparse "1.2.12"]
+                 [instaparse "1.2.13"]
                  [org.clojure/tools.logging "0.2.6"]
                  [org.clojure/tools.namespace "0.2.4"]
 

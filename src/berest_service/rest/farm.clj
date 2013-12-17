@@ -1,7 +1,8 @@
 (ns berest-service.rest.farm
   (:require [berest-service.berest.core :as bc]
-            [berest-service.rest.common :as rc]
             [berest-service.berest.datomic :as bd]
+            [berest-service.rest.common :as rc]
+            [berest-service.rest.queries :as rq]
             #_[berest-service.service :as bs]
             [datomic.api :as d]
             [io.pedestal.service.http.route :as route]
@@ -40,7 +41,7 @@
 
 (defn create-farms-layout []
   [:div.container
-   (for [e (rc/get-ui-entities :rest.ui/groups :farm)]
+   (for [e (rq/get-ui-entities :rest.ui/groups :farm)]
      (rc/create-form-element e))
 
    [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])

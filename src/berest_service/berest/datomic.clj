@@ -12,6 +12,8 @@
              [helper :as bh
               :refer [|->]]]))
 
+(def ^:dynamic *db-id* "berest")
+
 (defn datomic-connection-string [base-uri db-id]
   (str base-uri db-id))
 
@@ -30,13 +32,14 @@
 
 (def datomic-connection-string dynamodb-connection-string)
 
-(defn datomic-connection [db-id]
-  (->> db-id
+(defn datomic-connection [& [db-id]]
+  (->> (or db-id *db-id*)
        datomic-connection-string
        d/connect))
 
-(defn current-db [db-id]
-  (some->> (datomic-connection db-id)
+(defn current-db [& [db-id]]
+  (some->> (or db-id *db-id*)
+           datomic-connection
            d/db))
 
 (def berest-datomic-schemas ["private/db/berest-meta-schema.dtm"
