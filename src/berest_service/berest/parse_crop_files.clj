@@ -4,16 +4,15 @@
             [berest-service.berest.datomic :as bd]
             [instaparse.core :as insta]
             [clojure.java.io :as cjio]
-            [clojure.pprint :as pp]))
-
+            [clojure.pprint :as pp]
+            [clojure.java.shell :as sh]
+            [clojure.string :as cs]))
 
 
 
 (def crop-file-parser
   (insta/parser
    "
-   crop-file = crop-data+
-
    crop-data =
    <empty-line*>
    header-line
@@ -33,9 +32,7 @@
    dc-2-effectivity
    <empty-line+>
    dito*
-   <empty-line+>
-   <block-separator>
-   <empty-line*>
+   (<empty-line*> | <ows>)
 
    (*
    0101,7,0,WW,Winterweizen/AJ;      Aussaatjahr
@@ -49,14 +46,12 @@
 
    (*
    DC =    1,  10, 21;  Code
-            1,  15, 72;  Tag
+           1,  15, 72;  Tag
    *)
    dc-2-rel-day =
-   <ows 'DC' ows '=' ows> dc-codes <rest-of-line>
-   <ows> rel-days <rest-of-line>
+   <ows 'DC' ows '=' ows> integer-values <rest-of-line>
+   <ows> integer-values <rest-of-line>
 
-   dc-codes = (integer <ows> <','>? <ows>)+
-   rel-days = (integer <ows> <','>? <ows>)+
    integer-values = (integer <ows> <','>? <ows>)+
    double-values = (double <ows> <','>? <ows>)+
 
@@ -65,15 +60,16 @@
              10 : Aufgang;
              21 : Best.-beginn;
    *)
-   dc-2-name = <ows 'NameDC' ows '=' ows> dc-2-name-pair+
-   <dc-2-name-pair> = <ows ';'? ows> integer <ows ':' ows> #'[^;]+' <rest-of-line>
+   dc-2-name = <ows 'NameDC' ows '=' ows> dc-2-name-pairs
+   dc-2-name-pairs = dc-2-name-pair+
+   <dc-2-name-pair> = <ows> integer <ows ':' ows> #'[^;]+' <rest-of-line>
 
    (*
    Bedeckungsgrad   =   15,   30,  115;                    Tag
                          0, 0.60, 0.80;                    Wert
    *)
    dc-2-coverdegree =
-   <ows 'Bedeckungsgrad' ows '=' ows> dc-codes <rest-of-line>
+   <ows 'Bedeckungsgrad' ows '=' ows> integer-values <rest-of-line>
    <ows> double-values <rest-of-line>
 
    (*
@@ -81,7 +77,7 @@
                          1,   6;                           Wert
    *)
    dc-2-extraction-depth =
-   <ows 'Entnahmetiefe' ows '=' ows> dc-codes <rest-of-line>
+   <ows 'Entnahmetiefe' ows '=' ows> integer-values <rest-of-line>
    <ows> integer-values <rest-of-line>
 
    (*
@@ -89,7 +85,7 @@
                          1;                                Wert
    *)
    dc-2-transpiration =
-   <ows 'Transpiration' ows '=' ows> dc-codes <rest-of-line>
+   <ows 'Transpiration' ows '=' ows> integer-values <rest-of-line>
    <ows> double-values <rest-of-line>
 
    (*
@@ -97,7 +93,7 @@
                          0;                                Wert
    *)
    dc-2-quotient =
-   <ows 'Quotient(soll)' ows '=' ows> dc-codes <rest-of-line>
+   <ows 'Quotient(soll)' ows '=' ows> integer-values <rest-of-line>
    <ows> double-values <rest-of-line>
 
    (*
@@ -105,7 +101,7 @@
                       0.17;                                Wert
    *)
    dc-2-effectivity =
-   <ows 'Effektivitaet' ows '=' ows> dc-codes <rest-of-line>
+   <ows 'Effektivitaet' ows '=' ows> integer-values <rest-of-line>
    <ows> double-values <rest-of-line>
 
    (*
@@ -117,12 +113,12 @@
 
    (*
    * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
-   *)
    block-separator = <ows ('* -' ws?)+ ows newline>
+   *)
 
-   rest-of-line = ';' #'.*' newline
-   empty-line = ows | newline
-   newline = '\\r\\n' | '\\n'  (*#'\\r\\n' | #'\\n'*)
+   rest-of-line = ';' #'[^\\n\\r]*' newline
+   empty-line = newline | #'[^\\S\\n\\r]*' newline
+   newline = '\\r\\n' | '\\n'
    ows = #'\\s*'
    ws = #'\\s'
    word = #'[a-zA-Z0-9/.-]+'
@@ -142,8 +138,6 @@
            10 : Aufgang;
            21 : Best.-beginn;
 
-
-
  Bedeckungsgrad   =   15,   30,  115;                    Tag
                        0, 0.60, 0.80;                    Wert
 
@@ -158,94 +152,87 @@
 
  Effektivitaet    =    1;                                Tag
                     0.17;                                Wert
-
 
   0101,7,2,dito.,;
   0101,7,3,dito.,;
   0101,7,9,dito.,;
 
-  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
-
   ")
 
+(def ps (insta/parses crop-file-parser test-text))
 
-(insta/parse crop-file-parser test-text :optimize :memory)
+(println (count ps))
 
-
-
-
-
-
-
-#_(crop-file-parser
- "
- 0101,7,0,WW,Winterweizen/AJ;      Aussaatjahr
-
- DC =    1,  10, 21;  Code
-         1,  15, 72;  Tag
-
- NameDC =   1 : Aussaat;
-           10 : Aufgang;
-           21 : Best.-beginn;
+(pp/pprint (nth ps 0))
 
 
 
- Bedeckungsgrad   =   15,   30,  115;                    Tag
-                       0, 0.60, 0.80;                    Wert
+(def trans {:double #(Double/parseDouble %)
+            :integer #(Integer/parseInt %)
+            :double-values vector
+            :integer-values vector
+            :dc-2-rel-day (fn [dcs days]
+                            [:dc-to-rel-day (bd/create-entities :kv/dc :kv/rel-dc-day
+                                                                (interleave dcs days))])
+            :dc-2-coverdegree (fn [dcs cds]
+                                [:dc-2-coverdegree (bd/create-entities :kv/rel-dc-day :kv/cover-degree
+                                                                       (interleave dcs cds))])
+            :dc-2-name-pairs vector
+            :dc-2-name (fn [pairs]
+                         [:dc-2-name (bd/create-entities :kv/dc :kv/name pairs)])
+            })
 
- Entnahmetiefe    =   10,  90;                           Tag
-                       1,   6;                           Wert
-
- Transpiration    =    1;                                Tag
-                       1;                                Wert
-
- Quotient(soll)   =    1;                                Tag
-                       0;                                Wert
-
- Effektivitaet    =    1;                                Tag
-                    0.17;                                Wert
-
-
- 0101,7,2,dito.,;
- 0101,7,3,dito.,;
- 0101,7,9,dito.,;
- * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
-
-
-0101,1,Winterweizen;      Aussaatjahr
-
-DC =    1,  10, 21;  Code
-        1,  15, 72;  Tag
-
-NameDC =   1 : Aussaat;
-          10 : Aufgang;
-          21 : 31. Dez.;
+(insta/transform trans (crop-file-parser test-text))
 
 
 
-Bedeckungsgrad   =   15,   30,  115;                    Tag
-                      0, 0.60, 0.80;                    Wert
+#_(defn add-winter-rye [datomic-connection]
+  (let [dc-to-day (bd/create-entities :kv/dc :kv/rel-dc-day
+                                      [21 60, 31 110, 51 140, 61 155, 75 170, 92 200])
+        dc-to-name (bd/create-entities :kv/dc :kv/name
+                                       [21 "Best.-beginn", 31 "Schossbeginn", 51 "Aehrenschieben", 61 "Bluete",
+                                        75 "Milchreife", 92 "Todreife"])
+        rel-day-to-cover-degree (bd/create-entities :kv/rel-dc-day :kv/cover-degree
+                                                    [90 1.0])
+        rel-day-to-extraction-depth (bd/create-entities :kv/rel-dc-day :kv/extraction-depth
+                                                        [90 60, 120 90, 150 110, 170 130])
+        rel-day-to-transpiration-factor (bd/create-entities :kv/rel-dc-day :kv/transpiration-factor
+                                                            [100 1.0, 110 1.3, 190 1.3, 200 1.0, 210 0.1])
+        rel-day-to-quotient (bd/create-entities :kv/rel-dc-day :kv/quotient-aet-pet
+                                                [80 0.0, 90 0.2, 110 0.8, 170 0.8, 180 0.6, 200 0.0])
 
-Entnahmetiefe    =   10,  90;                           Tag
-                      1,   6;                           Wert
+        crop {:db/id (bd/new-entity-id)
+              :crop/id "0110/1/0"
+              :crop/number 110
+              :crop/cultivation-type 1
+              :crop/usage 0
+              :crop/name "Winterroggen/EJ"
+              :crop/symbol "WR"
+              :crop/dc-to-rel-dc-days (bd/get-entity-ids dc-to-day)
+              :crop/dc-to-developmental-state-names (bd/get-entity-ids dc-to-name)
+              :crop/rel-dc-day-to-cover-degrees (bd/get-entity-ids rel-day-to-cover-degree)
+              :crop/rel-dc-day-to-extraction-depths (bd/get-entity-ids rel-day-to-extraction-depth)
+              :crop/rel-dc-day-to-transpiration-factors (bd/get-entity-ids rel-day-to-transpiration-factor)
+              :crop/rel-dc-day-to-quotient-aet-pets (bd/get-entity-ids rel-day-to-quotient)
+              :crop/effectivity-quotient 0.17}]
 
-Transpiration    =    1;                                Tag
-                      1;                                Wert
-
-Quotient(soll)   =    1;                                Tag
-                      0;                                Wert
-
-Effektivitaet    =    1;                                Tag
-                   0.17;                                Wert
-
-* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
-
- ")
+    (d/transact datomic-connection
+                ;print
+                (flatten [dc-to-day
+                          dc-to-name
+                          rel-day-to-cover-degree
+                          rel-day-to-extraction-depth
+                          rel-day-to-transpiration-factor
+                          rel-day-to-quotient
+                          crop]))))
 
 
 (def crops (slurp (str "C:/Users/michael/development/GitHub/berest-service/resources/private/crops/full-version-with-dito-short-name-and-usage/BBFASTD1.TXT")))
 
+#_(cs/split crops #"\s*\*\s-\s\*\s\-[^\r\n]*")
 
+
+#_(insta/parse crop-file-parser crops :optimize :memory)
 
 (defn parse-Bbfastdx []
   (doseq [i (range 1 2)]
@@ -255,6 +242,10 @@ Effektivitaet    =    1;                                Tag
         crop-file-parser)))
 
 #_(parse-Bbfastdx)
+
+
+
+
 
 
 

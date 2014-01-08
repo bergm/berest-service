@@ -95,7 +95,10 @@
 
 (defn create-entities
   ([key value kvs]
-    (map (fn [id [k v]] {:db/id id, key k, value v}) (new-entity-ids) (apply array-map kvs)))
+    (map (fn [id [k v]] {:db/id id
+                         key k
+                         value v})
+         (new-entity-ids) (apply array-map kvs)))
   ([ks-to-vss]
     (map #(assoc (zipmap (keys ks-to-vss) %) :db/id (new-entity-id))
          (apply map vector (vals ks-to-vss)))))
