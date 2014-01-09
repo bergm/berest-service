@@ -57,7 +57,7 @@
    (*
    0101,7,0,WW,Winterweizen/AJ;      Aussaatjahr
    *)
-   header-line = <ows> crop-no <','> cult-type <','> (usage <','> crop-code <','>)? crop-name <rest-of-line>
+   header-line = <ows> crop-no <','> cult-type <','> (usage <','> crop-code <','>)? crop-name <ows> <rest-of-line>
    crop-no = integer
    cult-type = integer
    usage = integer
@@ -134,7 +134,7 @@
    (*
    * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
    *)
-   block-separator = <ows ('* -' ws?)+ ows-without-newline newline>
+   block-separator = <ows ('* -' ws '*'?)+ ows-without-newline newline>
 
    rest-of-line = ';' #'[^\\n\\r]*' newline
    empty-line = newline | ows-without-newline newline
@@ -179,7 +179,7 @@
   0101,7,3,dito.,;
   0101,7,9,dito.,;
 
-  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
 
   0101,7,0,WW,Winterweizen/AJ;      Aussaatjahr
 
@@ -210,8 +210,6 @@
   0101,7,9,dito.,;
 
   ")
-
-"* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -"
 
 #_(crop-file-parser test-text)
 
