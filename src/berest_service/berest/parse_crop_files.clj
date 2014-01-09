@@ -7,12 +7,7 @@
             [clojure.pprint :as pp]
             [clojure.java.shell :as sh]
             [clojure.string :as cs]))
-
-
-
-(def crop-file-parser
-  (insta/parser
-   "
+"
    crop-data =
    <empty-line*>
    header-line
@@ -33,6 +28,31 @@
    <empty-line+>
    dito*
    (<empty-line*> | <ows>)
+   "
+
+   "
+   crop-data = <empty-line*>
+   (header-line |
+   dc-2-rel-day |
+   dc-2-name |
+   dc-2-coverdegree |
+   dc-2-extraction-depth |
+   dc-2-transpiration |
+   dc-2-quotient |
+   dc-2-effectivity |
+   dito* |
+   <empty-line*>) <ows>
+   "
+
+(def crop-file-parser
+  (insta/parser
+   "
+   crop-file = <empty-line*> <block-separator?> crop-block+
+
+   crop-block = <empty-line*> (crop-data <empty-line*>)+ (<block-separator> | <ows-without-newline EOF>)
+
+   <crop-data> = header-line | dc-2-rel-day | dc-2-name | dc-2-coverdegree | dc-2-extraction-depth |
+   dc-2-transpiration | dc-2-quotient | dc-2-effectivity | dito
 
    (*
    0101,7,0,WW,Winterweizen/AJ;      Aussaatjahr
@@ -113,17 +133,19 @@
 
    (*
    * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
-   block-separator = <ows ('* -' ws?)+ ows newline>
    *)
+   block-separator = <ows ('* -' ws?)+ ows-without-newline newline>
 
    rest-of-line = ';' #'[^\\n\\r]*' newline
-   empty-line = newline | #'[^\\S\\n\\r]*' newline
+   empty-line = newline | ows-without-newline newline
    newline = '\\r\\n' | '\\n'
+   ows-without-newline = #'[^\\S\\n\\r]*'
    ows = #'\\s*'
    ws = #'\\s'
    word = #'[a-zA-Z0-9/.-]+'
    integer = #'[0-9]+'
    double = #'[0-9]+(?:\\.[0-9]*)?'
+   EOF = #'\\Z'
    "))
 
 (def test-text
@@ -157,13 +179,49 @@
   0101,7,3,dito.,;
   0101,7,9,dito.,;
 
+  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+
+  0101,7,0,WW,Winterweizen/AJ;      Aussaatjahr
+
+  DC =    1,  10, 21;  Code
+          1,  15, 72;  Tag
+
+ NameDC =   1 : Aussaat;
+           10 : Aufgang;
+           21 : Best.-beginn;
+
+ Bedeckungsgrad   =   15,   30,  115;                    Tag
+                       0, 0.60, 0.80;                    Wert
+
+ Entnahmetiefe    =   10,  90;                           Tag
+                       1,   6;                           Wert
+
+ Transpiration    =    1;                                Tag
+                       1;                                Wert
+
+ Quotient(soll)   =    1;                                Tag
+                       0;                                Wert
+
+ Effektivitaet    =    1;                                Tag
+                    0.17;                                Wert
+
+  0101,7,2,dito.,;
+  0101,7,3,dito.,;
+  0101,7,9,dito.,;
+
   ")
 
-(def ps (insta/parses crop-file-parser test-text))
+"* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -"
 
-(println (count ps))
+#_(crop-file-parser test-text)
 
-(pp/pprint (nth ps 0))
+(def ps (insta/parses crop-file-parser test-text :total true))
+
+(pp/pprint ps)
+
+(count ps)
+
+#_(pp/pprint (nth ps 0))
 
 
 
@@ -171,15 +229,70 @@
             :integer #(Integer/parseInt %)
             :double-values vector
             :integer-values vector
+            :word identity
+
+            :crop-no identity
+            :cult-type identity
+            :usage identity
+            :crop-code identity
+            :crop-name identity
+
+            :header-line (fn [crop-no cult-type & [usage-or-crop-name crop-code crop-name]]
+                           [:crop {:db/id (bd/new-entity-id)
+                            :crop/id (str crop-no "/" cult-type (when usage-or-crop-name "/") usage-or-crop-name)
+                            :crop/number crop-no
+                            :crop/cultivation-type cult-type
+                            :crop/usage usage-or-crop-name
+                            :crop/name crop-name
+                            :crop/symbol (or crop-code crop-name)}])
+
             :dc-2-rel-day (fn [dcs days]
-                            [:dc-to-rel-day (bd/create-entities :kv/dc :kv/rel-dc-day
+                            [:dc-2-rel-day (bd/create-entities :kv/dc :kv/rel-dc-day
                                                                 (interleave dcs days))])
+
             :dc-2-coverdegree (fn [dcs cds]
                                 [:dc-2-coverdegree (bd/create-entities :kv/rel-dc-day :kv/cover-degree
                                                                        (interleave dcs cds))])
+
             :dc-2-name-pairs vector
             :dc-2-name (fn [pairs]
                          [:dc-2-name (bd/create-entities :kv/dc :kv/name pairs)])
+
+            :dc-2-extraction-depth (fn [dcs cds]
+                                     [:dc-2-extraction-depth (bd/create-entities :kv/rel-dc-day :kv/extraction-depth
+                                                                                 (interleave dcs cds))])
+
+            :dc-2-transpiration (fn [dcs cds]
+                                  [:dc-2-transpiration-factor (bd/create-entities :kv/rel-dc-day :kv/transpiration-factor
+                                                                                  (interleave dcs cds))])
+
+            :dc-2-quotient (fn [dcs cds]
+                             [:dc-2-quotient (bd/create-entities :kv/rel-dc-day :kv/quotient-aet-pet
+                                                                 (interleave dcs cds))])
+
+            :dc-2-effectivity (fn [dcs cds]
+                                [:effectivity (first cds)])
+
+            :dito (fn [& args]
+                    [:dito args])
+
+            :crop-block (fn [& crop-data]
+                         (flatten
+                          (for [[k data-map] crop-data
+                                :when (not (#{:dito :effectivity} k))]
+                            (if (= k :crop)
+                              (let [cd (into {} crop-data)]
+                                (assoc data-map
+                                  :crop/dc-to-rel-dc-days (bd/get-entity-ids (:dc-2-rel-day cd))
+                                 :crop/dc-to-developmental-state-names (bd/get-entity-ids (:dc-2-name cd))
+                                 :crop/rel-dc-day-to-cover-degrees (bd/get-entity-ids (:dc-2-coverdegree cd))
+                                  :crop/rel-dc-day-to-extraction-depths (bd/get-entity-ids (:dc-2-extraction-depth cd))
+                                  :crop/rel-dc-day-to-transpiration-factors (bd/get-entity-ids (:dc-2-transpiration cd))
+                                  :crop/rel-dc-day-to-quotient-aet-pets (bd/get-entity-ids (:dc-2-quotient cd))
+                                  :crop/effectivity-quotient (:effectivity cd)))
+                              data-map))))
+
+
             })
 
 (insta/transform trans (crop-file-parser test-text))
@@ -229,6 +342,8 @@
 
 (def crops (slurp (str "C:/Users/michael/development/GitHub/berest-service/resources/private/crops/full-version-with-dito-short-name-and-usage/BBFASTD1.TXT")))
 
+(crop-file-parser crops)
+
 #_(cs/split crops #"\s*\*\s-\s\*\s\-[^\r\n]*")
 
 
@@ -249,4 +364,5 @@
 
 
 
-
+
+
