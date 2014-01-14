@@ -1,0 +1,1227 @@
+
+0000,0,0,BRACHE,Brache;
+
+DC =    1;  Code
+        1;  Tag
+
+NameDC =  1: Brache;
+
+
+Bedeckungsgrad =   1;          Tag
+                   0;          Wert
+
+Entnahmetiefe  =   1;          Tag
+                   1;          Wert
+
+Transpiration  =   1;          Tag
+                   1;          Wert
+
+Quotient(soll) =   1;          Tag
+                   0;          Wert
+
+Effektivitaet  =   1;          Tag
+                   0;          Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+
+0101,7,0,WW,Winterweizen/AJ;      Aussaatjahr
+
+DC =    1,  10, 21;  Code
+        1,  15, 72;  Tag
+
+NameDC =   1 : Aussaat;
+          10 : Aufgang;
+          21 : Best.-beginn;
+
+
+
+Bedeckungsgrad   =   15,   30,  115;                    Tag
+                      0, 0.60, 0.80;                    Wert
+
+Entnahmetiefe    =   10,  90;                           Tag
+                      1,   6;                           Wert
+
+Transpiration    =    1;                                Tag
+                      1;                                Wert
+
+Quotient(soll)   =    1;                                Tag
+                      0;                                Wert
+
+Effektivitaet    =    1;                                Tag
+                   0.17;                                Wert
+
+
+0101,7,2,dito.,;
+0101,7,3,dito.,;
+0101,7,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+
+
+0101,1,0,WW,Winterweizen/EJ;  Erntejahr
+
+DC =    21,  31,  51,  61,  75,  92;    Code
+        60, 128, 158, 165, 180, 215;    Tag
+
+NameDC =     21 : Best.-beginn;
+             31 : Schossbeginn;
+             51 : Aehrenschieben;
+             61 : Bluete;
+             75 : Milchreife;
+             92 : Todreife;
+
+Bedeckungsgrad    =   30, 115, 125;                      Tag
+                     0.6, 0.8, 1.0;                      Wert
+
+Entnahmetiefe     =   90, 120, 150, 170;                 Tag
+                       6,   8,  10,  12;                 Wert
+
+Transpiration     =  118, 128, 190, 200, 220;            Tag
+                       1, 1.3, 1.3,   1, 0.1;            Wert
+
+Quotient(soll)    =   75,  90, 128, 180, 200, 210;       Tag
+                       0, 0.2, 0.8, 0.8, 0.6,   0;       Wert
+
+Effektivitaet     =    1;                                Tag
+                    0.17;                                Wert
+
+0101,1,2,dito.,;
+0101,1,3,dito.,;
+0101,1,9,dito.,;
+0101,2,0,dito.,;
+0101,2,2,dito.,;
+0101,2,3,dito.,;
+0101,2,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+
+
+0102,7,0,DINK,Dinkel/AJ;      Aussaatjahr
+
+DC =    1,  10, 21;  Code
+        1,  15, 72;  Tag
+
+NameDC =   1 : Aussaat;
+          10 : Aufgang;
+          21 : Best.-beginn;
+
+
+
+Bedeckungsgrad   =   15,   30,  115;                    Tag
+                      0, 0.60, 0.80;                    Wert
+
+Entnahmetiefe    =   10,  90;                           Tag
+                      1,   6;                           Wert
+
+Transpiration    =    1;                                Tag
+                      1;                                Wert
+
+Quotient(soll)   =    1;                                Tag
+                      0;                                Wert
+
+Effektivitaet    =    1;                                Tag
+                   0.17;                                Wert
+
+
+0102,7,2,dito.,;
+0102,7,3,dito.,;
+0102,7,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+
+
+0102,1,0,DINK,Dinkel/EJ;  Erntejahr
+
+DC =    21,  31,  51,  61,  75,  92;    Code
+        60, 132, 162, 170, 183, 218;    Tag
+
+NameDC =     21 : Best.-beginn;
+             31 : Schossbeginn;
+             51 : Aehrenschieben;
+             61 : Bluete;
+             75 : Milchreife;
+             92 : Todreife;
+
+Bedeckungsgrad    =   30, 115, 125;                      Tag
+                     0.6, 0.8, 1.0;                      Wert
+
+Entnahmetiefe     =   90, 120, 150, 170;                 Tag
+                       6,   8,  10,  12;                 Wert
+
+Transpiration     =  118, 132, 190, 200, 220;            Tag
+                       1, 1.3, 1.3,   1, 0.1;            Wert
+
+Quotient(soll)    =   75,  90, 132, 183, 200, 210;       Tag
+                       0, 0.2, 0.8, 0.8, 0.6,   0;       Wert
+
+Effektivitaet     =    1;                                Tag
+                    0.17;                                Wert
+
+0102,1,2,dito.,;
+0102,1,3,dito.,;
+0102,1,9,dito.,;
+0102,2,0,dito.,;
+0102,2,2,dito.,;
+0102,2,3,dito.,;
+0102,2,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+
+
+0110,7,0,WR,Winterroggen/AJ;  Aussaatjahr
+
+DC  =   1,  10,  21;     Code
+        1,  15, 102;     Tag
+
+NameDC =     1  : Aussaat;
+            10  : Aufgang;
+            21  : Best.-beginn;
+
+Bedeckungsgrad    =   15,  30,  90;                      Tag
+                       0, 0.7,   1;                      Wert
+
+Entnahmetiefe     =   10,  90;                           Tag
+                       1,   6;                           Wert
+
+Transpiration     =  100;                                Tag
+                       1;                                Wert
+
+Quotient(soll)    =   80,  90;                           Tag
+                       0, 0.2;                           Wert
+
+Effektivitaet   =      1;                                Tag
+                    0.17;                                Wert
+
+0110,7,2,dito.,;
+0110,7,3,dito.,;
+0110,7,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+
+0110,1,0,WR,Winterroggen/EJ; Erntejahr
+
+DC =    21,  31,  51,  61,  75,  92;    Code
+        60, 110, 140, 155, 170, 200;    Tag
+
+NameDC =    21 : Best.-beginn;
+            31 : Schossbeginn;
+            51 : Aehrenschieben;
+            61 : Bluete;
+            75 : Milchreife;
+            92 : Todreife;
+
+Bedeckungsgrad    =   90;                                Tag
+                       1;                                Wert
+
+Entnahmetiefe     =   90, 120, 150, 170;                 Tag
+                       6,   9,  11,  13;                 Wert
+
+Transpiration     =  100, 110, 190, 200, 210;            Tag
+                       1, 1.3, 1.3,   1, 0.1;            Wert
+
+Quotient(soll)    =   80,  90, 110, 170, 180, 200;       Tag
+                       0, 0.2, 0.8, 0.8, 0.6,   0;       Wert
+
+Effektivitaet     =    1;                                Tag
+                    0.17;                                Wert
+
+
+0110,1,2,dito.,;
+0110,1,3,dito.,;
+0110,1,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0110,2,0,WR,Winterroggen/EJ;            Erntejahr mit Untersaat
+
+DC =   21, 31, 51, 61, 75, 92;          Code
+       60,110,140,155,170,200;          Tag
+
+NameDC =    21 : Best.-beginn;
+            31 : Schossbeginn;
+            51 : Aehrenschieben;
+            61 : Bluete;
+            75 : Milchreife;
+            92 : Todreife;
+
+
+Bedeckungsgrad  =   90;                                 TAG
+                     1;                                 Wert
+
+Entnahmetiefe   =   90,120,150,170;                     Tag
+                     6,  9, 11, 13;                     Wert
+
+Transpiration   =  100,110,190,200;                     Tag
+                     1,1.4,1.4,1.2;                     Wert
+
+Quotient(soll)  =   80, 90,110,170,180,200;             Tag
+                     0,0.2,0.8,0.8,0.6,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+0110,2,2,dito.,;
+0110,2,3,dito.,;
+0110,2,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0120,7,0,WG,Wintergerste/AJ;  Aussaatjahr
+
+DC       =   1,  10,  21;    Code
+             1,  15, 110;    Tag
+
+NameDC =     1 : Aussaat;
+            10 : Aufgang;
+            21 : Best.-beginn;
+
+
+
+Bedeckungsgrad    =   15,  30,  90;                      Tag
+                       0, 0.7,   1;                      Wert
+
+Entnahmetiefe     =   10,  90;                           Tag
+                       1,   6;                           Wert
+
+Transpiration     =  110, 120;                           Tag
+                       1, 1.2;                           Wert
+
+Quotient(soll)    =    1;                                Tag
+                       0;                                Wert
+
+Effektivitaet     =    1;                                Tag
+                    0.17;                                Wert
+
+
+0120,7,2,dito.,;
+0120,7,3,dito.,;
+0120,7,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+
+0120,1,0,WG,Wintergerste/EJ;  Erntejahr
+
+DC =    21,  31,  51,  61,  75,  92;    Code
+        60, 120, 140, 148, 160, 185;    Tag
+
+NameDC =    21 : Best.-beginn;
+            31 : Schossbeginn;
+            51 : Aehrenschieben;
+            61 : Bluete;
+            75 : Milchreife;
+            92 : Todreife;
+
+Bedeckungsgrad    =   90;                                Tag
+                       1;                                Wert
+
+Entnahmetiefe     =   90, 120, 150, 170;                 Tag
+                       6,   8,   9,  11;                 Wert
+
+Transpiration     =  110, 120, 170, 180, 200;            Tag
+                       1, 1.3, 1.3,   1, 0.1;            Wert
+
+Quotient(soll)    =   80,  90, 120, 160, 175, 190;       Tag
+                       0, 0.2, 0.8, 0.8, 0.6,   0;       Wert
+
+Effektivitaet     =    1;                                Tag
+                    0.17;                                Wert
+
+0120,1,2,dito.,;
+0120,1,3,dito.,;
+0120,1,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+
+0120,2,0,WG,Wintergerste/EJ;           Erntejahr mit Untersaat
+
+
+DC =   21, 31, 51, 61, 75, 92;          Code
+       60,120,140,148,160,185;          Tag
+
+NameDC =    21 : Best.-beginn;
+            31 : Schossbeginn;
+            51 : Aehrenschieben;
+            61 : Bluete;
+            75 : Milchreife;
+            92 : Todreife;
+
+
+Bedeckungsgrad  =   90;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   90,120,150,170;                     Tag
+                     6,  8,  9, 11;                     Wert
+
+Transpiration   =  110,120,170,180;                     Tag
+                     1,1.4,1.4,1.2;                     Wert
+
+Quotient(soll)  =   80, 90,120,160,175,185,186;         Tag
+                     0,0.2,0.8,0.8,0.6,0.6,  0;         Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+0120,2,2,dito.,;
+0120,2,3,dito.,;
+0120,2,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0130,1,0,SW,Sommerweizen;
+
+DC =    1, 10, 31, 51, 61, 75, 92;      Code
+        1, 20, 60, 85, 90,110,140;      Tag
+
+NameDC =  1 : Aussaat ;
+         10 : Aufgang;
+         31 : Schossbeginn  ;
+         51 : Aehrenschieben;
+         61 : Bluete;
+         75 : Milchreife;
+         92 : Todreife;
+
+Bedeckungsgrad  =   20, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20, 50, 65, 90;                     Tag
+                     2,  5,  6,  9;                     Wert
+
+Transpiration   =   50, 60,110,120,140;                 Tag
+                     1,1.2,1.2,1.1,0.1;                 Wert
+
+Quotient(soll)  =   50, 60,110,115,130;                 Tag
+                     0,0.8,0.8,0.7,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+0130,1,9,dito.,;
+0130,2,0,dito.,;
+0130,2,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0140,1,0,SR,Sommerroggen;
+
+DC =    1, 10, 31, 51, 61, 75, 92;      Code
+        1, 15, 60, 80, 85,100,130;      Tag
+
+NameDC =    1 : Aussaat ;
+           10 : Aufgang;
+           31 : Schossbeginn  ;
+           51 : Aehrenschieben;
+           61 : Bluete;
+           75 : Milchreife;
+           92 : Todreife;
+
+Bedeckungsgrad  =   15, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 50, 65, 90;                     Tag
+                     2,  5,  6,  9;                     Wert
+
+Transpiration   =   50, 60,105,115,130;                 Tag
+                     1,1.2,1.2,1.1,0.1;                 Wert
+
+Quotient(soll)  =   40, 50, 60,100,105,125;             Tag
+                     0,0.7,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+0140,1,9,dito.,;
+0140,2,0,dito.,;
+0140,2,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0150,1,0,SG,Sommergerste;
+
+DC =    1, 10, 31, 51, 61, 75, 92;      Code
+        1, 15, 60, 80, 85,100,130;      Tag
+
+NameDC =    1 : Aussaat ;
+           10 : Aufgang;
+           31 : Schossbeginn  ;
+           51 : Aehrenschieben;
+           61 : Bluete;
+           75 : Milchreife;
+           92 : Todreife;
+
+Bedeckungsgrad  =   15, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 50, 65, 90;                     Tag
+                     2,  5,  6,  8;                     Wert
+
+Transpiration   =   50, 60,100,110,130;                 Tag
+                     1,1.2,1.2,1.0,0.1;                 Wert
+
+Quotient(soll)  =   40, 60,100,105,120;                 Tag
+                     0,0.8,0.8,0.6,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+0150,1,1,dito.,;
+0150,1,2,dito.,;
+0150,1,3,dito.,;
+0150,1,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0150,2,0,SG,Sommergerste;       mit Untersaat
+
+DC =    1, 10, 31, 51, 61, 75, 92;      Code
+        1, 15, 60, 80, 85,100,130;      Tag
+
+NameDC =    1 : Aussaat;
+           10 : Aufgang;
+           31 : Schossbeginn;
+           51 : Aehrenschieben;
+           61 : Bluete;
+           75 : Milchreife;
+           92 : Todreife;
+
+Bedeckungsgrad  =   15, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 50, 65, 90;                     Tag
+                     2,  5,  6,  8;                     Wert
+
+Transpiration   =   50, 60,100,110;                     Tag
+                     1,1.4,1.4,1.2;                     Wert
+
+Quotient(soll)  =   40, 50, 80,105,120;                 Tag
+                     0,0.8,0.8,0.6,0.5;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+0150,2,1,dito.,;
+0150,2,2,dito.,;
+0150,2,3,dito.,;
+0150,2,9,dito.,;
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+0160,1,0,HA,Hafer;
+
+DC =    1, 10, 31, 51, 61, 75, 92;      Code
+        1, 20, 60, 85, 90,110,140;      Tag
+
+NameDC =    1 : Aussaat ;
+           10 : Aufgang;
+           31 : Schossbeginn  ;
+           51 : Aehrenschieben;
+           61 : Bluete;
+           75 : Milchreife;
+           92 : Todreife;
+
+Bedeckungsgrad  =   20, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20, 50, 65, 90;                     Tag
+                     2,  5,  6,  9;                     Wert
+
+Transpiration   =   50, 60,110,120,140;                 Tag
+                     1,1.3,1.3,1.1,0.1;                 Wert
+
+Quotient(soll)  =   40, 60,110,115,130;                 Tag
+                     0,0.8,0.8,0.6,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+0160,1,2,dito.,;
+0160,1,3,dito.,;
+0160,1,9,dito.,;
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0160,2,0,HA,Hafer       ;       mit Untersaat
+
+DC =    1, 10, 31, 51, 61, 75, 92;      Code
+        1, 20, 60, 85, 90,110,140;      Tag
+
+NameDC =     1 : Aussaat;
+            10 : Aufgang;
+            31 : Schossbeginn;
+            51 : Aehrenschieben;
+            61 : Bluete;
+            75 : Milchreife;
+            92 : Todreife;
+
+Bedeckungsgrad  =   20, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20, 50, 65, 90;                     Tag
+                     2,  5,  6,  9;                     Wert
+
+Transpiration   =   50, 60,110,120,130;                 Tag
+                     1,1.4,1.4,1.4,1.2;                 Wert
+
+Quotient(soll)  =   40, 50, 85,110,130;                 Tag
+                     0,0.8,0.8,0.7,0.5;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+0160,2,2,dito.,;
+0160,2,3,dito.,;
+0160,2,9,dito.,;
+
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+0170,1,0,K-MAIS,Koernermais-CCM;
+
+DC =   20, 30, 40, 50, 60, 70, 80, 90;  Code
+        1, 15, 40, 60, 85, 95,120,175;  Tag
+
+NameDC =   20 : Aussaat;
+           30 : Aufgang;
+           40 : 4-Blattstadium;
+           50 : 8-Blattstadium;
+           60 : Fahnenschieben;
+           70 : Bluete    ;
+           80 : Milchreife;
+           90 : Erntebeginn;
+
+Bedeckungsgrad  =   15, 80;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 80;                             Tag
+                     2, 10;                             Wert
+
+Transpiration   =   60, 85,140,180;                     Tag
+                     1,1.4,1.4,0.1;                     Wert
+
+Quotient(soll)  =   40, 75,130,140,155;                 Tag
+                     0,0.8,0.8,0.7,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0170,1,7,ZU-MAIS,Zuckermais   ;      Zuckermais
+
+DC =   20, 30, 40, 50, 60, 70, 80, 90;  Code
+        1, 15, 40, 60, 85, 95,120,140;  Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : 4-Blattstadium;
+            50 : 8-Blattstadium;
+            60 : Fahnenschieben;
+            70 : Bluete;
+            80 : Erntebeginn;
+            90 : Ernteabschluß;
+
+Bedeckungsgrad  =   15, 80;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 80, 90;                         Tag
+                     2,  9, 10;                         Wert
+
+Transpiration   =   60, 85,140,141;                     Tag
+                     1,1.4,1.4,  1;                     Wert
+
+Quotient(soll)  =   40, 75,120,140,141;                 Tag
+                     0,0.9,0.9,0.7,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0180,1,0,GE-GEM,Getreidegemenge;
+
+DC =    1, 10, 31, 51, 61, 75, 92;      Code
+        1, 20, 60, 85, 90,110,140;      Tag
+
+NameDC =    1 : Aussaat ;
+           10 : Aufgang;
+           31 : Schossbeginn;
+           51 : Aehrenschieben;
+           61 : Bluete;
+           75 : Milchreife;
+           92 : Todreife  ;
+
+Bedeckungsgrad  =    2, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20, 50, 65, 90;                     Tag
+                     2,  5,  6,  9;                     Wert
+
+Transpiration   =   50, 60,110,120,140;                 Tag
+                     1,1.3,1.3,1.2,0.1;                 Wert
+
+Quotient(soll)  =   40, 60, 85,110,130;                 Tag
+                     0,0.8,0.8,0.7,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+0180,2,0,dito.,;
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0181,1,0,HIRSE,Hirse;
+
+DC =   20, 30, 40, 50, 60, 90;          Code
+        1, 15, 50, 60, 90,130;          Tag
+
+NameDC =    20 : Aussaat ;
+            30 : Aufgang;
+            40 : Bestockung  ;
+            50 : Schossen;
+            60 : Rispenschieben;
+            90 : Vollreife;
+
+
+Bedeckungsgrad  =   15, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 50, 65;                         Tag
+                     2,  5,  8;                         Wert
+
+Transpiration   =   50, 60,100,130;                     Tag
+                     1,1.2,1.2,0.1;                     Wert
+
+Quotient(soll)  =   15, 50, 60, 85, 95,100;             Tag
+                     0,0.6,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                   0.1;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+0190,1,0,TRITI,Triticale/EJ;  Erntejahr
+
+DC =    21,  31,  51,  61,  75,  92;    Code
+        60, 128, 158, 165, 180, 215;    Tag
+
+NameDC =     21 : Best.-beginn;
+             31 : Schossbeginn;
+             51 : Aehrenschieben;
+             61 : Bluete;
+             75 : Milchreife;
+             92 : Todreife;
+
+Bedeckungsgrad    =   30, 115, 125;                      Tag
+                     0.6, 0.8, 1.0;                      Wert
+
+Entnahmetiefe     =   90, 120, 150, 170;                 Tag
+                       6,   8,  10,  12;                 Wert
+
+Transpiration     =  118, 128, 190, 200, 220;            Tag
+                       1, 1.3, 1.3,   1, 0.1;            Wert
+
+Quotient(soll)    =   75,  90, 128, 180, 200, 210;       Tag
+                       0, 0.2, 0.8, 0.8, 0.6,   0;       Wert
+
+Effektivitaet     =    1;                                Tag
+                    0.17;                                Wert
+
+0190,1,2,dito.,;
+0190,1,3,dito.,;
+0190,1,9,dito.,;
+0190,2,0,dito.,;
+0190,2,2,dito.,;
+0190,2,3,dito.,;
+0190,2,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+
+0301,1,0,TR-ERBSE,Speiseerbse;
+
+DC =   20, 30, 40, 50, 60, 70, 80, 90;  Code
+        1, 20, 50, 60, 70,100,105,120;  Tag
+
+NameDC =   20 : Aussaat;
+           30 : Aufgang;
+           40 : Bluehbeginn;
+           50 : Vollbluete;
+           60 : Bluehende;
+           70 : Gruenreife;
+           80 : Gelbreife;
+           90 : Vollreife;
+
+Bedeckungsgrad  =    20, 50;                             Tag
+                      0,  1;                             Wert
+
+Entnahmetiefe   =    20, 50, 65;                         Tag
+                      2,  5,  7;                         Wert
+
+Transpiration   =    40, 50, 95,105,120;                 Tag
+                      1,1.1,1.1,0.9,0.1;                 Wert
+
+Quotient(soll)  =    50, 60, 70, 95,105,110;             Tag
+                      0,0.7,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =     1;                                 Tag
+                   0.17;                                 Wert
+
+0301,1,9,dito.,;
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0302,1,0,TR-BO,Speisebohnen;
+
+DC =   20, 30, 40, 50, 60, 70, 80, 90;  Code
+        1, 15, 40, 50, 60, 80, 90,115;  Tag
+
+NameDC =  20 : Aussaat;
+          30 : Aufgang;
+          40 : Bluehbeginn;
+          50 : Vollbluete;
+          60 : Bluehende;
+          70 : Gruenreife;
+          80 : Gelbreife;
+          90 : Vollreife;
+
+Bedeckungsgrad  =   15, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 65, 80;                         Tag
+                     2,  7,  8;                         Wert
+
+Transpiration   =   50, 60, 90,110;                     Tag
+                     1,1.1,1.1,0.1;                     Wert
+
+Quotient(soll)  =   30, 50, 90,100;                     Tag
+                     0,0.8,0.8,  0;                     Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+0302,1,9,dito.,;
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0303,1,0,FU-ERBSK,Futtererbsen;
+
+DC =   20, 30, 40, 50, 60, 70, 80, 90;  Code
+        1, 20, 50, 60, 70,100,105,120;  Tag
+
+NameDC =  20 : Aussaat;
+          30 : Aufgang;
+          40 : Bluehbeginn;
+          50 : Vollbluete;
+          60 : Bluehende;
+          70 : Gruenreife;
+          80 : Gelbreife;
+          90 : Vollreife;
+
+Bedeckungsgrad  =   20, 50;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20, 50, 65;                         Tag
+                     2,  5,  7;                         Wert
+
+Transpiration   =   40, 50, 95,105,120;                 Tag
+                     1,1.1,1.1,0.9,0.1;                 Wert
+
+Quotient(soll)  =   50, 60, 70, 95,105,110;             Tag
+                     0,0.7,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+0303,1,9,dito.,;
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0304,1,0,ACKBO,Ackerbohnen;
+
+DC =   20, 30, 40, 50, 60, 70, 80, 90;  Code
+        1, 20, 45, 55, 65, 85, 95,120;  Tag
+
+NameDC =  20 : Aussaat;
+          30 : Aufgang;
+          40 : Bluehbeginn;
+          50 : Vollbluete;
+          60 : Bluehende;
+          70 : Gruenreife;
+          80 : Gelbreife;
+          90 : Vollreife;
+
+Bedeckungsgrad  =   20, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20, 65, 80;                         Tag
+                     2,  7,  8;                         Wert
+
+Transpiration   =   50, 60,100,110,120;                 Tag
+                     1,1.1,1.1,  1,0.1;                 Wert
+
+Quotient(soll)  =   30, 55,100,110,115;                 Tag
+                     0,0.8,0.8,0.7,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+0305,7,0,W-WICK,Winterwicken/AJ;          Ansaatjahr
+
+DC =   20, 30, 40;                      Code
+        1, 15,102;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bluehbeginn;
+
+Bedeckungsgrad  =   15, 30,110;                         Tag
+                     0,0.7,  1;                         Wert
+
+Entnahmetiefe   =   15, 90;                             Tag
+                     2,  6;                             Wert
+
+Transpiration   =    1;                                 Tag
+                     1;                                 Wert
+
+Quotient(soll)  =    1;                                 Tag
+                     0;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.20;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0305,1,0,W-WICK,Winterwicken/EJ;           Erntejahr WI-WICK
+
+DC =   40, 50, 60, 70, 80, 90;          Code
+      100,110,140,155,170,200;          Tag
+
+NameDC =    40 : Bluehbeginn;
+            50 : Vollbluete ;
+            60 : Fruchtansatz;
+            70 : Fruchtfuellung;
+            80 : Reifebeginn;
+            90 : Vollreife;
+
+
+Bedeckungsgrad  =  110;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   90,120,150;                         Tag
+                     6,  8,  9;                         Wert
+
+Transpiration   =  100,110,155,190,200;                 Tag
+                     1,1.1,1.1,  1,0.1;                 Wert
+
+Quotient(soll)  =   85,110,120,170,180,190;             Tag
+                     0,0.7,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.20;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+
+0306,1,0,S-WICK,Sommerwicken;
+
+DC =   20, 30, 40, 50, 60, 70, 80, 90;  Code
+        1, 20, 50, 60, 85, 90,110,140;  Tag
+
+NameDC = 20 : Aussaat;
+         30 : Aufgang;
+         40 : Bluehbeginn;
+         50 : Vollbluete;
+         60 : Fruchtansatz;
+         70 : Fruchtfuellung;
+         80 : Reifebeginn;
+         90 : Vollreife;
+
+Bedeckungsgrad  =   20, 50;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20, 50, 65, 90;                     Tag
+                     2,  5,  6,  7;                     Wert
+
+Transpiration   =   40,  50,  70,  90,130;              Tag
+                     1,1.05,1.05,0.95,0.1;              Wert
+
+Quotient(soll)  =   50, 60, 90,100,110;                 Tag
+                     0,0.8,0.8,0.7,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0307,1,0,LUPK,Lupinen;
+
+DC =   20, 30, 40, 50, 60, 70, 80, 90;  Code
+        1, 20, 60, 80, 90,110,120,140;  Tag
+
+NameDC =   20 : Aussaat;
+           30 : Aufgang;
+           40 : Bluehbeginn;
+           50 : Vollbluete;
+           60 : Bluehende;
+           70 : Gruenreife;
+           80 : Gelbreife;
+           90 : Vollreife;
+
+Bedeckungsgrad  =   20, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20, 80;                             Tag
+                     2, 10;                             Wert
+
+Transpiration   =   60,  75, 100,110,140;               Tag
+                     1,1.05,1.05,  1,0.1;               Wert
+
+Quotient(soll)  =   50, 70, 80,110,120,130;             Tag
+                     0,0.7,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+0308,1,0,HUE-GEM,Huelsenfr.gem.; ueber 40% Leguminosenanteil
+
+DC =   20, 30, 40, 50, 90;              Code
+        1, 20, 50, 60, 90;              Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bluebeginn;
+            50 : Vollbluete;
+            90 : Erntereife;
+
+
+Bedeckungsgrad  =   20, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20, 80;                             Tag
+                     2,  8;                             Wert
+
+Transpiration   =   50, 75;                             Tag
+                     1,1.1;                             Wert
+
+Quotient(soll)  =   40, 50, 60;                         Tag
+                     0,0.7,0.8;                         Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0309,1,0,TR-SOJA,Sojabohnen;
+
+DC =   20, 30, 40, 50, 60, 70, 80, 90;  Code
+        1, 15, 60, 72, 85,100,125,145;  Tag
+
+NameDC =  20 : Aussaat;
+          30 : Aufgang;
+          40 : Bluehbeginn;
+          50 : Vollbluete;
+          60 : Bluehende;
+          70 : Gruenreife;
+          80 : Gelbreife;
+          90 : Vollreife;
+
+Bedeckungsgrad  =   15, 50;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 85,100;                         Tag
+                     2,  9, 12;                         Wert
+
+Transpiration   =   60, 85,125,145;                     Tag
+                     1,1.1,1.1,0.1;                     Wert
+
+Quotient(soll)  =   30, 60, 72,100,125,130;             Tag
+                     0,0.7,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.17;                                 Wert
+
+0309,1,9,dito.,;
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+0401,7,0,W-RAPS,Winterraps/AJ;          Aussaatjahr
+
+DC =   20, 30, 40;                      Code
+        1, 10,128;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Best.-schluss;
+
+
+Bedeckungsgrad  =   10, 30;                             Tag
+                     0,0.8;                             Wert
+
+Entnahmetiefe   =   10;                                 Tag
+                     1;                                 Wert
+
+Transpiration   =    1;                                 Tag
+                     1;                                 Wert
+
+Quotient(soll)  =   85;                                 Tag
+                     0;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+0401,1,0,W-RAPS,Winterraps/EJ;           Erntejahr
+
+DC =   40, 50, 60, 90;                  Code
+       60,130,145,197;                  Tag
+
+NameDC =    40 : Best.-schluss;
+            50 : Bluehbeginn;
+            60 : Bluehende;
+            90 : Vollreife;
+
+
+Bedeckungsgrad  =   30,110;                             Tag
+                   0.8,  1;                             Wert
+
+Entnahmetiefe   =   10,135,150;                         Tag
+                     1,  9, 12;                         Wert
+
+Transpiration   =  100,120,170,200;                     Tag
+                     1,1.15,1.15,0.1;                   Wert
+
+Quotient(soll)  =   85,110,130,170,180,190;             Tag
+                     0,0.7,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+0403,1,0,S-RAPS,Sommerraps ;
+
+DC =    20, 30, 40, 50, 60, 90;            Code
+         1, 14, 43, 48, 58,130;             Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Best.-schluss;
+            50 : Bluehbeginn;
+            60 : Bluehende;
+            90 : Vollreife;
+
+
+
+Bedeckungsgrad  =   15, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 55, 70;                         Tag
+                     2,  6, 10;                         Wert
+
+Transpiration   =   50, 60,100,120,130;                 Tag
+                     1,1.1,1.1,  1,0.1;                 Wert
+
+Quotient(soll)  =   30, 50,100,120,125;                 Tag
+                     0,0.8,0.8,0.4,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0404,1,0,OELRETT,Oelrettich ;
+
+DC =    20, 30, 40, 50, 60, 90;            Code
+         1, 14, 43, 48, 73,165;             Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Best.-schluss;
+            50 : Bluehbeginn;
+            60 : Bluehende;
+            90 : Vollreife;
+
+
+
+Bedeckungsgrad  =   15, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 55, 85;                         Tag
+                     2,  6, 12;                         Wert
+
+Transpiration   =   50, 70,120,130,165;                 Tag
+                     1,1.2,1.2,  1,0.1;                 Wert
+
+Quotient(soll)  =   30, 50,120,145,155;                 Tag
+                     0,0.8,0.8,0.4,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0405,1,9,SENFK,Koernersenf ;
+
+DC =    20, 30, 40, 50, 60, 90;            Code
+         1, 14, 43, 48, 58,130;             Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Best.-schluss;
+            50 : Bluehbeginn;
+            60 : Bluehende;
+            90 : Vollreife;
+
+
+
+Bedeckungsgrad  =   15, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 55, 70;                         Tag
+                     2,  6, 10;                         Wert
+
+Transpiration   =   50, 60,100,120,130;                 Tag
+                     1,1.1,1.1,  1,0.1;                 Wert
+
+Quotient(soll)  =   30, 50,100,120,125;                 Tag
+                     0,0.8,0.8,0.4,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+0409,1,0,SOBLU,Sonnenblumen;
+
+DC =   20, 30, 40, 50, 60, 90;          Code
+        1, 20, 35, 80,100,125;          Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : 2-Blattstadium;
+            50 : Bluetenst.bild.;
+            60 : Bluete;
+            90 : Vollreife;
+
+Bedeckungsgrad  =   20, 80;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20,100;                             Tag
+                     2, 12;                             Wert
+
+Transpiration   =   55, 60,110,130;                     Tag
+                     1,1.05,1.05,0.1;                   Wert
+
+Quotient(soll)  =   50, 60,105,115,125;                 Tag
+                     0,0.8,0.8,0.7,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
