@@ -1,0 +1,1099 @@
+
+1001,1,Rotklee     ;       Nutzungsjahr                 
+
+DC =   40, 50;                          Code
+       90,140;                          Tag
+
+NameDC =    40 : Vegetationsbeginn;
+            50 : Bestandeshoehe 10cm;
+
+
+Bedeckungsgrad  =    1;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =  100,150;                             Tag
+                     6,  8;                             Wert
+
+Transpiration   =    1;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =  100,130,155,160,185,190;             Tag
+                   0.2,0.8,0.8,0.9,0.9,0.8;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+
+1001,2,Rotklee     ;    Ansaatjahr (Blanksaat)
+
+DC =   20, 30, 40;                      Code
+        1, 20, 60;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+
+
+Bedeckungsgrad  =   20, 40, 60;                         Tag
+                     0,0.2,  1;                         Wert
+
+Entnahmetiefe   =   20, 30, 60,150;                     Tag
+                     2,  3,  5,  8;                     Wert
+
+Transpiration   =   20, 50, 60;                         Tag
+                     0,  1,1.15;                        Wert
+
+Quotient(soll)  =   20, 40;                             Tag
+                   0.5,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+
+1001,3,Rotklee     ;       Untersaat m. Gruendeckfrucht
+
+DC =   20, 30, 40, 50, 60;              Code
+        1, 20, 60,140,160;              Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+            50 : 10cm nach Deckfr.Mahd;
+            60 : Bestandesschluss n. Mahd;
+
+Bedeckungsgrad  =   90;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   90;                                 Tag
+                     8;                                 Wert
+
+Transpiration   =   90;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =   90;                                 Tag
+                   0.8;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+ 
+
+
+1008,1,Kleegras    ;     Nutzungsjahr                 
+
+DC =   40, 50;                          Code
+       90,135;                          Tag
+
+NameDC =    40 : Vegetationsbeginn ;
+            50 : 10cm Bestandeshoehe ;
+
+
+Bedeckungsgrad  =    1;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =  100,150;                             Tag
+                     5,  7;                             Wert
+
+Transpiration   =    1;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =  100,130;                             Tag
+                   0.2,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+
+
+
+1008,2,Kleegras    ;       Ansaatjahr(Blanksaat)
+
+DC =   20, 30, 40;                      Code
+        1, 15, 45;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+
+Bedeckungsgrad  =   15, 45;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 30, 60,150;                     Tag
+                     2,  3,  5,  7;                     Wert
+
+Transpiration   =   15,  40;                            Tag
+                     0,1.15;                            Wert
+
+Quotient(soll)  =   20, 40;                             Tag
+                   0.5,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+1008,3,Kleegras    ;       Untersaat m. Gruendeckfrucht
+
+DC =   20, 30, 40, 50, 60;              Code
+        1, 15, 45,135,155;              Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+            50 : 10cm nach Deckfr.Mahd;
+            60 : Bestandesschluss n. Mahd;
+
+Bedeckungsgrad  =   90;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   90;                                 Tag
+                     8;                                 Wert
+
+Transpiration   =   90;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =   90;                                 Tag
+                   0.8;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+
+
+
+
+1010,1,Weidelgras-a;     Nutzungsjahr                 
+
+DC =   40, 50;                          Code
+       90,130;                          Tag
+
+NameDC =    40 : Vegetationsbeginn ;
+            50 : 10cm Bestandeshoehe;
+
+
+
+Bedeckungsgrad  =    1;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =  100,150;                             Tag
+                     5,  7;                             Wert
+
+Transpiration   =    1;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =  100,130,155,160,185,190;             Tag
+                   0.2,0.8,0.8,0.9,0.9,0.8;             Wert
+
+Effektivitaet   =    1;                                 Tag 
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+1010,2,Weidelgras-a;       Ansaatjahr(Blanksaat)
+
+DC =   20, 30, 40;                      Code
+        1, 15, 45;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+
+
+
+Bedeckungsgrad  =   15, 45;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 30, 60,150;                     Tag
+                     2,  3,  5,  7;                     Wert
+
+Transpiration   =   15, 40;                             Tag
+                     0,1.15;                            Wert
+
+Quotient(soll)  =   20, 40;                             Tag
+                   0.5,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+
+
+
+
+
+1010,3,Weidelgras-a;       Untersaat m. Gruendeckfrucht
+
+DC =   20, 30, 40, 50, 60;              Code
+        1, 15, 45,130,150;              Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+            50 : 10cm nach Deckfr.Mahd;
+            60 : Bestandesschluss n. Mahd;
+
+
+Bedeckungsgrad  =   90;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   90;                                 Tag
+                     7;                                 Wert
+
+Transpiration   =   90;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =   90;                                 Tag
+                   0.8;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+1011,1,W-Weidelgras;     Nutzungsjahr                 
+
+DC =   40, 50;                          Code
+       90,120;                          Tag
+
+NameDC =    40 : Vegetationsbeginn ;
+            90 : 10cm Bestandeshoehe ;
+
+
+Bedeckungsgrad  =    1;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =  100,150;                             Tag
+                     5,  7;                             Wert
+
+Transpiration   =    1;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =  100,125,150,155,175,185,205,215;     Tag
+                   0.2,0.8,0.8,0.9,0.9,0.7,0.7,0.8;     Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+1011,2,W-Weidelgras;       Ansaatjahr(Blanksaat)
+
+DC =   20, 30, 40;                      Code
+        1, 15, 45;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+
+
+
+Bedeckungsgrad  =   15, 45;                             Tag
+                     0,  1;                             Wert
+Entnahmetiefe   =   15, 30, 60,150;                     Tag
+                     2,  3,  5,  7;                     Wert
+
+Transpiration   =   15,  40;                            Tag
+                     0,1.15;                            Wert
+
+Quotient(soll)  =   20, 40;                             Tag
+                   0.5,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+1011,3,W-Weidelgras;       Untersaat m. Gruendeckfrucht
+
+DC =   20, 30, 40, 50, 60;              Code
+        1, 15, 45,120,140;              Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+            50 : 10cm nach Deckfr.Mahd;
+            60 : Bestandesschluss n. Mahd;
+
+
+
+Bedeckungsgrad  =   90;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   90;                                 Tag
+                     7;                                 Wert
+
+Transpiration   =   90;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =   90;                                 Tag
+                   0.8;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+
+1012,1,Weidelgras-e;       Ansaatjahr(Blanksaat)
+
+DC =   20, 30, 40;                      Code
+        1, 10, 35;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandeshoehe 10cm;
+
+
+
+Bedeckungsgrad  =   10, 35;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   10, 30, 60,120;                     Tag
+                     2,  3,  5,  6;                     Wert
+
+Transpiration   =   10,  60;                            Tag
+                     1,1.15;                            Wert
+
+Quotient(soll)  =   20, 50;                             Tag
+                   0.2,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag 
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+1012,2,Weidelgras-e;     Untersaat m. Gruendeckfrucht
+
+DC =   20, 30, 40, 50, 60;              Code
+        1, 10, 35,100,115;              Tag
+
+NameDC =   20 : Aussaat;
+           30 : Aufgang;
+           40 : Bestandesschluss;
+           50 : 10cm nach Deckfr.Mahd;
+           60 : Bestandesschluss n. Mahd;
+
+
+
+Bedeckungsgrad  =   90;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   90;                                 Tag
+                     6;                                 Wert
+
+Transpiration   =   90;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =   90;                                 Tag
+                   0.8;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+
+1013,1,Knaulgras   ;     Nutzungsjahr
+
+DC =   40, 50;                          Code
+       90,125;                          Tag
+
+
+NameDC =    40 : Vegetationsbeginn;
+            50 : 10cm Bestandeshoehe;
+
+
+
+
+Bedeckungsgrad  =    1;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =  100,150;                             Tag
+                     5,  6;                             Wert
+
+Transpiration   =    1;                                 Tag
+                   1.1;                                 Wert
+
+Quotient(soll)  =  100,125,140,150;                     Tag
+                   0.2,0.7,0.7,0.8;                     Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+1013,2,Knaulgras   ;       Ansaatjahr(Blanksaat)
+
+DC =   20, 30, 40;                      Code
+        1, 15, 45;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+
+
+
+Bedeckungsgrad  =   15, 45;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 30, 60,120;                     Tag
+                     2,  3,  5,  6;                     Wert
+
+Transpiration   =   15, 40;                             Tag
+                     0,1.1;                             Wert
+
+Quotient(soll)  =   20, 40;                             Tag
+                   0.2,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag 
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+
+1013,3,Knaulgras   ;     Untersaat m. Gruendeckfrucht
+
+DC =   20, 30, 40, 50, 60;              Code
+        1, 15, 45,125,145;              Tag
+
+
+
+NameDC =   20 : Aussaat;
+           30 : Aufgang;
+           40 : Bestandesschluss;
+           50 : 10cm nach Deckfr.Mahd;
+           60 : Bestandesschluss n. Mahd;
+
+Bedeckungsgrad  =   90;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   90;                                 Tag
+                     6;                                 Wert
+
+Transpiration   =   90;                                 Tag
+                   1.1;                                 Wert
+
+Quotient(soll)  =   90;                                 Tag
+                   0.8;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+1015,1,Lieschgras  ;      Nutzungsjahr
+
+DC =   40, 50;                          Code
+       90,135;                          Tag
+
+NameDC =    40 : Vegetationsbeginn;
+            50 : 10cm Bestandeshoehe;
+
+
+
+
+Bedeckungsgrad  =    1;                                 Tag
+                     1;                                 Wert
+                                                     
+Entnahmetiefe   =  100,150;                             Tag
+                     5,  6;                             Wert
+                                                     
+Transpiration   =    1;                                 Tag
+                   1.1;                                 Wert
+                                                     
+Quotient(soll)  =  100,130;                             Tag
+                   0.2,0.8;                             Wert
+                                                     
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+
+1015,2,Lieschgras  ;       Ansaatjahr(Blanksaat)
+
+DC =   20, 30, 40;                      Code
+        1, 15, 45;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+
+
+
+Bedeckungsgrad  =   15, 45;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 30, 60,120;                     Tag
+                     2,  3,  5,  6;                     Wert
+
+Transpiration   =   15, 40;                             Tag
+                     0,1.1;                             Wert
+
+Quotient(soll)  =   20, 40;                             Tag
+                   0.2,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+1015,3,Lieschgras  ;     Untersaat m. Gruendeckfrucht
+
+DC =   20, 30, 40, 50, 60;              Code
+        1, 15, 45,135,155;              Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+            50 : 10cm nach Deckfr.Mahd;
+            60 : Bestandesschluss n. Mahd;
+
+
+
+Bedeckungsgrad  =   90;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   90;                                 Tag
+                     6;                                 Wert
+
+Transpiration   =   90;                                 Tag
+                   1.1;                                 Wert
+
+Quotient(soll)  =   90;                                 Tag
+                   0.8;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+
+1023,1,Luzerne     ;      Nutzungsjahr
+                                                                 
+DC =   40, 50;                          Code
+       90,125;                          Tag
+                                      
+NameDC =    40 : Vegetationsbeginn;
+            50 : 10cm Bestandeshoehe;
+
+
+
+Bedeckungsgrad  =    1;                                 Tag
+                     1;                                 Wert
+                                                      
+Entnahmetiefe   =  100,150;                             Tag
+                     6, 12;                             Wert
+                                                     
+Transpiration   =    1;                                 Tag
+                  1.15;                                 Wert
+                                                      
+Quotient(soll)  =  120,150;                             Tag
+                   0.2,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+1023,2,Luzerne;       Ansaatjahr(Blanksaat)
+
+DC =   20, 30, 40;                      Code
+        1, 20, 70;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+
+
+
+Bedeckungsgrad  =   20, 40,  70;                        Tag
+                     0,0.2,0.85;                        Wert
+
+Entnahmetiefe   =   15, 30, 60,120;                     Tag
+                     2,  3,  5,  6;                     Wert
+
+Transpiration   =   15, 50,  60;                        Tag
+                     0,  1,1.15;                        Wert
+
+Quotient(soll)  =   15, 50;                             Tag
+                   0.2,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+
+
+1023,3,Luzerne     ;     Untersaat m. Gruendeckfrucht
+
+DC =   20, 30, 40, 50, 60;              Code
+        1, 20, 70,125,155;              Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+            50 : 10cm nach Deckfr.Mahd;
+            60 : Bestandesschluss n. Mahd;
+
+
+Bedeckungsgrad  =   90;                                 Tag
+                  0.85;                                 Wert
+
+Entnahmetiefe   =   90;                                 Tag
+                     6;                                 Wert
+
+Transpiration   =   90;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =   90;                                 Tag
+                   0.8;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+1026,1,Lupine-gruen;                           
+
+DC =   20, 30, 40, 50, 60, 90;          Code
+        1, 20, 40, 60, 75,100;          Tag
+
+NameDC =    20 : Aussaat  ;
+            30 : Aufgang  ;
+            40 : Rosettenstadium;
+            50 : Knospenstadium;
+            60 : Bluete;
+            90 : Erntereife;
+
+
+Bedeckungsgrad  =   20, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20, 60, 80;                         Tag
+                     2,  8, 10;                         Wert
+
+Transpiration   =   60,  75;                            Tag
+                     1,1.05;                            Wert
+
+Quotient(soll)  =   50, 60, 70;                         Tag
+                     0,0.7,0.8;                         Wert
+
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+1027,1,Luzernegras ;      Nutzungsjahr
+                                                                 
+DC =   40, 50;                          Code
+       90,125;                          Tag
+                                      
+NameDC =    40 : Vegetationsbeginn;
+            50 : 10cm Bestandeshoehe;
+
+
+
+Bedeckungsgrad  =    1;                                 Tag
+                     1;                                 Wert
+                                                      
+Entnahmetiefe   =  100,150;                             Tag
+                     6,  8;                             Wert
+                                                     
+Transpiration   =    1;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =  105,135;                             Tag
+                   0.2,0.8;                             Wert
+                                                     
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+                        
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+1027,2,Luzernegras ;       Ansaatjahr(Blanksaat)
+
+DC =   20, 30, 40;                      Code
+        1, 15, 45;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+
+
+
+Bedeckungsgrad  =   15, 45;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 30, 60,120;                     Tag
+                     2,  3,  5,  6;                     Wert
+
+Transpiration   =   15,  40;                            Tag
+                     0,1.15;                            Wert
+
+Quotient(soll)  =   15, 50;                             Tag
+                   0.2,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+
+
+
+
+1027,3,Luzernegras ;     Untersaat m. Gruendeckfrucht
+
+DC =   20, 30, 40, 50, 60;              Code
+        1, 15, 45,130,150;              Tag
+
+NameDC =   20 : Aussaat;
+           30 : Aufgang;
+           40 : Bestandesschluss;
+           50 : 10cm nach Deckfr.Mahd;
+           60 : Bestandesschluss n. Mahd;
+
+
+
+
+Bedeckungsgrad  =   90;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   90;                                 Tag
+                     6;                                 Wert
+
+Transpiration   =   90;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =   90;                                 Tag
+                   0.8;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+1028,1,Grasmischung;      Nutzungsjahr
+                                                                 
+DC =   40, 50;                          Code
+       90,130;                          Tag
+                                      
+NameDC =    40 : Vegetationsbeginn;
+            50 : 10cm Bestandeshoehe;
+
+
+
+
+Bedeckungsgrad  =    1;                                 Tag
+                     1;                                 Wert
+                                                      
+Entnahmetiefe   =  100,150;                             Tag
+                     6,  7;                             Wert
+
+Transpiration   =    1;                                 Tag
+                  1.15;                                 Wert
+                                                      
+Quotient(soll)  =  100,130;                             Tag
+                   0.2,0.8;                             Wert
+                                                     
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+                        
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+
+1028,2,Grasmischung;       Ansaatjahr(Blanksaat)
+
+DC =   20, 30, 40;                      Code
+        1, 15, 45;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+
+
+
+
+Bedeckungsgrad  =   15, 45;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 30, 60,120;                     Tag
+                     2,  3,  5,  6;                     Wert
+
+Transpiration   =   15,  40;                            Tag
+                     0,1.15;                            Wert
+
+Quotient(soll)  =   15, 50;                             Tag
+                   0.2,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+1028,3,Grasmischung;     Untersaat m. Gruendeckfrucht
+
+DC =   20, 30, 40, 50, 60;              Code
+        1, 15, 45,130,150;              Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+            50 : 10cm nach Deckfr.Mahd;
+            60 : Bestandesschluss n. Mahd;
+
+
+
+Bedeckungsgrad  =   90;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   90;                                 Tag
+                     6;                                 Wert
+
+Transpiration   =   90;                                 Tag
+                  1.15;                                 Wert
+
+Quotient(soll)  =   90;                                 Tag
+                   0.8;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+1030,1,Mais Gr+S   ;      Silo- u. Gruenmais
+
+DC =   20, 30, 40, 50, 60, 70, 80, 90;  Code
+        1, 15, 25, 50, 70, 80,120,150;  Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : 4-Blattstadium;
+            50 : 8-Blattstadium;
+            60 : Fahnenschieben;
+            70 : Bluete;
+            80 : Milchreife;
+            90 : Erntereife;
+
+Bedeckungsgrad  =   15, 80;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 80, 90;                         Tag
+                     2,  9, 10;                         Wert
+
+Transpiration   =   60, 85,140,170;                     Tag
+                     1,1.2,1.2,0.1;                     Wert
+
+Quotient(soll)  =   40, 60, 90,115,140,150;             Tag
+                     0,0.6,0.9,0.9,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+1031,1,Wickweidelgr;      Nutzungsjahr
+                                                                 
+DC =   40, 50;                          Code
+       90,130;                          Tag
+                                      
+NameDC =    40 : Vegetationsbeginn;
+            50 : 10cm Bestandeshoehe;
+
+
+
+Bedeckungsgrad  =    1;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   15, 30, 60,120;                     Tag
+                     2,  3,  5,  6;                     Wert
+                                                     
+Transpiration   =    1;                                 Tag
+                  1.15;                                 Wert
+                                                      
+Quotient(soll)  =  100,130;                             Tag
+                   0.2,0.8;                             Wert
+                                                     
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+                        
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+1031,2,Wickweidelgr;       Ansaatjahr(Blanksaat)
+
+DC =   20, 30, 40;                      Code
+        1, 15, 45;                      Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestandesschluss;
+
+
+
+Bedeckungsgrad  =   15, 45;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   15, 30, 60;                         Tag
+                     2,  3,  6;                         Wert
+
+Transpiration   =   15,  40;                            Tag
+                     0,1.15;                            Wert
+
+Quotient(soll)  =   15, 50;                             Tag
+                   0.2,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+1032,1,WiFu-Roggen ;              Aussaatjahr
+
+DC =   20, 30, 40, 50;                  Code
+        1, 15,100,102;                  Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            40 : Bestockung;
+            50 : 31. Dez.;
+
+
+Bedeckungsgrad  =   15, 30, 90;                         Tag
+                     0,0.7,  1;                         Wert
+
+Entnahmetiefe   =    1, 90;                             Tag
+                     1,  6;                             Wert
+
+Transpiration   =    1;                                 Tag
+                     1;                                 Wert
+
+Quotient(soll)  =    1;                                 Tag
+                     0;                                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+
+
+
+
+1032,1,WiFu-Roggen ;              Erntejahr  
+
+DC =    50, 90;                         Code
+       115,125;                         Tag
+
+NameDC =    50 : Schossbeginn;
+            90 : Erntereife;
+
+
+
+Bedeckungsgrad  =   90;                                 Tag
+                     1;                                 Wert
+
+Entnahmetiefe   =   90,130;                             Tag
+                     6, 10;                             Wert
+
+Transpiration   =  100,110;                             Tag
+                     1,1.2;                             Wert
+
+Quotient(soll)  =   85,110;                             Tag
+                     0,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+1033,1,Futterhafer ;                       
+
+DC =   20, 30, 40, 50, 90;              Code
+        1, 20, 50, 60, 85;              Tag
+
+NameDC =    20 : Aussaat  ;
+            30 : Aufgang  ;
+            40 : Bestockung  ;
+            50 : Schossbeginn;
+            90 : Erntereife;
+
+
+Bedeckungsgrad  =   20, 60;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20, 90;                             Tag
+                     2,  9;                             Wert
+
+Transpiration   =   50, 60;                             Tag
+                     1,1.2;                             Wert
+
+Quotient(soll)  =   40, 50, 60;                         Tag
+                     0,0.7,0.8;                         Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+
+

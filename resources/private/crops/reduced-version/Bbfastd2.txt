@@ -1,0 +1,549 @@
+
+
+0701,1,Kartoffeln;    Reifegruppe 1
+
+DC =    1,   5,  10,  15,  17,  28,  31;    Code
+        1,  30,  45,  65,  75,  95, 110;    Tag
+
+NameDC =     1 : Pflanzung;
+             5 : Auflaufen;
+            10 : Sichtbarwerden der 1. Knospen;
+            15 : Bluehbeginn;
+            17 : Bluehende;
+            28 : Braunreife;
+            31 : Krautabtoetung Erntebeginn;
+
+Bedeckungsgrad    =   30,  60, 100, 115;                Tag
+                       0,   1,   1,   0;                Wert
+
+Entnahmetiefe     =   35,  50,  60;                     Tag
+                       2,   5,   7;                     Wert
+
+Transpiration     =   40,  60, 100, 110;                Tag
+                       1,1.15,1.15,   1;                Wert
+
+Quotient(soll)    =   35,  45,  55, 100, 101;           Tag
+                       0, 0.2, 0.8, 0.8,   0;           Wert
+
+Effektivitaet     =    1;                               Tag
+                    0.08;                               Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+0701,2,Kartoffeln 1;    Vermehrung
+
+DC =   1,  5, 10, 15, 17, 28, 31;      Code
+       1, 30, 45, 65, 75, 95,110;      Tag
+
+NameDC =    1 : Pflanzung;
+            5 : Aufgang;
+           10 : Sichtbarwerden d. 1. Knospen;
+           15 : Beginn der Bluete;
+           17 : Ende der Bluete;
+           28 : Braunreife;
+           31 : Krautabtoetung Erntebeginn;
+
+
+Bedeckungsgrad  =   30, 60, 95,115;                     Tag
+                     0,  1,  1,  0;                     Wert
+
+Entnahmetiefe   =   35, 50, 60;                         Tag
+                     2,  5,  7;                         Wert
+
+Transpiration   =   40, 60,100,110;                     Tag
+                     1,1.15,1.15,  1;                   Wert
+
+Quotient(soll)  =   35, 45, 55, 75, 80, 90;             Tag
+                     0,0.2,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.08;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+0702,1,Kartoffeln;   Reifegruppe 2
+
+DC =    1,   5,  10,  15,  17,  28,  31;    Code
+        1,  30,  45,  65,  80, 100, 115;    Tag
+
+NameDC =     1 : Pflanzung;
+             5 : Auflaufen;
+            10 : Sichtbarwerden der 1. Knospen;
+            15 : Bluehbeginn;
+            17 : Bluehende;
+            28 : Braunreife;
+            31 : Krautabtoetung Erntebeginn;
+
+Bedeckungsgrad    =   30,  60, 105, 120;                Tag
+                       0,   1,   1,   0;                Wert
+
+Entnahmetiefe     =   35,  50,  60;                     Tag
+                       2,   5,   7;                     Wert
+
+Transpiration     =   45,  65, 105, 120;                Tag
+                       1,1.15,1.15,   1;                Wert
+
+Quotient(soll)    =   35,  45,  60, 100, 105;           Tag
+                       0, 0.2, 0.8, 0.8,   0;           Wert
+
+Effektivitaet     =    1;                               Tag
+                    0.08;                               Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+0702,2,Kartoffeln 2;    Vermehrung
+
+DC =   1,  5, 10, 15, 17, 28, 31;      Code
+       1, 30, 45, 65, 80,100,115;      Tag
+
+NameDC =    1 : Pflanzung;
+            5 : Aufgang;
+           10 : Sichtbarwerden d. 1. Knospen;
+           15 : Beginn der Bluete;
+           17 : Ende der Bluete;
+           28 : Braunreife;
+           31 : Krautabtoetung Erntebeginn;
+
+Bedeckungsgrad  =   30, 60,105,120;                     Tag
+                     0,  1,  1,  0;                     Wert
+
+Entnahmetiefe   =   35, 50, 60;                         Tag
+                     2,  5,  7;                         Wert
+
+Transpiration   =   45,  65, 105,120;                   Tag
+                     1,1.15,1.15,  1;                   Wert
+
+Quotient(soll)  =   35, 45, 50, 60, 75, 85, 95;         Tag
+                     0,0.2,0.6,0.8,0.8,0.7,  0;         Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.08;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+0703,1,Kartoffeln;    Reifegruppe 3
+
+
+DC =    1,   5,  10,  15,  17,  28,  31;    Code
+        1,  35,  50,  70,  85, 115, 125;    Tag
+
+NameDC =     1 : Pflanzung;
+             5 : Auflaufen;
+            10 : Sichtbarwerden der 1. Knospen;
+            15 : Bluehbeginn;
+            17 : Bluehende;
+            28 : Braunreife;
+            31 : Krautabtoetung Erntebeginn;
+
+Bedeckungsgrad    =   35,  65, 120, 135;                 Tag
+                       0,   1,   1,   0;                 Wert
+
+Entnahmetiefe     =   35,  50,  60;                      Tag
+                       2,   5,   7;                      Wert
+
+Transpiration     =   50,  70, 115, 120;                 Tag
+                       1, 1.2, 1.2,   1;                 Wert
+
+Quotient(soll)    =   35,  50,  55,  85, 105, 110, 115;  Tag
+                       0, 0.2, 0.7, 0.8, 0.8, 0.7,   0;  Wert
+
+Effektivitaet     =    1;                                Tag
+                    0.10;                                Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+0703,2,Kartoffeln 3;    Vermehrung
+
+DC =    1,  5, 10, 15, 17, 28, 31;      Code
+        1, 35, 50, 70, 85,115,125;      Tag
+
+NameDC =    1 : Pflanzung;
+            5 : Aufgang;
+           10 : Sichtbarwerden d. 1. Knospen;
+           15 : Beginn der Bluete;
+           17 : Ende der Bluete;
+           28 : Braunreife;
+           31 : Krautabtoetung Erntebeginn;
+
+Bedeckungsgrad  =   35, 65,120,135;                     Tag
+                     0,  1,  1,  0;                     Wert
+
+Entnahmetiefe   =   35, 50, 60;                         Tag
+                     2,  5,  7;                         Wert
+
+Transpiration   =   50, 70,115,120;                     Tag
+                     1,1.2,1.2,  1;                     Wert
+
+Quotient(soll)  =   35, 50, 55, 85, 95,110;             Tag
+                     0,0.2,0.7,0.8,0.8,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                   0.1;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+0704,1,Kartoffeln;   Reifegruppe 4
+
+
+DC =    1,   5,  10,  15, 17,  28,  31;    Code
+        1,  35,  55,  70, 95, 128, 140;    Tag
+
+NameDC =     1 : Pflanzung;
+             5 : Auflaufen;
+            10 : Sichtbarwerden der 1. Knospen;
+            15 : Bluehbeginn;
+            17 : Bluehende;
+            28 : Braunreife;
+            31 : Krautabtoetung Erntebeginn;
+
+Bedeckungsgrad    =   35,  65, 135, 150;                  Tag
+                       0,   1,   1,   0;                  Wert
+
+Entnahmetiefe     =   35,  50,  60;                       Tag
+                       2,   5,   7;                       Wert
+
+Transpiration     =   50,  70, 120, 130;                  Tag
+                       1, 1.2, 1.2,   1;                  Wert
+
+Quotient(soll)    =   35,  50,  55,  95, 115, 125, 130;   Tag
+                       0, 0.2, 0.7, 0.8, 0.8, 0.7,   0;   Wert
+
+Effektivitaet     =    1;                                 Tag
+                    0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+0704,2,Kartoffeln 4;    Vermehrung
+
+DC =    1,  5, 10, 15, 17, 28, 31;      Code
+        1, 35, 55, 70, 95,128,140;      Tag
+
+NameDC =    1 : Pflanzung;
+            5 : Aufgang;
+           10 : Sichtbarwerden d. 1. Knospen;
+           15 : Beginn der Bluete;
+           17 : Ende der Bluete;
+           28 : Braunreife;
+           31 : Krautabtoetung Erntebeginn;
+
+Bedeckungsgrad  =   35, 65,135,140;                     Tag
+                     0,  1,  1,  0;                     Wert
+
+Entnahmetiefe   =   35, 50, 60;                         Tag
+                     2,  5,  7;                         Wert
+
+Transpiration   =   50, 70,120,130;                     Tag
+                     1,1.2,1.2,  1;                     Wert
+
+Quotient(soll)  =   35, 50, 55, 85, 95,110;             Tag
+                     0,0.2,0.7,0.8,0.8,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+0705,1,Kartoffeln;    Reifegruppe 5
+
+DC =    1,   5,  10,  15,  17,  28,  31;    Code
+        1,  35,  55,  70,  95, 130, 150;    Tag
+
+NameDC =     1 : Pflanzung;
+             5 : Auflaufen;
+            10 : Sichtbarwerden der 1. Knospen;
+            15 : Bluehbeginn;
+            17 : Bluehende;
+            28 : Braunreife;
+            31 : Krautabtoetung Erntebeginn;
+
+Bedeckungsgrad    =   35,  65, 140, 160;                 Tag
+                       0,   1,   1,   0;                 Wert
+
+Entnahmetiefe     =   35,  50,  60;                      Tag
+                       2,   5,   7;                      Wert
+
+Transpiration     =   50,  70, 125, 140;                 Tag
+                       1, 1.2, 1.2,   1;                 Wert
+
+Quotient(soll)    =   35,  50,  70, 105, 130, 140;       Tag
+                       0, 0.2, 0.7, 0.8, 0.8,   0;       Wert
+
+Effektivitaet     =    1;                                Tag
+                    0.13;                                Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - *  - * 
+ 
+
+0705,2,Kartoffeln 5;    Vermehrung
+
+DC =    1,  5, 10, 15, 17, 28, 31;      Code
+        1, 35, 55, 70, 95,130,150;      Tag
+
+NameDC =    1 : Pflanzung;
+            5 : Aufgang;
+           10 : Sichtbarwerden d. 1. Knospen;
+           15 : Beginn der Bluete;
+           17 : Ende der Bluete;
+           28 : Braunreife;
+           31 : Krautabtoetung Erntebeginn;
+
+Bedeckungsgrad  =   35, 65,140,160;                     Tag
+                     0,  1,  1,  0;                     Wert
+
+Entnahmetiefe   =   35, 50, 60;                         Tag
+                     2,  5,  7;                         Wert
+
+Transpiration   =   50, 70,125,140;                     Tag
+                     1,1.2,1.2,  1;                     Wert
+
+Quotient(soll)  =   35, 50, 70,100,120,121;             Tag
+                     0,0.2,0.7,0.8,0.5,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * 
+
+
+0801,1,Zuckerrueben;  Zuckergewinnung
+
+DC =    1, 11, 24, 32, 41, 43, 45, 47, 49;  Code
+        1, 20, 50, 60, 80,100,130,140,180;  Tag
+
+NameDC =    1 : Aussaat;
+           11 : Aufgang;
+           24 : 4-Blattstadium;
+           32 : 8-Blattstadium;
+           41 : Bestandesschluss;
+           43 : 3  Wochen nach Bestandesschluss;
+           45 : 7  "      "    ";
+           47 : 11 "      "    ";
+           49 : 15 "      "    ";
+
+Bedeckungsgrad  =   20, 40, 80;                          Tag
+                     0,0.2,  1;                          Wert
+
+Entnahmetiefe   =   20, 60,100;                          Tag
+                     2,  5, 11;                          Wert
+
+Transpiration   =   70, 80,140,170;                      Tag
+                     1,1.2,1.2,  1;                      Wert
+
+Quotient(soll)  =   60, 80, 90,160,170,190;              Tag
+                     0,0.7,0.8,0.8,0.7,  0;              Wert
+
+Effektivitaet   =    1;                                   Tag 
+                   0.1;                                   Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0802,1,Samentraeger;  Vermehr. 2. J
+
+DC =    20, 30, 40, 90;                     Code
+         1, 45, 90,125;                     Tag
+
+NameDC =    20 : Pflanzung;
+            30 : Bestandesschluss;
+            40 : Beginn der Bluete;
+            90 : Erntereife;
+
+Bedeckungsgrad  =    1, 45;                             Tag
+                   0.1,  1;                             Wert
+
+Entnahmetiefe   =   20, 60, 80;                         Tag
+                     3,  5,  9;                         Wert
+
+Transpiration   =   60, 80;                             Tag
+                     1,1.1;                             Wert
+
+Quotient(soll)  =   30, 60,100,110,120;                 Tag
+                     0,0.8,0.8,0.7,  0;                 Wert
+
+Effektivitaet   =    1;                                 Tag
+                   0.1;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+
+
+0805,1,Zuckerrueben;  fuer Futterzwecke
+
+DC =    1, 11, 24, 32, 41, 43, 45, 47, 49;  Code
+        1, 20, 50, 60, 80,100,130,140,180;  Tag
+
+NameDC =    1 : Aussaat ;
+           11 : Aufgang;
+           24 : 4-Blattstadium;
+           32 : 8-Blattstadium;
+           41 : Bestandesschluss;
+           43 : 3  Wochen nach Bestandesschluss;
+           45 : 7  "      "    ";
+           47 : 11 "      "    ";
+           49 : 15 "      "    ";
+
+Bedeckungsgrad  =   20, 40, 80;                         Tag
+                     0,0.2,  1;                         Wert
+
+Entnahmetiefe   =   20, 60,100;                         Tag
+                     2,  5, 11;                         Wert
+
+Transpiration   =   70, 80,140,170;                     Tag
+                     1,1.2,1.2,  1;                     Wert
+
+Quotient(soll)  =   60, 80, 90,160,170,190;             Tag
+                     0,0.7,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                   0.1;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0901,1,Gehaltsruebe;              
+
+DC =    1, 11, 24, 32, 41, 50;             Code
+        1, 20, 50, 60, 80,180;             Tag
+
+NameDC =  01 : Aussaat;
+          11 : Aufgang;
+          24 : 4-Blattstadium;
+          32 : 8-";
+          41 : Bestandesschluss;
+          50 : Erntereife;
+
+
+Bedeckungsgrad  =   20, 40, 80;                         Tag
+                     0,0.2,  1;                         Wert
+
+Entnahmetiefe   =   20, 60,105;                         Tag
+                     2,  5, 11;                         Wert
+
+Transpiration   =   70, 80,140,170;                     Tag
+                     1,1.2,1.2,  1;                     Wert
+
+Quotient(soll)  =   60, 80, 90,160,170,190;             Tag
+                     0,0.7,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0902,1,Massenruebe ;              
+
+DC =    01, 11, 24, 32, 41, 50;             Code
+         1, 20, 50, 60, 80,180;             Tag
+
+NameDC =   01 : Aussaat;
+           11 : Aufgang;
+           24 : 4-Blattstadium;
+           32 : 8-";
+           41 : Bestandesschluss;
+           50 : Erntereife;
+
+
+Bedeckungsgrad  =   20, 40, 80;                         Tag
+                     0,0.2,  1;                         Wert
+
+Entnahmetiefe   =   20, 60,100;                         Tag
+                     2,  5, 10;                         Wert
+
+Transpiration   =   70, 80,140,170;                     Tag
+                     1,1.2,1.2,  1;                     Wert
+
+Quotient(soll)  =   60, 80, 90,160,170,190;             Tag
+                     0,0.7,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0905,1,Stoppelruebe;              
+
+DC =    01, 11, 24, 32, 41, 50;             Code
+         1, 15, 30, 40, 60, 80;             Tag
+
+NameDC =  01 : Aussaat;
+          11 : Aufgang;
+          24 : 4-Blattstadium;
+          32 : 8-";
+          41 : Bestandesschluss;
+          50 : Erntereife;
+
+
+Bedeckungsgrad  =   15, 40, 60;                         Tag
+                     0,0.3,  1;                         Wert
+
+Entnahmetiefe   =   15, 40, 60;                         Tag
+                     2,  4,  7;                         Wert
+
+Transpiration   =    1;                                 Tag
+                     1;                                 Wert
+
+Quotient(soll)  =   15, 30;                             Tag
+                     0,0.8;                             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+0906,1,Kohlruebe-dr;              
+
+DC =    01, 11, 24, 32, 41, 50;             Code
+         1, 15, 42, 60,113,160;             Tag
+
+NameDC =    01 : Aussaat;
+            11 : Aufgang;
+            24 : 4-Blattstadium;
+            32 : 8-";
+            41 : Bestandesschluss;
+            50 : Erntereife;
+
+
+Bedeckungsgrad  =   15, 60,110;                         Tag
+                     0,0.3,0.9;                         Wert
+
+Entnahmetiefe   =   20, 60, 80;                         Tag
+                     2,  5,  8;                         Wert
+
+Transpiration   =   70, 80,140,170;                     Tag
+                     1,1.1,1.1,  1;                     Wert
+
+Quotient(soll)  =   50, 60, 80,140,160,170;             Tag
+                     0,0.5,0.8,0.8,0.7,  0;             Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+
+0907,1,Futt-Moehren;              
+
+DC =    20, 30, 90;                         Code
+         1, 25,155;                         Tag
+
+NameDC =    20 : Aussaat;
+            30 : Aufgang;
+            90 : Erntereife;
+
+
+
+Bedeckungsgrad  =   25, 96;                             Tag
+                     0,  1;                             Wert
+
+Entnahmetiefe   =   20,100;                             Tag
+                     2,  8;                             Wert
+
+Transpiration   =  110;                                 Tag
+                     1;                                 Wert
+
+Quotient(soll)  =   30, 90,150,170;                     Tag
+                     0,0.8,0.8,  0;                     Wert
+
+Effektivitaet   =    1;                                 Tag
+                  0.13;                                 Wert  
+
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
