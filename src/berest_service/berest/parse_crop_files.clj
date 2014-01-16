@@ -98,11 +98,12 @@
    dito = <ows> crop-no <','> cult-type <','> usage <',' ows 'dito.' ows ',' rest-of-line>
 
    rest-of-line = ';' #'[^\\n\\r]*' (newline | EOF)
-   empty-line = newline | ows-without-newline newline
+   empty-line = newline | ws-without-newline newline
    newline = '\\r\\n' | '\\n'
    ows-without-newline = #'[^\\S\\n\\r]*'
+   ws-without-newline = #'[^\\S\\n\\r]+'
    ows = #'\\s*'
-   ws = #'\\s'
+   ws = #'\\s+'
    word = #'[a-zA-Z0-9/.-]+'
    integer = #'[0-9]+'
    double = #'[0-9]+(?:\\.[0-9]*)?'
