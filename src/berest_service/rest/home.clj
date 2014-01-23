@@ -38,21 +38,23 @@
            }
           [element (or lang rc/*lang*)] "UNKNOWN element"))
 
+
 (defn get-home [req]
-  (rur/response
-   (rc/layout "Berest REST service"
-              [:div.container
-               [:h2 "Berest REST service"]
-               [:p (vocab :title)]
-               [:hr]
-               [:ul#berestElements
-                [:li [:a {:href "farms"} (vocab :farms)]
-                 [:li [:a {:href "weather-stations"} (vocab :weather-stations)]]
-                 ]]
-               ])))
+   (rur/response
+    (rc/layout "Berest REST service"
+               [:div.container
+                [:h2 "Berest REST service"]
+                [:p (vocab :title)]
+                [:hr]
+                [:ul#berestElements
+                 [:li [:a {:href "farms"} (vocab :farms)]
+                  [:li [:a {:href "weather-stations"} (vocab :weather-stations)]]
+                  ]]
+                ])))
 
 
 
 
 
-
+
+

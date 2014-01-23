@@ -9,8 +9,18 @@
               [berest-service.rest.farm :as rfarm]
               [berest-service.rest.home :as rhome]
               [berest-service.rest.weather-station :as rwstation]
-              [clojure.string :as cs]))
+              [clojure.string :as cs]
+              [geheimtur.interceptor :as gi]))
 
+(def users {
+            ;"user" {:name "user" :password "zALf" :roles #{:user} :full-name "Bobby Briggs"}
+            "admin" {:name "admin" :password "#zalFFlaz!" :roles #{:admin} :full-name "Michael Berg"}})
+
+(defn credentials
+  [username password]
+  (when-let [identity (get users username)]
+    (when (= password (:password identity))
+      (dissoc identity :password))))
 
 
 (defn about-page
@@ -42,7 +52,6 @@
       (#(map (partial cs/join ".") %) ,,,)))
 
 
-
 (defn get-rest-plot [req]
   (let [{sim :sim
          format :format
@@ -68,18 +77,22 @@
   [#_[:home
     ["/" {:get home-page} ^:interceptors [bootstrap/html-body]]]
    [:rest
-    ["/" ^:interceptors [(body-params/body-params) bootstrap/html-body]
+    ["/" ^:interceptors [(body-params/body-params)
+                         bootstrap/html-body
+                         (gi/http-basic "BEREST REST-Service" credentials)]
      {:get rhome/get-home}
-     ["/farms" {:get rfarm/get-farms
-                :post rfarm/create-new-farm}
+     ["/farms"
+      ^:interceptors [(gi/guard :roles #{:admin} :silent? false)]
+      {:get rfarm/get-farms
+       :post rfarm/create-new-farm}
       ["/:farm-id" {:get rfarm/get-farm
                     :put rfarm/update-farm}
        ["/plots" {:get get-rest-plots}
         ["/:plot-id-format" {:get get-rest-plot}]]]]
-     ["/weather-stations" {:get rwstation/get-weather-stations
-                           :post rwstation/create-weather-station}]]]])
-
-
+     ["/weather-stations"
+      ^:interceptors [(gi/guard :roles #{:admin} :silent? false)]
+      {:get rwstation/get-weather-stations
+       :post rwstation/create-weather-station}]]]])
 
 
 ;; You can use this fn or a per-request fn via io.pedestal.service.http.route/url-for
@@ -100,7 +113,7 @@
               ;;
               ;; "http://localhost:8080"
               ;;
-              ;;::bootstrap/allowed-origins ["scheme://host:port"]
+              ;;::bootstrap/allowed-origins ["http://berest-humanespaces.rhcloud.com" #_"scheme://host:port"]
 
               ;; Root for resource interceptor that is available by default.
               ::bootstrap/resource-path "/public"
@@ -130,4 +143,5 @@
 
 
 
-
+
+
