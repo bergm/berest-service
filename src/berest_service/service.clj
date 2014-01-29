@@ -3,18 +3,23 @@
               [io.pedestal.service.http.route :as route]
               [io.pedestal.service.http.body-params :as body-params]
               [io.pedestal.service.http.route.definition :refer [defroutes]]
-              [ring.util.response :as ring-resp]
+              [io.pedestal.service.interceptor :as interceptor :refer [defon-response]]
+              [io.pedestal.service.http.ring-middlewares :as ring-middlewares]
+              [ring.util.response :as rur]
+              [ring.middleware.session.cookie :as cookie]
               [berest-service.berest.plot :as plot]
               [berest-service.berest.farm :as farm]
               [berest-service.rest.farm :as rfarm]
               [berest-service.rest.home :as rhome]
+              [berest-service.rest.login :as rlogin]
+              [berest-service.rest.common :as rcommon]
               [berest-service.rest.weather-station :as rwstation]
               [clojure.string :as cs]
-              [geheimtur.interceptor :as gi]))
+              [geheimtur.interceptor :as gi]
+              [geheimtur.impl.form-based :as gif]))
 
-(def users {
-            ;"user" {:name "user" :password "zALf" :roles #{:user} :full-name "Bobby Briggs"}
-            "admin" {:name "admin" :password "#zalFFlaz!" :roles #{:admin} :full-name "Michael Berg"}})
+(def users {;"user" {:name "user" :password "zALf" :roles #{:user} :full-name "Bobby Briggs"}
+            "admin" {:name "admin" :password "#zALf!" :roles #{:admin} :full-name "Michael Berg"}})
 
 (defn credentials
   [username password]
@@ -25,11 +30,11 @@
 
 (defn about-page
   [request]
-  (ring-resp/response (format "Clojure %s" (clojure-version))))
+  (rur/response (format "Clojure %s" (clojure-version))))
 
 (defn home-page
   [request]
-  (ring-resp/response "Hello berest service!!!!!!!"))
+  (rur/response "Hello berest service!!!!!!!"))
 
 #_(defroutes routes
   [[["/" {:get home-page}
@@ -64,14 +69,39 @@
         plot-id "zalf"]
     (if simulate?
       (-> (plot/simulate-plot :user-id user-id :farm-id farm-id :plot-id plot-id :data data)
-          ring-resp/response
-          (ring-resp/content-type ,,, "text/csv"))
+          rur/response
+          (rur/content-type ,,, "text/csv"))
       (case (or format* format)
         "csv" (-> (plot/calc-plot :user-id user-id :farm-id farm-id :plot-id plot-id :data data)
-                  ring-resp/response
-                  (ring-resp/content-type ,,, "text/csv"))
-        (ring-resp/not-found (str "Format '" format "' is not supported!"))))))
+                  rur/response
+                  (rur/content-type ,,, "text/csv"))
+        (rur/not-found (str "Format '" format "' is not supported!"))))))
 
+(defon-response access-forbidden-interceptor
+  [response]
+  (if (or
+       (= 401 (:status response))
+       (= 403 (:status response)))
+    (->
+     (rcommon/error-page {:title "Access Forbidden" :message (:body response)})
+     (rur/content-type "text/html;charset=UTF-8"))
+    response))
+
+(defon-response not-found-interceptor
+  [response]
+  (if-not (rur/response? response)
+    (-> (rcommon/error-page {:title   "Not Found"
+                             :message "We are sorry, but the page you are looking for does not exist."})
+        (rur/content-type "text/html;charset=UTF-8"))
+    response))
+
+(def login-post-handler
+  (gif/default-login-handler {:credential-fn credentials}))
+
+(interceptor/definterceptor
+ session-interceptor
+ (ring-middlewares/session {:cookie-name "SID"
+                            :store (cookie/cookie-store)}))
 
 (defroutes routes
   [#_[:home
@@ -79,10 +109,15 @@
    [:rest
     ["/" ^:interceptors [(body-params/body-params)
                          bootstrap/html-body
-                         (gi/http-basic "BEREST REST-Service" credentials)]
+                         #_(gi/http-basic "BEREST REST-Service" credentials)
+                         session-interceptor]
      {:get rhome/get-home}
+     ["/login" {:get rlogin/login-page
+                :post login-post-handler}]
+     ["/logout" {:get gif/default-logout-handler}]
+     ["/unauthorized" {:get rcommon/unauthorized}]
      ["/farms"
-      ^:interceptors [(gi/guard :roles #{:admin} :silent? false)]
+      ^:interceptors [access-forbidden-interceptor (gi/interactive {}) (gi/guard :roles #{:admin} :silent? false)]
       {:get rfarm/get-farms
        :post rfarm/create-new-farm}
       ["/:farm-id" {:get rfarm/get-farm
@@ -117,6 +152,8 @@
 
               ;; Root for resource interceptor that is available by default.
               ::bootstrap/resource-path "/public"
+
+              ::bootstrap/not-found-interceptor not-found-interceptor
 
               ;; Either :jetty or :tomcat (see comments in project.clj
               ;; to enable Tomcat)

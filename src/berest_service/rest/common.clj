@@ -7,7 +7,8 @@
             [hiccup.util :as hu]
             [datomic.api :as d]
             [berest-service.berest.datomic :as bd]
-            [berest-service.rest.queries :as rq]))
+            [berest-service.rest.queries :as rq]
+            [ring.util.response :as rur]))
 
 (def ^:dynamic *lang* :lang/de)
 
@@ -168,15 +169,103 @@
 
 
 
-   #_(hd/defhtml layout [title & content]
-            (hp/html5 {:xml? true}
-                      [:head
-                       [:title title]
-                       (hp/include-css "//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css")
-                       [:style
-                        "body { margin: 2em; }"
-                        "textarea { width: 80%; height: 200px }"]]
-                      [:body content]))
+(defn vocab
+  "translatable vocabulary for this page"
+  [element & [lang]]
+  (get-in {:page-name {:lang/de "BEREST Service"
+                      :lang/en "BEREST service"}
+           :signed-in-as {:lang/de "Eingeloggt als "
+                          :lang/en "Signed in as "}
+           :all-farms {:lang/de "Alle Betriebe"
+                       :lang/en "all farms"}
+           :dwd-weather-stations {:lang/de "DWD Wetterstationen"
+                                  :lang/en "DWD weather stations"}}
+          [element (or lang *lang*)] "UNKNOWN element"))
+
+
+
+#_(hd/defhtml layout [title & content]
+              (hp/html5 {:xml? true}
+                        [:head
+                         [:title title]
+                         (hp/include-css "//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css")
+                         [:style
+                          "body { margin: 2em; }"
+                          "textarea { width: 80%; height: 200px }"]]
+                        [:body content]))
+
+
+
+
+(defn head
+  [& [title]]
+  [:head
+   (when (and title (not (empty? title))) [:title title])
+   [:meta {:name "viewport"
+           :content "width=device-width, initial-scale=1.0"}]
+   [:link {:href "/css/auth-buttons.css" :media "screen" :rel "stylesheet" :type "text/css"}]
+   [:link {:href "/css/bootstrap.min.css" :media "screen" :rel "stylesheet" :type "text/css"}]
+   #_(hp/include-css "//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css")
+   "<!--[if lt IE 9]>"
+   [:script {:src "/js/html5shiv.js"}]
+   [:script {:src "/js/respond.min.js"}]
+   "<![endif]-->"])
+
+(defn navbar
+  [user]
+  [:nav {:class "navbar navbar-default" :role "navigation"}
+   [:div {:class "navbar-header"}
+    [:button {:type "button" :class "navbar-toggle" :data-toggle "collapse" :data-target ".navbar-collapse"}
+     [:span {:class "sr-only"} "Toggle navigation"]
+     [:span {:class "icon-bar"}]
+     [:span {:class "icon-bar"}]
+     [:span {:class "icon-bar"}]]
+    [:a {:class "navbar-brand" :href "/"} (vocab :page-name)]]
+   [:div {:class "collapse navbar-collapse"}
+    [:ul {:class "nav navbar-nav"}
+     [:li
+      [:a {:href "/farms"} (vocab :all-farms)]]
+     [:li
+      [:a {:href "/weather-stations"} (vocab :dwd-weather-stations)]]]
+    (when-not (nil? user)
+      [:div {:class "navbar-right"}
+       [:p {:class "navbar-text"}
+        (vocab :signed-in-as) [:strong (:full-name user)]]
+       [:a {:href "/logout" :class "btn btn-primary navbar-btn"}
+        "Logout"]])]])
+
+(defn body
+  [user & content]
+  [:body
+   (navbar user)
+   [:div {:class "container"}
+    [:div {:class "row"}
+     content]]
+   [:script {:src "//code.jquery.com/jquery.js"}]
+   [:script {:src "/js/bootstrap.min.js"}]])
+
+(defn error-page
+  [context]
+  (->> [:div {:class "col-lg-8 col-lg-offset-2"}
+        [:h2 (:title context)]
+        [:p (:message context)]]
+       (body (:user context) ,,,)
+       (hp/html5 (head) ,,,)
+       rur/response))
+
+(defn unauthorized
+  [request]
+  (->> [:div {:class "col-lg-8 col-lg-offset-2"}
+        [:h2 "Unauthorized"]
+        [:p "It looks like there was a problem authenticating you, sir. Please try again."]]
+       (body nil ,,,)
+       (hp/html5 (head) ,,,)
+       rur/response))
+
+
+
+
+
 
 (hd/defhtml layout [title & content]
             (hp/html5
@@ -242,4 +331,5 @@
           [:body]))
 
 
-
+
+

@@ -5,13 +5,14 @@
             [berest-service.rest.queries :as rq]
             #_[berest-service.service :as bs]
             [datomic.api :as d]
-            [io.pedestal.service.http.route :as route]
+            #_[io.pedestal.service.http.route :as route]
             [ring.util.response :as rur]
             [hiccup.element :as he]
             [hiccup.def :as hd]
             [hiccup.form :as hf]
             [hiccup.page :as hp]
-            [clojure.edn :as edn]))
+            [clojure.edn :as edn]
+            [geheimtur.util.auth :as gua]))
 
 (comment "for instarepl"
 
@@ -57,7 +58,7 @@
          (map first ,,,)
          (map (partial d/entity db) ,,,))))
 
-(defn get-farms-layout [url]
+#_(defn get-farms-layout [url]
   (rc/layout (str "GET | POST " url)
              [:div.container
               [:h3 (str "GET | POST " url)]
@@ -84,7 +85,42 @@
                 (create-farms-layout)]
                ]]))
 
-(defn get-farms [req]
+(defn farms-layout [url]
+  [:div.container
+   [:h3 (str "GET | POST " url)]
+
+   [:div
+    [:h4 (str (vocab :farms) " (GET " url ")")]
+    [:p (vocab :show)]
+    [:hr]
+    [:ul#farms
+     (for [fe (get-farm-entities)]
+       [:li [:a {:href (str url "/" (:farm/id fe))} (or (:farm/name fe) (:farm/id fe))]])
+     ]
+    [:hr]
+    [:h4 "application/edn"]
+    [:code (pr-str (map :farm/id (get-farm-entities)))]
+    [:hr]
+    ]
+
+   [:div
+    [:h4 (str (vocab :create)" (POST " url ")")]
+    [:form.form-horizontal {:role :form
+                            :method :post
+                            :action url}
+     (create-farms-layout)]
+    ]])
+
+(defn get-farms
+  [{:keys [url-for params] :as request}]
+  (let [url (url-for ::get-farms :app-name :rest) ]
+    (->> (farms-layout url)
+         (rc/body (gua/get-identity request) ,,,)
+         (hp/html5 (rc/head (str "GET | POST " url)) ,,,)
+         rur/response)))
+
+
+#_(defn get-farms [req]
   (let [url ((:url-for req) ::get-farms :app-name :rest)]
     (-> (get-farms-layout url)
         rur/response
@@ -144,4 +180,5 @@
 
 
 
-
+
+
