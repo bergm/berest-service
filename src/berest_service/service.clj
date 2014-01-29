@@ -109,6 +109,7 @@
    [:rest
     ["/" ^:interceptors [(body-params/body-params)
                          bootstrap/html-body
+                         access-forbidden-interceptor (gi/interactive {})
                          #_(gi/http-basic "BEREST REST-Service" credentials)
                          session-interceptor]
      {:get rhome/get-home}
@@ -117,7 +118,7 @@
      ["/logout" {:get gif/default-logout-handler}]
      ["/unauthorized" {:get rcommon/unauthorized}]
      ["/farms"
-      ^:interceptors [access-forbidden-interceptor (gi/interactive {}) (gi/guard :roles #{:admin} :silent? false)]
+      ^:interceptors [(gi/guard :roles #{:admin} :silent? false)]
       {:get rfarm/get-farms
        :post rfarm/create-new-farm}
       ["/:farm-id" {:get rfarm/get-farm

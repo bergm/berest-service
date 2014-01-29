@@ -13,7 +13,8 @@
             [hiccup.page :as hp]
             [clojure.pprint :as pp]
             [clojure.edn :as edn]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [geheimtur.util.auth :as gua]))
 
 (defn vocab
   "translatable vocabulary for this page"
@@ -43,38 +44,41 @@
    [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])
 
 
-(defn get-wstations-layout [url]
+(defn weather-stations-layout [url]
   (let [wses (rq/get-entities :weather-station/id)]
-    (rc/layout (str "GET | POST " url)
-               [:div.container
-                [:h3 (str "GET | POST " url)]
+    [:div.container
+     [:h3 (str "GET | POST " url)]
 
-                [:div
-                 [:h4 (str (vocab :wstations) " (GET " url ")")]
-                 [:p (vocab :show)]
-                 [:hr]
-                 [:ul#farms
-                  (for [wse wses]
-                    [:li [:a {:href (str url "/" (:weather-station/id wse))}
-                          (or (:weather-station/name wse) (:weather-station/id wse))]])]
-                 [:hr]
-                 [:h4 "application/edn"]
-                 [:code (pr-str (map :weather-station/id wses))]
-                 [:hr]]
+     [:div
+      [:h4 (str (vocab :wstations) " (GET " url ")")]
+      [:p (vocab :show)]
+      [:hr]
+      [:ul#farms
+       (for [wse wses]
+         [:li [:a {:href (str url "/" (:weather-station/id wse))}
+               (or (:weather-station/name wse) (:weather-station/id wse))]])]
+      [:hr]
+      [:h4 "application/edn"]
+      [:code (pr-str (map :weather-station/id wses))]
+      [:hr]]
 
-                [:div
-                 [:h4 (str (vocab :create) " (POST " url ")")]
-                 [:form.form-horizontal {:role :form
-                                        :method :post
-                                         :action url}
+     [:div
+      [:h4 (str (vocab :create) " (POST " url ")")]
+      [:form.form-horizontal {:role :form
+                              :method :post
+                              :action url}
 
-                  (create-wstation-layout)]
-                 ]])))
+       (create-wstation-layout)]
+      ]]))
 
 
-(defn get-weather-stations [req]
-  (let [url ((:url-for req) ::get-weather-stations :app-name :rest)]
-    (rur/response (get-wstations-layout url))))
+(defn get-weather-stations
+  [{:keys [url-for params] :as request}]
+  (let [url (url-for ::get-weather-stations :app-name :rest) ]
+    (->> (weather-stations-layout url)
+         (rc/body (gua/get-identity request) ,,,)
+         (hp/html5 (rc/head (str "GET | POST " url)) ,,,)
+         rur/response)))
 
 
 (defn create-weather-station [req]
@@ -96,4 +100,5 @@
 
 
 
-
+
+
