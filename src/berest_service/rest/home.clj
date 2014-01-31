@@ -9,27 +9,25 @@
             [hiccup.element :as he]
             [hiccup.def :as hd]
             [hiccup.form :as hf]
-            [hiccup.page :as hp]))
+            [hiccup.page :as hp]
+            [geheimtur.util.auth :as auth]))
 
 (defn vocab
   "translatable vocabulary for this page"
   [element & [lang]]
-  (get-in {:title {:lang/de "Der Berest REST service.<br/>
-                   Nachfolgend finden Sie eine Liste von Links zu den
-                   eigentlichen Teilen des Service.<br/>
-                   Sie sehen diese Seite auf diese Art und Weise, weil Sie
-                   (oder Ihr Browser) den text/html Mediatyp angefordert haben.
-                   Der application/edn Mediatyp ist ebenso für die gesamte API
-                   untestützt und ist das bevorzugte Format für programmatische Nutzung.
-                   Sie können Ihren bevorzugten Mediatyp über den Accept header wählen."
-                   :lang/en "The Berest REST service.<br/>
-                   Below you will find a list of links leading to the actual
-                   service parts.</br>
-                   You are seeing the page this way now because you
-                   (or your browser) requested the text/html media type.
-                   The application/edn media type is also supported throughout
-                   the API, and is the preferred format for programmatic use.
-                   You can choose your preferred media type using an Accept header."}
+  (get-in {:title {:lang/de ""
+                   :lang/en "The BEREST REST Service provides 2 categories of resources
+                   - one service to a users data in the database (data), including
+                   useable representations of farms and plots and a simple way of creating
+                   those resources and simple access to BEREST as a calculation/simulation
+                   runtime for RPC like functionality.<br/><br/>
+                   Note that this web app is the service. It is not an app built on the service,
+                   nor a set of documentation pages about the service.
+                   The URIs, query params, and POST data are the same ones you
+                   will use when accessing the service programmatically.<br/><br/>
+                   The embedded documentation is designed to assist you in using
+                   the service API, but is not a reference nor tutorial for BEREST
+                   itself. Please consult the BEREST documentation."}
            :farms {:lang/de "Betriebe"
                    :lang/en "farms"}
            :weather-stations {:lang/de "Wetter Stationen"
@@ -39,22 +37,45 @@
           [element (or lang rc/*lang*)] "UNKNOWN element"))
 
 
-(defn get-home [req]
-   (rur/response
-    (rc/layout "Berest REST service"
-               [:div.container
-                [:h2 "Berest REST service"]
-                [:p (vocab :title)]
-                [:hr]
-                [:ul#berestElements
-                 [:li [:a {:href "farms"} (vocab :farms)]
-                  [:li [:a {:href "weather-stations"} (vocab :weather-stations)]]
-                  ]]
-                ])))
+(defn- home-layout
+  []
+  [:div.container
+   [:h2 "Berest REST service"]
+   [:p (vocab :title :lang/en)]
+   [:hr]
+   [:ul#berestElements
+    [:li [:a {:href "api"} "API"]
+     [:li [:a {:href "data"} "Data"]]
+     ]]
+   ])
+
+(defn get-home
+  [{:keys [url-for params] :as request}]
+  (let [url (url-for ::get-home :app-name :rest) ]
+    (->> (home-layout)
+         (rc/body (auth/get-identity request) ,,,)
+         (hp/html5 (rc/head "Berest REST service") ,,,)
+         rur/response)))
+
+(defn- user-home-layout
+  [user-id]
+  [:div.container
+   [:h2 (str "Berest REST service for " user-id)]
+   [:p (vocab :title)]
+   [:hr]
+   [:ul#berestElements
+    [:li [:a {:href "farms"} (vocab :farms)]
+     [:li [:a {:href "weather-stations"} (vocab :weather-stations)]]
+     ]]
+   ])
 
 
-
-
-
+(defn get-user-home
+  [{:keys [url-for params path-params] :as request}]
+  (let [url (url-for ::get-user-home :app-name :rest) ]
+    (->> (user-home-layout (:user-id path-params))
+         (rc/body (auth/get-identity request) ,,,)
+         (hp/html5 (rc/head (str "Berest REST service" (:user-id path-params))) ,,,)
+         rur/response)))
 
 
