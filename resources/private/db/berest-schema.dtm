@@ -793,8 +793,8 @@
   :db/doc "State the city and municipality is located in, highest organizational unit below country."
   :db.install/_attribute :db.part/db}
 
- {:db/id #db/id[:db.part/db]
-  :db/ident :address/state-short
+{:db/id #db/id[:db.part/db]
+:db/ident :address/state-short
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
   :db/doc "A states short form, usually a two or three letter symbol."
@@ -919,7 +919,7 @@
   :db/doc "A stations geographical coordinate"
   :db.install/_attribute :db.part/db}
 
- {:db/id #db/id[:db.part/db]
+  {:db/id #db/id[:db.part/db]
   :db/ident :weather-station/data
   :db/valueType :db.type/ref
   :db/isComponent true
@@ -931,22 +931,22 @@
   :db/ident :weather-station/add-data
   :db/doc "A transaction function creating data and just allowing unique data per station and day"
   :db/fn #db/fn {:lang "clojure"
-                 :params [db station-id date evap precip]
-                 :code "(let [q (datomic.api/q '[:find ?se ?e
-                 :in $ ?station-id ?date
-                 :where
-                 [?se :weather-station/id ?station-id]
-                 [?se :weather-station/data ?e]
-                 [?e :weather-data/date ?date]]
-                 db station-id date)
-                 [station-entity-id data-entity-id] (first q)]
-                 [{:db/id (datomic.api/tempid :db.part/user) ;always create a temporary db/id, will be upsert if station exists already
-                 :weather-station/id station-id
-                 :weather-station/data (merge (if data-entity-id
-                 {:db/id data-entity-id} ;assign new values to known existing entity
-                 {:weather-data/date date}) ;create implicitly new entity with this date
-                 (when precip {:weather-data/precipitation precip})
-                 (when evap {:weather-data/evaporation evap}))}])"}}
+                 :params [db data]
+                 :code "(let [station-id (:weather-station/id data)
+        date (-> data :weather-station/data :weather-data/date)
+        q (datomic.api/q '[:find ?se ?e
+                           :in $ ?station-id ?date
+                           :where
+                           [?se :weather-station/id ?station-id]
+                           [?se :weather-station/data ?e]
+                           [?e :weather-data/date ?date]]
+                         db station-id date)
+        [station-entity-id data-entity-id] (first q)
+        data* (if data-entity-id
+                (assoc-in data [:weather-station/data :db/id] data-entity-id)
+                data)]
+    ;always create a temporary db/id, will be upsert if station exists already
+    [(assoc data* :db/id (datomic.api/tempid :db.part/user))])"}}
 
  ;; weather-data
  ;;-----------------------------------------------------------------------------------------------
@@ -988,6 +988,13 @@
   :meta/unit :mm
   :db/cardinality :db.cardinality/one
   :db/doc "A weather data record's turc-wendling evaporation"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :weather-data/prognosis-data?
+  :db/valueType :db.type/boolean
+  :db/cardinality :db.cardinality/one
+  :db/doc "are the data associated with this entity prognosis data?"
   :db.install/_attribute :db.part/db}
 
 ;; geo-coord
