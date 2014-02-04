@@ -1,0 +1,20 @@
+Datenlieferung ZALF e.V.
+Erstellung am Montag, den 03.02.2014, 10:00 Uhr GZ 
+
+** Bei Rückfragen (034297/989-275) bitte Produktbezeichnung angeben:
+** FYDL60 DWLB 03.02.20141000
+
+Datum                         10162                     10264                     10267                     10270                     10361                     10368                     10376                     10393                     10466                     10469                     10480                     10490                     10499                      B488                      F143                      F419                      F431                      F475                      F707                      F742                      F951                      N398                      N652
+            RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM   RR-S  VP-T     GS    TM
+02.02.2014   0,0   0,5  284,0   2,8    0,0   0,5  257,0   3,1    1,2   0,4  201,0   1,6    0,8   0,4  201,0   1,7    0,3   0,4  247,0   2,2    0,5   0,5  264,0   2,1    0,3   0,4  209,0   2,4    6,8   0,3  179,0   1,5    1,3   0,4  240,0   3,1    1,8   0,4  214,0   2,7    0,4   0,3  163,0   1,7    3,7   0,3  142,0   1,7    0,1   0,3  175,0   1,0    0,6   0,4  189,0   1,5    1,4   0,4  198,0   2,0    0,1   0,4  204,0   2,7    0,7   0,4  202,0   2,0    7,2   0,4  203,0   1,9    0,8   0,4  209,0   1,2    7,8   0,4  208,0   1,7    5,3   0,4  214,0   1,6    0,3   0,4  208,0   2,5    1,0   0,4  211,0   1,6
+
+
+Erläuterungen:
+St.-Kenn = Stationskennung (DWD)
+Datum = TagMonatJahr
+RR-S = Niederschlag (24-stuendig) (mm)
+VP-T = potentielle Verdunstung, Turc/Wendling (mm)
+GS = Globalstrahlung (24-stuendig) (J/qcm)
+TM = Mittel der Lufttemperatur (2 m) (°C)
+
+DWD Abt. Agrarmeteorologie
