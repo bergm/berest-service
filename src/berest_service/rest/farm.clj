@@ -119,13 +119,6 @@
          (hp/html5 (rc/head (str "GET | POST " url)) ,,,)
          rur/response)))
 
-
-#_(defn get-farms [req]
-  (let [url ((:url-for req) ::get-farms :app-name :rest)]
-    (-> (get-farms-layout url)
-        rur/response
-        (rur/content-type ,,, "text/html"))))
-
 (defn create-new-farm [req]
   (rur/response "post to create a new farm"))
 
