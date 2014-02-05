@@ -997,7 +997,7 @@
   :db/doc "are the data associated with this entity prognosis data?"
   :db.install/_attribute :db.part/db}
 
-;; geo-coord
+ ;; geo-coord
  ;;-----------------------------------------------------------------------------------------------
 
  {:db/id #db/id[:db.part/db]
@@ -1028,6 +1028,41 @@
   :db/doc "A geocoords gauss-krueger-5 height value"
   :db.install/_attribute :db.part/db}
 
+ ;; user
+ ;;-----------------------------------------------------------------------------------------------
 
+ {:db/id #db/id[:db.part/db]
+  :db/ident :user/id
+  :db/unique :db.unique/identity
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "A users id"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :user/password
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "A users password, but encrypted by scrypt key derivation function algorithm"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :user/full-name
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "A users full-name, might be used for display"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :user/roles
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many
+  :db/doc "A the roles a user can play, references entities of type :user.role"
+  :db.install/_attribute :db.part/db}
+
+ [:db/add #db/id[:db.part/user] :db/ident :user.role/admin]
+ [:db/add #db/id[:db.part/user] :db/ident :user.role/consultant]
+ [:db/add #db/id[:db.part/user] :db/ident :user.role/farmer]
+ [:db/add #db/id[:db.part/user] :db/ident :user.role/guest]
 
  ]

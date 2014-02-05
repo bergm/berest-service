@@ -14,18 +14,12 @@
               [berest-service.rest.weather-station :as wstation]
               [berest-service.rest.api :as api]
               [berest-service.rest.plot :as plot]
+              [berest-service.berest.datomic :as bd]
               [clojure.string :as cs]
               [geheimtur.interceptor :as gi]
               [geheimtur.impl.form-based :as gif]))
 
-(def users {;"user" {:name "user" :password "zALf" :roles #{:user} :full-name "Bobby Briggs"}
-            "admin" {:name "admin" :password "#zALf!" :roles #{:admin} :full-name "Michael Berg"}})
 
-(defn credentials
-  [username password]
-  (when-let [identity (get users username)]
-    (when (= password (:password identity))
-      (dissoc identity :password))))
 
 
 (defn about-page
@@ -56,7 +50,7 @@
     response))
 
 (def login-post-handler
-  (gif/default-login-handler {:credential-fn credentials}))
+  (gif/default-login-handler {:credential-fn bd/credentials}))
 
 (interceptor/definterceptor
  session-interceptor
@@ -73,28 +67,50 @@
                          (gi/interactive {})
                          session-interceptor]
      {:get home/get-home}
-     ["/login" {:get login/login-page
-                :post login-post-handler}]
-     ["/logout" {:get gif/default-logout-handler}]
-     ["/unauthorized" {:get common/unauthorized}]
-     ["/api" {:get api/get-api}
-      ["/simulate" {:get api/simulate}]
-      ["/calculate" {:get api/calculate}]]
+
+     ["/login"
+      {:get login/login-page
+       :post login-post-handler}]
+
+     ["/logout"
+      {:get gif/default-logout-handler}]
+
+     ["/unauthorized"
+      {:get common/unauthorized}]
+
+     ["/api"
+      {:get api/get-api}
+
+      ["/simulate"
+       {:get api/simulate}]
+
+      ["/calculate"
+       {:get api/calculate}]]
+
      ["/data"
+
       ["/:user-id"
        ^:interceptors [(gi/guard :roles #{:admin} :silent? false)]
        {:get home/get-user-home}
-       ["/farms"
-        {:get farm/get-farms
-         :post farm/create-new-farm}]
-       ["/:farm-id" {:get farm/get-farm
-                     :put farm/update-farm}
-        ["/plots" {:get plot/get-plot-ids}]
-        ["/:plot-id-format" {:get plot/get-rest-plot}]]
+
        ["/weather-stations"
         ^:interceptors [(gi/guard :roles #{:admin} :silent? false)]
         {:get wstation/get-weather-stations
-         :post wstation/create-weather-station}]]]]]])
+         :post wstation/create-weather-station}]
+
+       ["/farms"
+        {:get farm/get-farms
+         :post farm/create-new-farm}]
+
+       ["/:farm-id"
+        {:get farm/get-farm
+         :put farm/update-farm}
+
+        ["/plots"
+         {:get plot/get-plot-ids}]
+
+        ["/:plot-id-format"
+         {:get plot/get-rest-plot}]]]]]]])
 
 
 ;; You can use this fn or a per-request fn via io.pedestal.service.http.route/url-for

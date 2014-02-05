@@ -1,16 +1,15 @@
 (ns berest-service.berest.datomic
   (:require clojure.set
+            [crypto.password.scrypt :as pwd]
             [clojure.string :as cstr]
             [clojure.pprint :as pp]
             [clj-time.core :as ctc]
             [clj-time.coerce :as ctcoe]
             [clojure.java.io :as cjio]
-            [datomic.api :as d
-             :refer [q db]]
-            [berest-service.berest
-             [util :as bu]
-             [helper :as bh
-              :refer [|->]]]))
+            [clojure.tools.logging :as log]
+            [datomic.api :as d :refer [q db]]
+            [berest-service.berest.util :as bu]
+            [berest-service.berest.helper :as bh :refer [|->]]))
 
 (def ^:dynamic *db-id* "berest")
 
@@ -123,7 +122,7 @@
 (defn create-map-from-entity-ids
   [key value entity-ids]
   (->> entity-ids
-    get-entities
+    (get-entities (current-db) ,,,)
     (map (juxt key value) ,,,)
     (into (sorted-map) ,,,)))
 
@@ -199,66 +198,57 @@
 
 ;;transaction functions
 
-(defn add-weather-data
-  "transaction function to insert only unique precip and evap values per station and date into db
-  because no unique/identity constraints for multi-value keys are allowed (yet), but would be needed
-  as these values are unique for station/date combination"
-  [db station-id date evap precip]
-  (let [q (datomic.api/q '[:find ?se ?e
-                           :in $ ?station-id ?date
+(comment "moved the only transaction function to dwd.clj as it is actually pretty domain specific")
+
+
+
+
+;; user management and credential functions
+
+(defn store-credentials
+  "store given credentials into db"
+  [user-id password full-name roles & [db-id]]
+  (let [enc-pwd (pwd/encrypt password)
+        kw-roles (map #(->> % name (keyword "user.role")) roles)
+        creds {:db/id (d/tempid :db.part/user)
+               :user/id user-id
+               :user/password enc-pwd
+               :user/full-name full-name
+               :user/roles kw-roles}]
+    (try
+      (d/transact (datomic-connection (or db-id *db-id*)) [creds])
+      true
+      (catch Exception e
+        (println #_log/info "Couldn't store credentials into datomic database " *db-id* "! data w/o pwd: [\n"
+                  (dissoc :user/password creds) "\n]")
+        nil))))
+
+(defn credentials
+  [user-id password & [db-id]]
+  (let [db (current-db (or db-id *db-id*))
+        user-entity (d/q '[:find ?e
+                           :in $ ?user-id
                            :where
-                           [?se :weather-station/id ?station-id]
-                           [?se :weather-station/data ?e]
-                           [?e :weather-data/date ?date]]
-                         db station-id date)
-        [station-entity-id data-entity-id] (first q)]
-    [{:db/id (datomic.api/tempid :db.part/user) ;always create a temporary db/id, will be upsert if station exists already
-      :weather-station/id station-id
-      :weather-station/data (merge (if data-entity-id
-                                     {:db/id data-entity-id} ;assign new values to known existing entity
-                                     {:weather-data/date date}) ;create implicitly new entity with this date
-                                   (when precip {:weather-data/precipitation precip})
-                                   (when evap {:weather-data/evaporation evap}))}]))
+                           [?e :user/id ?user-id]]
+                         db user-id)
+        identity (->> user-entity ffirst (d/entity db ,,,) d/touch (into {} ,,,))]
+    (when (pwd/check password (:user/password identity))
+      (dissoc identity :user/password))))
 
-(comment "instarepl debugging code"
+(comment "insta repl code"
+  (d/q '[:find ?e
+         :in $
+         :where
+         [?e :user/id ?user-id]]
+       (current-db) "michael")
 
-  (datomic.api/q '[:find ?d ?p ?tx ?in
-                   :in $
-                   :where
-                   [_ :weather-station/id "1111"]
-                   [?e :weather-station/data ?d]
-                   [?d :weather-data/precipitation ?p ?tx]
-                   [?tx :db/txInstant ?in]]
-                 (d/as-of (current-db "berest") #inst "2013-12-02T15:00:11.601-00:00"))
-
-  (datomic.api/q '[:find ?d ?p ?tx ?in
-                   :in $
-                   :where
-                   [_ :weather-station/id "1111"]
-                   [?e :weather-station/data ?d]
-                   [?d :weather-data/precipitation ?p ?tx]
-                   [?tx :db/txInstant ?in]]
-                 (current-db "berest"))
-
-
-  (ctc/days 1)
-
-  (datomic.api/q '[:find ?se ?e
-                   :in $ ?station-id ?date
-                   :where
-                   [?se :weather-station/id ?station-id]
-                   [?se :weather-station/data ?e]
-                   [?e :weather-data/date ?date]]
-                 (current-db "berest") "1111" (ctcoe/to-date (ctc/minus (ctc/today) (ctc/days 1))))
-
-  (ctc/today)
-
-  (add-weather-data (current-db "berest") "1111" (ctcoe/to-date (ctc/minus (ctc/today) (ctc/days 1))) 3.0 21.0)
-
-  (def con (datomic-connection "berest"))
-
-  (d/transact (datomic-connection "berest") [(add-weather-data (current-db "berest") "1111" (ctcoe/to-date (ctc/plus (ctc/today) (ctc/days 1))) 5.0 30.0)])
-
-  (d/transact (datomic-connection "berest") [[:weather-station/add-data "1111" (ctcoe/to-date (ctc/today)) 3.0 15.0]])
-
+  (->> (d/q '[:find ?e
+              :in $
+              :where
+              [?e :user/id ?user-id]]
+            (current-db) "michael")
+       ffirst
+       (d/entity (current-db) ,,,)
+       d/touch)
   )
+

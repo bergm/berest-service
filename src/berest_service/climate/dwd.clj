@@ -117,6 +117,9 @@
     [(assoc data* :db/id (datomic.api/tempid :db.part/user))])\"}}")])
   )
 
+
+
+
 (comment "instarepl test"
   (add-data (bd/current-db) {:weather-station/id "N652",
                              :weather-station/data
@@ -151,6 +154,7 @@
 
   (clojure.java.io/reader t)
   )
+
 
 (defn import-dwd-data-into-datomic
   "import the requested kind [:prognosis | :measured] dwd data into datomic"

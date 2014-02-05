@@ -74,7 +74,7 @@
 
 (defn get-weather-stations
   [{:keys [url-for params] :as request}]
-  (let [url (url-for ::get-weather-stations :app-name :rest) ]
+  (let [url (url-for ::get-weather-stations :app-name :rest)]
     (->> (weather-stations-layout url)
          (rc/body (gua/get-identity request) ,,,)
          (hp/html5 (rc/head (str "GET | POST " url)) ,,,)

@@ -18,6 +18,7 @@
                  #_[com.datomic/datomic-free "0.8.4218"]
 
                  [geheimtur "0.1.1"]
+                 [crypto-password "0.1.1"]
 
                  [clj-time "0.6.0"]
                  [clojure-csv "2.0.1"]
