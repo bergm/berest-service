@@ -1,8 +1,9 @@
 (ns berest-service.rest.weather-station
   (:require [berest-service.berest.core :as bc]
-            [berest-service.rest.common :as rc]
+            [berest-service.rest.common :as common]
             [berest-service.berest.datomic :as bd]
             [berest-service.rest.queries :as rq]
+            [berest-service.rest.util :as util]
             #_[berest-service.service :as bs]
             [datomic.api :as d]
             [io.pedestal.service.http.route :as route]
@@ -31,7 +32,7 @@
                            :lang/en "Create"}
 
            }
-          [element (or lang rc/*lang*)] "UNKNOWN element"))
+          [element (or lang common/*lang*)] "UNKNOWN element"))
 
 
 
@@ -39,12 +40,70 @@
 (defn create-wstation-layout []
   [:div.container
    (for [e (rq/get-ui-entities :rest.ui/groups :weather-station)]
-     (rc/create-form-element e))
+     (common/create-form-element e))
 
    [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])
 
 
 (defn weather-stations-layout [url]
+  (let [wses (rq/get-entities :weather-station/id)]
+    [:div.container
+     [:h3 (str "GET | POST " url)]
+
+     [:div
+      [:h4 (str (vocab :wstations) " (GET " url ")")]
+      [:p (vocab :show)]
+      [:hr]
+      [:ul#farms
+       (for [wse wses]
+         [:li [:a {:href (str (util/drop-path-segment url)
+                              "/weather-station/" (:weather-station/id wse))}
+               (or (:weather-station/name wse) (:weather-station/id wse))]])]
+      [:hr]
+      [:h4 "application/edn"]
+      [:code (pr-str (map :weather-station/id wses))]
+      [:hr]]
+
+     [:div
+      [:h4 (str (vocab :create) " (POST " url ")")]
+      [:form.form-horizontal {:role :form
+                              :method :post
+                              :action url}
+
+       (create-wstation-layout)]
+      ]]))
+
+
+(defn get-weather-stations
+  [{:keys [url-for params] :as request}]
+  (let [url (url-for ::get-weather-stations :app-name :rest)]
+    (->> (weather-stations-layout url)
+         (common/body (gua/get-identity request) ,,,)
+         (hp/html5 (common/head (str "GET | POST " url)) ,,,)
+         rur/response)))
+
+
+(defn create-weather-station [req]
+  (let [form-data (:form-params req)
+        form-data* (into {} (map (fn [[k v]]
+                                   (let [attr (common/id->ns-attr k)]
+                                     [attr (rq/string->value attr v)]))
+                                 form-data))
+        transaction-data (assoc form-data* :db/id (d/tempid :db.part/user))]
+    #_(try
+      (d/transact (bd/datomic-connection) transaction-data)
+      (catch Exception e
+        (log/info "Couldn't store weather station data to datomic! data:
+                  [\n" transaction-data "\n]")))
+
+    (rur/response (pr-str transaction-data))
+
+    ))
+
+
+
+
+(defn weather-station-layout [url]
   (let [wses (rq/get-entities :weather-station/id)]
     [:div.container
      [:h3 (str "GET | POST " url)]
@@ -72,19 +131,19 @@
       ]]))
 
 
-(defn get-weather-stations
+(defn get-weather-station
   [{:keys [url-for params] :as request}]
   (let [url (url-for ::get-weather-stations :app-name :rest)]
-    (->> (weather-stations-layout url)
-         (rc/body (gua/get-identity request) ,,,)
-         (hp/html5 (rc/head (str "GET | POST " url)) ,,,)
+    (->> (weather-station-layout url)
+         (common/body (gua/get-identity request) ,,,)
+         (hp/html5 (common/head (str "GET | POST " url)) ,,,)
          rur/response)))
 
 
-(defn create-weather-station [req]
+(defn update-weather-station [req]
   (let [form-data (:form-params req)
         form-data* (into {} (map (fn [[k v]]
-                                   (let [attr (rc/id->ns-attr k)]
+                                   (let [attr (common/id->ns-attr k)]
                                      [attr (rq/string->value attr v)]))
                                  form-data))
         transaction-data (assoc form-data* :db/id (d/tempid :db.part/user))]
@@ -97,8 +156,5 @@
     (rur/response (pr-str transaction-data))
 
     ))
-
-
-
 
 

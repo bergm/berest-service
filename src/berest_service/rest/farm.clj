@@ -1,8 +1,9 @@
 (ns berest-service.rest.farm
   (:require [berest-service.berest.core :as bc]
             [berest-service.berest.datomic :as bd]
-            [berest-service.rest.common :as rc]
+            [berest-service.rest.common :as common]
             [berest-service.rest.queries :as rq]
+            [berest-service.rest.util :as util]
             #_[berest-service.service :as bs]
             [datomic.api :as d]
             #_[io.pedestal.service.http.route :as route]
@@ -37,13 +38,13 @@
                            :lang/en "Create"}
 
            }
-          [element (or lang rc/*lang*)] "UNKNOWN element"))
+          [element (or lang common/*lang*)] "UNKNOWN element"))
 
 
 (defn create-farms-layout []
   [:div.container
    (for [e (rq/get-ui-entities :rest.ui/groups :farm)]
-     (rc/create-form-element e))
+     (common/create-form-element e))
 
    [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])
 
@@ -57,33 +58,6 @@
     (->> result
          (map first ,,,)
          (map (partial d/entity db) ,,,))))
-
-#_(defn get-farms-layout [url]
-  (rc/layout (str "GET | POST " url)
-             [:div.container
-              [:h3 (str "GET | POST " url)]
-
-              [:div
-               [:h4 (str (vocab :farms) " (GET " url ")")]
-               [:p (vocab :show)]
-               [:hr]
-               [:ul#farms
-                (for [fe (get-farm-entities)]
-                  [:li [:a {:href (str url "/" (:farm/id fe))} (or (:farm/name fe) (:farm/id fe))]])
-                ]
-               [:hr]
-               [:h4 "application/edn"]
-               [:code (pr-str (map :farm/id (get-farm-entities)))]
-               [:hr]
-               ]
-
-              [:div
-               [:h4 (str (vocab :create)" (POST " url ")")]
-               [:form.form-horizontal {:role :form
-                                       :method :post
-                                       :action url}
-                (create-farms-layout)]
-               ]]))
 
 (defn farms-layout [url]
   [:div.container
@@ -115,8 +89,8 @@
   [{:keys [url-for params] :as request}]
   (let [url (url-for ::get-farms :app-name :rest) ]
     (->> (farms-layout url)
-         (rc/body (gua/get-identity request) ,,,)
-         (hp/html5 (rc/head (str "GET | POST " url)) ,,,)
+         (common/body (gua/get-identity request) ,,,)
+         (hp/html5 (common/head (str "GET | POST " url)) ,,,)
          rur/response)))
 
 (defn create-new-farm [req]

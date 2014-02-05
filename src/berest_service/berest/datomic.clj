@@ -233,7 +233,13 @@
                          db user-id)
         identity (->> user-entity ffirst (d/entity db ,,,) d/touch (into {} ,,,))]
     (when (pwd/check password (:user/password identity))
-      (dissoc identity :user/password))))
+      {:name (:user/id identity)
+       :roles (->> (:user/roles identity)
+                   (map #(-> % name keyword) ,,,)
+                   (into #{} ,,,))
+       :full-name (:user/full-name identity)})))
+
+(credentials "michael" "#zALf!")
 
 (comment "insta repl code"
   (d/q '[:find ?e

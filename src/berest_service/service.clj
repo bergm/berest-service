@@ -7,19 +7,19 @@
               [io.pedestal.service.http.ring-middlewares :as ring-middlewares]
               [ring.util.response :as rur]
               [ring.middleware.session.cookie :as cookie]
-              [berest-service.rest.farm :as farm]
-              [berest-service.rest.home :as home]
-              [berest-service.rest.login :as login]
-              [berest-service.rest.common :as common]
-              [berest-service.rest.weather-station :as wstation]
-              [berest-service.rest.api :as api]
-              [berest-service.rest.plot :as plot]
+              [berest-service.rest
+               [farm :as farm]
+               [home :as home]
+               [login :as login]
+               [common :as common]
+               [weather-station :as wstation]
+               [api :as api]
+               [plot :as plot]
+               [user :as user]]
               [berest-service.berest.datomic :as bd]
               [clojure.string :as cs]
               [geheimtur.interceptor :as gi]
               [geheimtur.impl.form-based :as gif]))
-
-
 
 
 (defn about-page
@@ -87,30 +87,37 @@
       ["/calculate"
        {:get api/calculate}]]
 
+     ["/data/users"
+      ^:interceptors [(gi/guard :roles #{:admin} :silent? false)]
+      {:get user/get-users}]
+
      ["/data"
+      ^:interceptors [(gi/guard :roles #{:admin :farmer :consultant} :silent? false)]
 
-      ["/:user-id"
-       ^:interceptors [(gi/guard :roles #{:admin} :silent? false)]
-       {:get home/get-user-home}
+      ["/user/:user-id"
+       {:get user/get-user}]
 
-       ["/weather-stations"
-        ^:interceptors [(gi/guard :roles #{:admin} :silent? false)]
-        {:get wstation/get-weather-stations
-         :post wstation/create-weather-station}]
+      ["/weather-stations"
+       {:get wstation/get-weather-stations
+        :post wstation/create-weather-station}]
 
-       ["/farms"
-        {:get farm/get-farms
-         :post farm/create-new-farm}]
+      ["/weather-station/:wstation-id"
+       {:get wstation/get-weather-station
+        :put wstation/update-weather-station}]
 
-       ["/:farm-id"
+      ["/farms"
+       {:get farm/get-farms
+        :post farm/create-new-farm}]
+
+       ["/farm/:farm-id"
         {:get farm/get-farm
          :put farm/update-farm}
 
         ["/plots"
          {:get plot/get-plot-ids}]
 
-        ["/:plot-id-format"
-         {:get plot/get-rest-plot}]]]]]]])
+        ["/plot/:plot-id-format"
+         {:get plot/get-rest-plot}]]]]]])
 
 
 ;; You can use this fn or a per-request fn via io.pedestal.service.http.route/url-for

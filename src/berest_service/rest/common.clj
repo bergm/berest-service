@@ -211,8 +211,33 @@
    [:script {:src "/js/respond.min.js"}]
    "<![endif]-->"])
 
+
+(defn- all-path-subsegments-reversed
+  [url-like]
+  (as-> url-like x
+        (cs/split x #"/")
+        (iterate rest x)
+        (take-while not-empty x)
+        (reverse x)))
+
+(defn- all-urls
+  [url-like & [base]]
+  (let [url-like* (cs/split "/aaa/bbb/ccc/ddd/eeee" #"/")
+        urls (for [i (range 1 10)]
+               (split-at i url-like*))]
+    (map (fn [[fst rst]]
+           (let [url (cs/join "/" fst)]
+             [:a {:href (if (empty? url) (or base "") url)}
+              (if (empty? url) "/" (str (last fst) "/"))]))
+         urls)
+    ))
+
+(all-urls "/aaa/bbb/ccc/ddd/eeee" "base")
+
+
+
 (defn navbar
-  [user]
+  [url user]
   [:nav {:class "navbar navbar-default" :role "navigation"}
    [:div {:class "navbar-header"}
     [:button {:type "button" :class "navbar-toggle" :data-toggle "collapse" :data-target ".navbar-collapse"}
@@ -235,9 +260,9 @@
         "Logout"]])]])
 
 (defn body
-  [user & content]
+  [url user & content]
   [:body
-   (navbar user)
+   (navbar url user)
    [:div {:class "container"}
     [:div {:class "row"}
      content]]
