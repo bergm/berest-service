@@ -136,7 +136,6 @@
                (bd/current-db) "10162" #inst "2014-02-04T00:00:00.000-00:00")
   )
 
-
 (defn make-prognosis-filename [date]
   (str "FY60DWLA-" (ctf/unparse (ctf/formatter "yyyyMMdd") date) "_0915.txt"))
 
@@ -177,7 +176,7 @@
       (try
         (d/transact (bd/datomic-connection bd/*db-id*) transaction-data->add-data)
         (catch Exception e
-          (log/info "Couldn't write dwd data to datomic! data: [\n" transaction-fns-data "\n]")
+          (log/info "Couldn't write dwd data to datomic! data: [\n" transaction-data->add-data "\n]")
           (throw e)))
       true)
     (catch Exception _ false)))
