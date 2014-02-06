@@ -78,7 +78,7 @@
   [{:keys [url-for params] :as request}]
   (let [url (url-for ::get-weather-stations :app-name :rest)]
     (->> (weather-stations-layout url)
-         (common/body (gua/get-identity request) ,,,)
+         (common/body url (gua/get-identity request) ,,,)
          (hp/html5 (common/head (str "GET | POST " url)) ,,,)
          rur/response)))
 
@@ -135,7 +135,7 @@
   [{:keys [url-for params] :as request}]
   (let [url (url-for ::get-weather-stations :app-name :rest)]
     (->> (weather-station-layout url)
-         (common/body (gua/get-identity request) ,,,)
+         (common/body url (gua/get-identity request) ,,,)
          (hp/html5 (common/head (str "GET | POST " url)) ,,,)
          rur/response)))
 

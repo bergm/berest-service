@@ -220,24 +220,26 @@
         (take-while not-empty x)
         (reverse x)))
 
-(defn- all-urls
+(defn- url->link-segments
   [url-like & [base]]
-  (let [url-like* (cs/split "/aaa/bbb/ccc/ddd/eeee" #"/")
-        urls (for [i (range 1 10)]
-               (split-at i url-like*))]
-    (map (fn [[fst rst]]
-           (let [url (cs/join "/" fst)]
-             [:a {:href (if (empty? url) (or base "") url)}
-              (if (empty? url) "/" (str (last fst) "/"))]))
-         urls)
-    ))
-
-(all-urls "/aaa/bbb/ccc/ddd/eeee" "base")
-
-
+  (when url-like
+    (let [url-like* (cs/split url-like #"/")
+          urls (for [i (range 1 (inc (count url-like*)))]
+                 (split-at i url-like*))]
+      (as-> urls _
+            (map (fn [[fst _]]
+                   (let [url (cs/join "/" fst)
+                         url* (if (empty? url) (or base "") url)
+                         display (str (last fst) "/")]
+                     [:a {:href url*} display]))
+                 _)
+            (drop-last _ )
+            (concat _ [[:a (str (last url-like*) "/")]])))))
 
 (defn navbar
   [url user]
+  (println (url->link-segments url))
+  (println "url: " url " user: " user)
   [:nav {:class "navbar navbar-default" :role "navigation"}
    [:div {:class "navbar-header"}
     [:button {:type "button" :class "navbar-toggle" :data-toggle "collapse" :data-target ".navbar-collapse"}
@@ -248,10 +250,8 @@
     [:a {:class "navbar-brand" :href "/"} (vocab :page-name)]]
    [:div {:class "collapse navbar-collapse"}
     [:ul {:class "nav navbar-nav"}
-     [:li
-      [:a {:href "/farms"} (vocab :all-farms)]]
-     [:li
-      [:a {:href "/weather-stations"} (vocab :dwd-weather-stations)]]]
+     (for [segment (url->link-segments url)]
+       [:li segment])]
     (when-not (nil? user)
       [:div {:class "navbar-right"}
        [:p {:class "navbar-text"}
@@ -274,7 +274,7 @@
   (->> [:div {:class "col-lg-8 col-lg-offset-2"}
         [:h2 (:title context)]
         [:p (:message context)]]
-       (body (:user context) ,,,)
+       (body nil (:user context) ,,,)
        (hp/html5 (head) ,,,)
        rur/response))
 
@@ -283,7 +283,7 @@
   (->> [:div {:class "col-lg-8 col-lg-offset-2"}
         [:h2 "Unauthorized"]
         [:p "It looks like there was a problem authenticating you, sir. Please try again."]]
-       (body nil ,,,)
+       (body nil nil ,,,)
        (hp/html5 (head) ,,,)
        rur/response))
 

@@ -54,7 +54,7 @@
   [{:keys [params] :as request}]
   (let [has-error (contains? params :error)]
     (->> (login-form (:return params) has-error)
-         (rc/body (gua/get-identity request) ,,,)
+         (rc/body nil (gua/get-identity request) ,,,)
          (hp/html5 (rc/head) ,,,)
          rur/response)))
 

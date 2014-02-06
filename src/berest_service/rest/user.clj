@@ -91,7 +91,7 @@
   [{:keys [url-for params] :as request}]
   (let [url (url-for ::get-users :app-name :rest) ]
     (->> (users-layout url)
-         (common/body (auth/get-identity request) ,,,)
+         (common/body url (auth/get-identity request) ,,,)
          (hp/html5 (common/head (str "GET | POST " url)) ,,,)
          rur/response)))
 
@@ -127,7 +127,7 @@
   [{:keys [url-for params] :as request}]
   (let [url (url-for ::get-user :app-name :rest) ]
     (->> (user-layout url)
-         (common/body (auth/get-identity request) ,,,)
+         (common/body url (auth/get-identity request) ,,,)
          (hp/html5 (common/head (str "GET | POST " url)) ,,,)
          rur/response)))
 

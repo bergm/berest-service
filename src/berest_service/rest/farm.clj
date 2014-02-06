@@ -90,7 +90,7 @@
   (let [url (url-for ::get-farms :app-name :rest) ]
     (->> (farms-layout url)
          (common/body (gua/get-identity request) ,,,)
-         (hp/html5 (common/head (str "GET | POST " url)) ,,,)
+         (hp/html5 url (common/head (str "GET | POST " url)) ,,,)
          rur/response)))
 
 (defn create-new-farm [req]

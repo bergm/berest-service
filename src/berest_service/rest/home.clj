@@ -53,7 +53,7 @@
   [{:keys [url-for params] :as request}]
   (let [url (url-for ::get-home :app-name :rest) ]
     (->> (home-layout)
-         (rc/body (auth/get-identity request) ,,,)
+         (rc/body url (auth/get-identity request) ,,,)
          (hp/html5 (rc/head "Berest REST service") ,,,)
          rur/response)))
 
@@ -74,7 +74,7 @@
   [{:keys [url-for params path-params] :as request}]
   (let [url (url-for ::get-user-home :app-name :rest) ]
     (->> (user-home-layout (:user-id path-params))
-         (rc/body (auth/get-identity request) ,,,)
+         (rc/body url (auth/get-identity request) ,,,)
          (hp/html5 (rc/head (str "Berest REST service" (:user-id path-params))) ,,,)
          rur/response)))
 
