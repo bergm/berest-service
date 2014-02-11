@@ -1,9 +1,10 @@
 (ns berest-service.rest.weather-station
   (:require [berest-service.berest.core :as bc]
             [berest-service.rest.common :as common]
-            [berest-service.berest.datomic :as bd]
-            [berest-service.rest.queries :as rq]
+            [berest-service.berest.datomic :as db]
+            [berest-service.rest.queries :as queries]
             [berest-service.rest.util :as util]
+            [berest-service.rest.template :as temp]
             #_[berest-service.service :as bs]
             [datomic.api :as d]
             [io.pedestal.service.http.route :as route]
@@ -37,61 +38,48 @@
 
 
 
-(defn create-wstation-layout []
+(defn create-wstation-layout [db]
   [:div.container
-   (for [e (rq/get-ui-entities :rest.ui/groups :weather-station)]
+   (for [e (queries/get-ui-entities db :rest.ui/groups :weather-station)]
      (common/create-form-element e))
 
    [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])
 
 
-(defn weather-stations-layout [url]
-  (let [wses (rq/get-entities :weather-station/id)]
-    [:div.container
-     [:h3 (str "GET | POST " url)]
+(defn weather-stations-layout [db url]
+  [:div.container
+   (temp/standard-get-post-h3 url)
 
-     [:div
-      [:h4 (str (vocab :wstations) " (GET " url ")")]
-      [:p (vocab :show)]
-      [:hr]
-      [:ul#farms
-       (for [wse wses]
-         [:li [:a {:href (str (util/drop-path-segment url)
-                              "/weather-station/" (:weather-station/id wse))}
-               (or (:weather-station/name wse) (:weather-station/id wse))]])]
-      [:hr]
-      [:h4 "application/edn"]
-      [:code (pr-str (map :weather-station/id wses))]
-      [:hr]]
+   (temp/standard-get-layout {:url url
+                              :get-title (vocab :wstations)
+                              :description (vocab :show)
+                              :get-id-fn :weather-station/id
+                              :get-name-fn :weather-station/name
+                              :entities (queries/get-entities db :weather-station/id)
+                              :sub-entity-path "weather-station/"})
 
-     [:div
-      [:h4 (str (vocab :create) " (POST " url ")")]
-      [:form.form-horizontal {:role :form
-                              :method :post
-                              :action url}
-
-       (create-wstation-layout)]
-      ]]))
+   (temp/standard-post-layout {:url url
+                               :post-title (vocab :create)
+                               :post-layout-fn (partial create-wstation-layout db)})])
 
 
 (defn get-weather-stations
   [{:keys [url-for params] :as request}]
-  (let [url (url-for ::get-weather-stations :app-name :rest)]
-    (->> (weather-stations-layout url)
-         (common/body url (gua/get-identity request) ,,,)
-         (hp/html5 (common/head (str "GET | POST " url)) ,,,)
-         rur/response)))
+  (let [db (db/current-db)]
+    (common/standard-get ::get-weather-stations
+                         (partial weather-stations-layout db)
+                         request)))
 
 
 (defn create-weather-station [req]
   (let [form-data (:form-params req)
         form-data* (into {} (map (fn [[k v]]
                                    (let [attr (common/id->ns-attr k)]
-                                     [attr (rq/string->value attr v)]))
+                                     [attr (queries/string->value attr v)]))
                                  form-data))
         transaction-data (assoc form-data* :db/id (d/tempid :db.part/user))]
     #_(try
-      (d/transact (bd/datomic-connection) transaction-data)
+      (d/transact (db/datomic-connection) transaction-data)
       (catch Exception e
         (log/info "Couldn't store weather station data to datomic! data:
                   [\n" transaction-data "\n]")))
@@ -104,51 +92,35 @@
 
 
 (defn weather-station-layout [url]
-  (let [wses (rq/get-entities :weather-station/id)]
-    [:div.container
-     [:h3 (str "GET | POST " url)]
+  [:div.container
+   (temp/standard-get-post-h3 url)
 
-     [:div
-      [:h4 (str (vocab :wstations) " (GET " url ")")]
-      [:p (vocab :show)]
-      [:hr]
-      [:ul#farms
-       (for [wse wses]
-         [:li [:a {:href (str url "/" (:weather-station/id wse))}
-               (or (:weather-station/name wse) (:weather-station/id wse))]])]
-      [:hr]
-      [:h4 "application/edn"]
-      [:code (pr-str (map :weather-station/id wses))]
-      [:hr]]
+   (temp/standard-get-layout {:url url
+                              :get-title (vocab :wstations)
+                              :description (vocab :show)
+                              :get-id-fn :weather-station/id
+                              :get-name-fn :weather-station/name
+                              :entities (queries/get-entities (db/current-db) :weather-station/id)
+                              :sub-entity-path "weather-station/"})
 
-     [:div
-      [:h4 (str (vocab :create) " (POST " url ")")]
-      [:form.form-horizontal {:role :form
-                              :method :post
-                              :action url}
-
-       (create-wstation-layout)]
-      ]]))
+   (temp/standard-post-layout {:url url
+                               :post-title (vocab :create)
+                               :post-layout-fn create-wstation-layout})])
 
 
 (defn get-weather-station
   [{:keys [url-for params] :as request}]
-  (let [url (url-for ::get-weather-stations :app-name :rest)]
-    (->> (weather-station-layout url)
-         (common/body url (gua/get-identity request) ,,,)
-         (hp/html5 (common/head (str "GET | POST " url)) ,,,)
-         rur/response)))
-
+  (common/standard-get ::get-weather-station weather-station-layout request))
 
 (defn update-weather-station [req]
   (let [form-data (:form-params req)
         form-data* (into {} (map (fn [[k v]]
                                    (let [attr (common/id->ns-attr k)]
-                                     [attr (rq/string->value attr v)]))
+                                     [attr (queries/string->value attr v)]))
                                  form-data))
         transaction-data (assoc form-data* :db/id (d/tempid :db.part/user))]
     #_(try
-      (d/transact (bd/datomic-connection) transaction-data)
+      (d/transact (db/datomic-connection) transaction-data)
       (catch Exception e
         (log/info "Couldn't store weather station data to datomic! data:
                   [\n" transaction-data "\n]")))

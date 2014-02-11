@@ -2,7 +2,7 @@
   (:require [clojure.string :as cs]
             [clojure.edn :as edn]
             [datomic.api :as d]
-            [berest-service.berest.datomic :as bd])
+            [berest-service.berest.datomic :as db])
   #_(:import java.math.BigInteger))
 
 (defmulti string->value* (fn [db-type _] db-type))
@@ -37,9 +37,8 @@
 (defmethod string->value* :db.type/boolean [_ value]
   (-> value edn/read-string))
 
-(defn string->value [attr str-value]
-  (let [db (bd/current-db)
-        db-type (ffirst
+(defn string->value [db attr str-value]
+  (let [db-type (ffirst
                  (d/q '[:find ?db.type
                         :in $ ?attr
                         :where
@@ -49,23 +48,21 @@
                       db attr))]
     (string->value* db-type str-value)))
 
-(string->value :geo-coord/latitude "111.")
+#_(string->value (db/current-db) :geo-coord/latitude "111.")
 
-(defn get-entities [id-attr]
-  (let [db (bd/current-db)
-        result (d/q '[:find ?ws-e
+(defn get-entities [db id-attr]
+  (let [result (d/q '[:find ?e
                       :in $ ?id-attr
                       :where
-                      [?ws-e ?id-attr]]
+                      [?e ?id-attr]]
                     db id-attr)]
     (->> result
          (map first ,,,)
          (map (partial d/entity db) ,,,))))
 
 
-(defn get-ui-entities [attr & [value]]
-  (let [db (bd/current-db)
-        result (if value
+(defn get-ui-entities [db attr & [value]]
+  (let [result (if value
                  (d/q '[:find ?ui-e
                         :in $ ?attr ?value
                         :where
@@ -80,4 +77,5 @@
          (map first ,,,)
          (map (partial d/entity db) ,,,)
          (sort-by :rest.ui/order-no ,,,)
-         #_(map d/touch ,,,))))
+         #_(map d/touch ,,,))))
+

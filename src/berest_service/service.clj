@@ -78,7 +78,7 @@
      ["/unauthorized"
       {:get common/unauthorized}]
 
-     ["/api"
+     ["/api/"
       {:get api/get-api}
 
       ["/simulate"
@@ -91,7 +91,7 @@
       ^:interceptors [(gi/guard :roles #{:admin} :silent? false)]
       {:get user/get-users}]
 
-     ["/data"
+     ["/data/"
       ^:interceptors [(gi/guard :roles #{:admin :farmer :consultant} :silent? false)]
 
       ["/user/:user-id"
@@ -105,11 +105,11 @@
        {:get wstation/get-weather-station
         :put wstation/update-weather-station}]
 
-      ["/farms"
+      ["/farms/"
        {:get farm/get-farms
         :post farm/create-new-farm}]
 
-       ["/farm/:farm-id"
+       ["/farm/:farm-id/"
         {:get farm/get-farm
          :put farm/update-farm}
 

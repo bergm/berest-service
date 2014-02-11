@@ -1,10 +1,12 @@
 (ns berest-service.rest.user
   (:require [berest-service.berest.core :as bc]
-            [berest-service.berest.datomic :as bd]
+            [berest-service.berest.datomic :as db]
             [berest-service.rest.common :as common]
             [berest-service.rest.queries :as queries]
             [berest-service.rest.util :as util]
+            [berest-service.rest.template :as temp]
             #_[berest-service.service :as bs]
+
             [datomic.api :as d]
             #_[io.pedestal.service.http.route :as route]
             [ring.util.response :as rur]
@@ -40,96 +42,58 @@
            }
           [element (or lang common/*lang*)] "UNKNOWN element"))
 
-(defn create-user-layout []
+(defn create-user-layout [db]
   [:div.container
-   (for [e (queries/get-ui-entities :rest.ui/groups :user)]
+   (for [e (queries/get-ui-entities db :rest.ui/groups :user)]
      (common/create-form-element e))
 
    [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])
 
-(defn get-user-entities
-  [& [db-id]]
-  (let [db (bd/current-db (or db-id bd/*db-id*))
-        result (d/q '[:find ?e
-                      :in $
-                      :where
-                      [?e :user/id]]
-                    db)]
-    (->> result
-         (map first ,,,)
-         (map (partial d/entity db) ,,,))))
-
-(defn users-layout [url]
+(defn users-layout [db url]
   [:div.container
-   [:h3 (str "GET | POST " url)]
+   (temp/standard-get-post-h3 url)
 
-   [:div
-    [:h4 (str (vocab :users) " (GET " url ")")]
-    [:p (vocab :show)]
-    [:hr]
-    [:ul#users
-     (for [ue (get-user-entities)]
-       [:li [:a {:href (str (util/drop-path-segment url)
-                            "/user/" (:user/id ue))}
-             (or (:user/name ue) (:user/id ue))]])
-     ]
-    [:hr]
-    [:h4 "application/edn"]
-    [:code (pr-str (map :user/id (get-user-entities)))]
-    [:hr]
-    ]
+   (temp/standard-get-layout {:url url
+                              :get-title (vocab :users)
+                              :description (vocab :show)
+                              :get-id-fn :user/id
+                              :get-name-fn :user/name
+                              :entities (queries/get-entities db :user/id)
+                              :sub-entity-path "user/"})
 
-   [:div
-    [:h4 (str (vocab :create)" (POST " url ")")]
-    [:form.form-horizontal {:role :form
-                            :method :post
-                            :action url}
-     (create-user-layout)]
-    ]])
+   (temp/standard-post-layout {:url url
+                               :post-title (vocab :create)
+                               :post-layout-fn (partial create-user-layout db)})])
+
 
 (defn get-users
   [{:keys [url-for params] :as request}]
-  (let [url (url-for ::get-users :app-name :rest) ]
-    (->> (users-layout url)
-         (common/body url (auth/get-identity request) ,,,)
-         (hp/html5 (common/head (str "GET | POST " url)) ,,,)
-         rur/response)))
+  (let [db (db/current-db)]
+    (common/standard-get ::get-users
+                         (partial users-layout db)
+                         request)))
 
 
-
-(defn user-layout [url]
+(defn user-layout [db url]
   [:div.container
-   [:h3 (str "GET | POST " url)]
+   (temp/standard-get-post-h3 url)
 
-   [:div
-    [:h4 (str (vocab :users) " (GET " url ")")]
-    [:p (vocab :show)]
-    [:hr]
-    [:ul#users
-     (for [ue (get-user-entities)]
-       [:li [:a {:href (str url "/user/" (:user/id ue))} (or (:user/name ue) (:user/id ue))]])
-     ]
-    [:hr]
-    [:h4 "application/edn"]
-    [:code (pr-str (map :user/id (get-user-entities)))]
-    [:hr]
-    ]
+   (temp/standard-get-layout {:url url
+                              :get-title (vocab :users)
+                              :description (vocab :show)
+                              :get-id-fn :user/id
+                              :get-name-fn :user/name
+                              :entities (queries/get-entities db :user/id)
+                              :sub-entity-path "user/"})
 
-   [:div
-    [:h4 (str (vocab :create)" (POST " url ")")]
-    [:form.form-horizontal {:role :form
-                            :method :post
-                            :action url}
-     (create-user-layout)]
-    ]])
+   (temp/standard-post-layout {:url url
+                               :post-title (vocab :create)
+                               :post-layout-fn (partial create-user-layout db)})])
 
 (defn get-user
   [{:keys [url-for params] :as request}]
-  (let [url (url-for ::get-user :app-name :rest) ]
-    (->> (user-layout url)
-         (common/body url (auth/get-identity request) ,,,)
-         (hp/html5 (common/head (str "GET | POST " url)) ,,,)
-         rur/response)))
-
-
+  (let [db (db/current-db)]
+    (common/standard-get ::get-user
+                         (partial user-layout db)
+                         request)))
 

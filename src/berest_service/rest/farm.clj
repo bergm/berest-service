@@ -1,9 +1,10 @@
 (ns berest-service.rest.farm
   (:require [berest-service.berest.core :as bc]
-            [berest-service.berest.datomic :as bd]
+            [berest-service.berest.datomic :as db]
             [berest-service.rest.common :as common]
-            [berest-service.rest.queries :as rq]
+            [berest-service.rest.queries :as queries]
             [berest-service.rest.util :as util]
+            [berest-service.rest.template :as temp]
             #_[berest-service.service :as bs]
             [datomic.api :as d]
             #_[io.pedestal.service.http.route :as route]
@@ -41,57 +42,36 @@
           [element (or lang common/*lang*)] "UNKNOWN element"))
 
 
-(defn create-farms-layout []
+(defn create-farms-layout [db ]
   [:div.container
-   (for [e (rq/get-ui-entities :rest.ui/groups :farm)]
+   (for [e (queries/get-ui-entities db :rest.ui/groups :farm)]
      (common/create-form-element e))
 
    [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])
 
-(defn get-farm-entities []
-  (let [db (bd/current-db "berest")
-        result (d/q '[:find ?farm-e
-                      :in $
-                      :where
-                      [?farm-e :farm/id _]]
-                    db)]
-    (->> result
-         (map first ,,,)
-         (map (partial d/entity db) ,,,))))
-
-(defn farms-layout [url]
+(defn farms-layout [db url]
   [:div.container
-   [:h3 (str "GET | POST " url)]
+   (temp/standard-get-post-h3 url)
 
-   [:div
-    [:h4 (str (vocab :farms) " (GET " url ")")]
-    [:p (vocab :show)]
-    [:hr]
-    [:ul#farms
-     (for [fe (get-farm-entities)]
-       [:li [:a {:href (str url "/" (:farm/id fe))} (or (:farm/name fe) (:farm/id fe))]])
-     ]
-    [:hr]
-    [:h4 "application/edn"]
-    [:code (pr-str (map :farm/id (get-farm-entities)))]
-    [:hr]
-    ]
+   (temp/standard-get-layout {:url url
+                              :get-title (vocab :farms)
+                              :description (vocab :show)
+                              :get-id-fn :farm/id
+                              :get-name-fn :farm/name
+                              :entities (queries/get-entities db :farm/id)
+                              :sub-entity-path "farm/"})
 
-   [:div
-    [:h4 (str (vocab :create)" (POST " url ")")]
-    [:form.form-horizontal {:role :form
-                            :method :post
-                            :action url}
-     (create-farms-layout)]
-    ]])
+   (temp/standard-post-layout {:url url
+                               :post-title (vocab :create)
+                               :post-layout-fn (partial create-farms-layout db)})])
 
 (defn get-farms
   [{:keys [url-for params] :as request}]
-  (let [url (url-for ::get-farms :app-name :rest) ]
-    (->> (farms-layout url)
-         (common/body (gua/get-identity request) ,,,)
-         (hp/html5 url (common/head (str "GET | POST " url)) ,,,)
-         rur/response)))
+  (let [db (db/current-db)]
+    (common/standard-get ::get-farms
+                         (partial farms-layout db)
+                         request)))
+
 
 (defn create-new-farm [req]
   (rur/response "post to create a new farm"))
@@ -102,38 +82,6 @@
 
 (defn update-farm [req]
   (rur/response (str "put to farm id: " (get-in req [:path-params :farm-id]))))
-
-
-#_(defn farm-layout [user-id id]
-  [:div "user-id" user-id "& farm no " id]
-  #_(if-let [plot (bc/db-read-plot id)]
-    (let []
-      [:h1 (str "Schlag: " id)]
-        [:div#plotData
-          [:div#currentDCData
-            (str "DC: ")]])
-    ([:div#error "Fehler: Konnte Schlag mit Nummer: " id " nicht laden!"])))
-
-#_(defn farms-layout [user-id]
-  [:div "all farms"
-   #_(he/javascript-tag "weberest.web.views.client.hello_world()")
-   (hf/submit-button {:id "xxx"} "press for hello")
-   #_(hp/include-js "/cljs/main.js")])
-
-#_(defn create-farm [user-id farm-data]
-  (:id farm-data))
-
-#_(defn new-farm-layout [user-id]
-  (hf/form-to [:post "/farms/new"]
-    [:div
-      (hf/label "id" "Betriebsnummer")
-      (hf/text-field "id" "111")]
-    [:div
-      (hf/label "name" "Betriebsname:")
-      (hf/text-field "name" "")]
-    #_(login-fields user)
-    (hf/submit-button "Betrieb erstellen")))
-
 
 
 

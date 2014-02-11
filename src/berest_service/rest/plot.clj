@@ -2,10 +2,11 @@
   (:require [clojure.string :as cs]
             [io.pedestal.service.http :as http]
             [berest-service.berest.core :as bc]
-            [berest-service.berest.datomic :as bd]
+            [berest-service.berest.datomic :as db]
             [berest-service.berest.plot :as plot]
-            [berest-service.rest.common :as rc]
-            [berest-service.rest.queries :as rq]
+            [berest-service.rest.common :as common]
+            [berest-service.rest.queries :as queries]
+            [berest-service.rest.template :as temp]
             #_[berest-service.service :as bs]
             [datomic.api :as d]
             #_[io.pedestal.service.http.route :as route]
@@ -40,7 +41,40 @@
                            :lang/en "Create"}
 
            }
-          [element (or lang rc/*lang*)] "UNKNOWN element"))
+          [element (or lang common/*lang*)] "UNKNOWN element"))
+
+(defn create-plots-layout [db]
+  [:div.container
+   (for [e (queries/get-ui-entities db :rest.ui/groups :plot)]
+     (common/create-form-element e))
+
+   [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])
+
+(defn plots-layout [db url]
+  [:div.container
+   (temp/standard-get-post-h3 url)
+
+   (temp/standard-get-layout {:url url
+                              :get-title (vocab :farms)
+                              :description (vocab :show)
+                              :get-id-fn :farm/id
+                              :get-name-fn :farm/name
+                              :entities (queries/get-entities db :plot/id)
+                              :sub-entity-path "plot/"})
+
+   (temp/standard-post-layout {:url url
+                               :post-title (vocab :create)
+                               :post-layout-fn (partial create-plots-layout db)})])
+
+(defn get-plots
+  [{:keys [url-for params] :as request}]
+  (let [db (db/current-db)]
+    (common/standard-get ::get-plots
+                         (partial plots-layout db)
+                         request)))
+
+
+
 
 (defn get-plot-ids [{:keys [path-params] :as request}]
   (let [{:keys [farm-id user-id]} path-params]

@@ -6,9 +6,11 @@
             [hiccup.def :as hd]
             [hiccup.util :as hu]
             [datomic.api :as d]
-            [berest-service.berest.datomic :as bd]
+            #_[berest-service.berest.datomic :as db]
             [berest-service.rest.queries :as rq]
-            [ring.util.response :as rur]))
+            [berest-service.rest.util :as util]
+            [ring.util.response :as rur]
+            [geheimtur.util.auth :as auth]))
 
 (def ^:dynamic *lang* :lang/de)
 
@@ -194,9 +196,6 @@
                           "textarea { width: 80%; height: 200px }"]]
                         [:body content]))
 
-
-
-
 (defn head
   [& [title]]
   [:head
@@ -212,34 +211,9 @@
    "<![endif]-->"])
 
 
-(defn- all-path-subsegments-reversed
-  [url-like]
-  (as-> url-like x
-        (cs/split x #"/")
-        (iterate rest x)
-        (take-while not-empty x)
-        (reverse x)))
-
-(defn- url->link-segments
-  [url-like & [base]]
-  (when url-like
-    (let [url-like* (cs/split url-like #"/")
-          urls (for [i (range 1 (inc (count url-like*)))]
-                 (split-at i url-like*))]
-      (as-> urls _
-            (map (fn [[fst _]]
-                   (let [url (cs/join "/" fst)
-                         url* (if (empty? url) (or base "") url)
-                         display (str (last fst) "/")]
-                     [:a {:href url*} display]))
-                 _)
-            (drop-last _ )
-            (concat _ [[:a (str (last url-like*) "/")]])))))
 
 (defn navbar
-  [url user]
-  (println (url->link-segments url))
-  (println "url: " url " user: " user)
+  [user]
   [:nav {:class "navbar navbar-default" :role "navigation"}
    [:div {:class "navbar-header"}
     [:button {:type "button" :class "navbar-toggle" :data-toggle "collapse" :data-target ".navbar-collapse"}
@@ -250,8 +224,8 @@
     [:a {:class "navbar-brand" :href "/"} (vocab :page-name)]]
    [:div {:class "collapse navbar-collapse"}
     [:ul {:class "nav navbar-nav"}
-     (for [segment (url->link-segments url)]
-       [:li segment])]
+     [:li [:a {:href "/home"} "Home"]]
+     [:li [:a {:href ""} "other quick-link"]]]
     (when-not (nil? user)
       [:div {:class "navbar-right"}
        [:p {:class "navbar-text"}
@@ -260,9 +234,9 @@
         "Logout"]])]])
 
 (defn body
-  [url user & content]
+  [user & content]
   [:body
-   (navbar url user)
+   (navbar user)
    [:div {:class "container"}
     [:div {:class "row"}
      content]]
@@ -274,7 +248,7 @@
   (->> [:div {:class "col-lg-8 col-lg-offset-2"}
         [:h2 (:title context)]
         [:p (:message context)]]
-       (body nil (:user context) ,,,)
+       (body (:user context) ,,,)
        (hp/html5 (head) ,,,)
        rur/response))
 
@@ -283,12 +257,18 @@
   (->> [:div {:class "col-lg-8 col-lg-offset-2"}
         [:h2 "Unauthorized"]
         [:p "It looks like there was a problem authenticating you, sir. Please try again."]]
-       (body nil nil ,,,)
+       (body nil ,,,)
        (hp/html5 (head) ,,,)
        rur/response))
 
 
-
+(defn standard-get
+  [route-name layout-fn {:keys [url-for params] :as request}]
+  (let [url (url-for route-name :app-name :rest) ]
+    (->> (layout-fn url)
+         (body (auth/get-identity request) ,,,)
+         (hp/html5 (head (str "GET | POST " url)) ,,,)
+         rur/response)))
 
 
 
