@@ -45,7 +45,7 @@
 (defn create-user-layout [db]
   [:div.container
    (for [e (queries/get-ui-entities db :rest.ui/groups :user)]
-     (common/create-form-element e))
+     (common/create-form-element db e))
 
    [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])
 
@@ -59,7 +59,7 @@
                               :get-id-fn :user/id
                               :get-name-fn :user/name
                               :entities (queries/get-entities db :user/id)
-                              :sub-entity-path "user/"})
+                              :sub-entity-path ["users"]})
 
    (temp/standard-post-layout {:url url
                                :post-title (vocab :create)

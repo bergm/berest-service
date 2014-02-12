@@ -241,6 +241,33 @@
   :rest.ui/groups :geo-coord}
 
 
+ ;; user
+
+ {:db/id :user/id
+  :rest.ui/order-no 1
+  :rest.ui/label {:lang/en "id"
+                  :lang/de "Id"}
+  :rest.ui/placeholder {:lang/en "user id"
+                        :lang/de "Nutzer Id"}
+  :rest.ui/groups :user}
+
+ {:db/id :user/password
+  :rest.ui/order-no 2
+  :rest.ui/label {:lang/en "password"
+                  :lang/de "Passwort"}
+  :rest.ui/placeholder {:lang/en "some good password"
+                        :lang/de "ein gutes Passwort"}
+  :rest.ui/groups :user}
+
+ {:db/id :user/full-name
+  :rest.ui/order-no 2
+  :rest.ui/label {:lang/en "full name"
+                  :lang/de "voller Name"}
+  :rest.ui/placeholder {:lang/en "John Doe"
+                        :lang/de "Max Mustermann"}
+  :rest.ui/groups :user}
+
+
 
 
 
@@ -259,4 +286,5 @@
 
  ]
 
-
+
+

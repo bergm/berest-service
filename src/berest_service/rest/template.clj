@@ -47,8 +47,9 @@
    [:hr]
    [:ul#farms
     (for [e entities]
-      [:li [:a {:href (str (util/drop-path-segment url)
-                           sub-entity-path (get-id-fn e))}
+      [:li [:a {:href (str (util/drop-path-segment url) "/"
+                           (cs/join "/" sub-entity-path) "/"
+                           (get-id-fn e) "/")}
             (or (get-name-fn e) (get-id-fn e))]])]
    [:hr]
    [:h4 "application/edn"]

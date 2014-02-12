@@ -78,7 +78,7 @@
      ["/unauthorized"
       {:get common/unauthorized}]
 
-     ["/api/"
+     ["/api"
       {:get api/get-api}
 
       ["/simulate"
@@ -91,33 +91,33 @@
       ^:interceptors [(gi/guard :roles #{:admin} :silent? false)]
       {:get user/get-users}]
 
-     ["/data/"
+     ["/data"
       ^:interceptors [(gi/guard :roles #{:admin :farmer :consultant} :silent? false)]
 
-      ["/user/:user-id"
+      ["/users/:user-id"
        {:get user/get-user}]
 
       ["/weather-stations"
        {:get wstation/get-weather-stations
-        :post wstation/create-weather-station}]
+        :post wstation/post-weather-stations}
 
-      ["/weather-station/:wstation-id"
+       ["/:wstation-id"
        {:get wstation/get-weather-station
-        :put wstation/update-weather-station}]
+        :put wstation/put-weather-station}]]
 
-      ["/farms/"
+      ["/farms"
        {:get farm/get-farms
-        :post farm/create-new-farm}]
+        :post farm/create-new-farm}
 
-       ["/farm/:farm-id/"
+       ["/:farm-id/"
         {:get farm/get-farm
          :put farm/update-farm}
 
         ["/plots"
-         {:get plot/get-plot-ids}]
+         {:get plot/get-plot-ids}
 
-        ["/plot/:plot-id-format"
-         {:get plot/get-rest-plot}]]]]]])
+         ["/:plot-id-format"
+         {:get plot/get-rest-plot}]]]]]]]])
 
 
 ;; You can use this fn or a per-request fn via io.pedestal.service.http.route/url-for

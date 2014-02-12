@@ -46,7 +46,7 @@
 (defn create-plots-layout [db]
   [:div.container
    (for [e (queries/get-ui-entities db :rest.ui/groups :plot)]
-     (common/create-form-element e))
+     (common/create-form-element db e))
 
    [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])
 
@@ -60,7 +60,7 @@
                               :get-id-fn :farm/id
                               :get-name-fn :farm/name
                               :entities (queries/get-entities db :plot/id)
-                              :sub-entity-path "plot/"})
+                              :sub-entity-path ["plots"]})
 
    (temp/standard-post-layout {:url url
                                :post-title (vocab :create)

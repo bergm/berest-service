@@ -42,10 +42,10 @@
           [element (or lang common/*lang*)] "UNKNOWN element"))
 
 
-(defn create-farms-layout [db ]
+(defn create-farms-layout [db]
   [:div.container
    (for [e (queries/get-ui-entities db :rest.ui/groups :farm)]
-     (common/create-form-element e))
+     (common/create-form-element db e))
 
    [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])
 
@@ -59,7 +59,7 @@
                               :get-id-fn :farm/id
                               :get-name-fn :farm/name
                               :entities (queries/get-entities db :farm/id)
-                              :sub-entity-path "farm/"})
+                              :sub-entity-path ["farms"]})
 
    (temp/standard-post-layout {:url url
                                :post-title (vocab :create)

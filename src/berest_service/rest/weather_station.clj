@@ -41,12 +41,57 @@
 (defn create-wstation-layout [db]
   [:div.container
    (for [e (queries/get-ui-entities db :rest.ui/groups :weather-station)]
-     (common/create-form-element e))
+     (common/create-form-element db e))
 
    [:button.btn.btn-primary {:type :submit} (vocab :create-button)]])
 
 
 (defn weather-stations-layout [db url]
+  [:div.container
+   (temp/standard-get-post-h3 url)
+
+   (temp/standard-get-layout {:url url
+                              :get-title (vocab :wstations)
+                              :description (vocab :show)
+                              :get-id-fn :weather-station/id
+                              :get-name-fn :weather-station/name
+                              :entities (queries/get-entities db :weather-station/id)
+                              :sub-entity-path ["weather-stations"]})
+
+   (temp/standard-post-layout {:url url
+                               :post-title (vocab :create)
+                               :post-layout-fn (partial create-wstation-layout db)})])
+
+
+(defn get-weather-stations
+  [{:keys [url-for params] :as request}]
+  (let [db (db/current-db)]
+    (common/standard-get ::get-weather-stations
+                         (partial weather-stations-layout db)
+                         request)))
+
+
+(defn post-weather-stations [{:keys [form-params] :as request}]
+  (let [db (db/current-db)
+        form-data (into {} (map (fn [[k v]]
+                                  (let [attr (common/id->ns-attr k)]
+                                    [attr (queries/string->value db attr v)]))
+                                form-params))
+        transaction-data (assoc form-data :db/id (d/tempid :db.part/user))]
+    #_(try
+        (d/transact (db/datomic-connection) transaction-data)
+        (catch Exception e
+          (log/info "Couldn't store weather station data to datomic! data:
+                    [\n" transaction-data "\n]")))
+
+    (rur/response (pr-str transaction-data))
+
+    ))
+
+
+
+
+(defn weather-station-layout [db url]
   [:div.container
    (temp/standard-get-post-h3 url)
 
@@ -63,62 +108,20 @@
                                :post-layout-fn (partial create-wstation-layout db)})])
 
 
-(defn get-weather-stations
-  [{:keys [url-for params] :as request}]
-  (let [db (db/current-db)]
-    (common/standard-get ::get-weather-stations
-                         (partial weather-stations-layout db)
-                         request)))
-
-
-(defn create-weather-station [req]
-  (let [form-data (:form-params req)
-        form-data* (into {} (map (fn [[k v]]
-                                   (let [attr (common/id->ns-attr k)]
-                                     [attr (queries/string->value attr v)]))
-                                 form-data))
-        transaction-data (assoc form-data* :db/id (d/tempid :db.part/user))]
-    #_(try
-      (d/transact (db/datomic-connection) transaction-data)
-      (catch Exception e
-        (log/info "Couldn't store weather station data to datomic! data:
-                  [\n" transaction-data "\n]")))
-
-    (rur/response (pr-str transaction-data))
-
-    ))
-
-
-
-
-(defn weather-station-layout [url]
-  [:div.container
-   (temp/standard-get-post-h3 url)
-
-   (temp/standard-get-layout {:url url
-                              :get-title (vocab :wstations)
-                              :description (vocab :show)
-                              :get-id-fn :weather-station/id
-                              :get-name-fn :weather-station/name
-                              :entities (queries/get-entities (db/current-db) :weather-station/id)
-                              :sub-entity-path "weather-station/"})
-
-   (temp/standard-post-layout {:url url
-                               :post-title (vocab :create)
-                               :post-layout-fn create-wstation-layout})])
-
-
 (defn get-weather-station
   [{:keys [url-for params] :as request}]
-  (common/standard-get ::get-weather-station weather-station-layout request))
+  (let [db (db/current-db)]
+    (common/standard-get ::get-weather-station
+                         (partial weather-station-layout db)
+                         request)))
 
-(defn update-weather-station [req]
-  (let [form-data (:form-params req)
-        form-data* (into {} (map (fn [[k v]]
-                                   (let [attr (common/id->ns-attr k)]
-                                     [attr (queries/string->value attr v)]))
-                                 form-data))
-        transaction-data (assoc form-data* :db/id (d/tempid :db.part/user))]
+(defn put-weather-station [{:keys [form-params] :as request}]
+  (let [db (db/current-db)
+        form-data (into {} (map (fn [[k v]]
+                                  (let [attr (common/id->ns-attr k)]
+                                    [attr (queries/string->value db attr v)]))
+                                form-params))
+        transaction-data (assoc form-data :db/id (d/tempid :db.part/user))]
     #_(try
       (d/transact (db/datomic-connection) transaction-data)
       (catch Exception e
