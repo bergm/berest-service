@@ -273,19 +273,10 @@
                   :lang/de "Role"}
   :rest.ui/groups :user
   :rest.ui/type :rest.ui.type/enum-list
-  :rest.ui/values [:user.role/admin
-                   :user.role/consultant
-                   :user.role/farmer
-                   :user.role/guest]}
-
- {:db/id :contract/state
-  :rest.ui/type :rest.ui.type/enum-list
-  :rest.ui/list :contract-state
-  :rest.ui/order-no 1
-  :rest.ui/label {:lang/en "contract state"
-                  :lang/de "Vertragsstatus"}
-  :rest.ui/groups :contract}
-
+  :rest.ui/enum-list-values [:user.role/admin
+                             :user.role/consultant
+                             :user.role/farmer
+                             :user.role/guest]}
 
 
  ;;some test data

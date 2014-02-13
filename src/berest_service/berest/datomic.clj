@@ -62,9 +62,6 @@
        datomic-connection-string
        d/delete-database))
 
-
-
-
 (comment "instarepl debugging code"
 
   (delete-db "berest")
@@ -201,26 +198,24 @@
 (comment "moved the only transaction function to dwd.clj as it is actually pretty domain specific")
 
 
-
-
 ;; user management and credential functions
 
 (defn store-credentials
   "store given credentials into db"
-  [user-id password full-name roles & [db-id]]
+  [db-connection user-id password full-name roles]
   (let [enc-pwd (pwd/encrypt password)
-        kw-roles (map #(->> % name (keyword "user.role")) roles)
+        kw-roles (map #(->> % name (keyword "user.role" ,,,)) roles)
         creds {:db/id (d/tempid :db.part/user)
                :user/id user-id
                :user/password enc-pwd
                :user/full-name full-name
                :user/roles kw-roles}]
     (try
-      (d/transact (datomic-connection (or db-id *db-id*)) [creds])
+      (d/transact db-connection [creds])
       true
       (catch Exception e
-        (println #_log/info "Couldn't store credentials into datomic database " *db-id* "! data w/o pwd: [\n"
-                  (dissoc :user/password creds) "\n]")
+        (println e #_log/info " Couldn't store credentials into datomic database! Data w/o pwd: [\n"
+                 (dissoc creds :user/password) "\n]")
         nil))))
 
 (defn credentials
@@ -239,7 +234,7 @@
                    (into #{} ,,,))
        :full-name (:user/full-name identity)})))
 
-(credentials "michael" "#zALf!")
+#_(credentials "michael" "#zALf!")
 
 (comment "insta repl code"
   (d/q '[:find ?e
@@ -256,5 +251,17 @@
        ffirst
        (d/entity (current-db) ,,,)
        d/touch)
+
+  (->> (d/q '[:find ?e
+            :in $
+            :where
+            [?e :db/ident :user/id]]
+          (current-db))
+     ffirst
+     (d/entity (current-db))
+     d/touch)
+
+
   )
+
 

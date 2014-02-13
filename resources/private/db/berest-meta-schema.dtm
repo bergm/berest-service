@@ -78,6 +78,13 @@
   attribute which is used by all the list elements)."
   :db.install/_attribute :db.part/db}
 
+ {:db/id #db/id[:db.part/db]
+  :db/ident :rest.ui/enum-list-values
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/many
+  :db/doc "A list of enum values encoded as keywords (:db/idents)."
+  :db.install/_attribute :db.part/db}
+
 
  ;; language attributes
  {:db/id #db/id[:db.part/db]
@@ -97,4 +104,5 @@
  ]
 
 
-
+
+

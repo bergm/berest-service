@@ -148,13 +148,23 @@
      (for [e (queries/get-ui-entities db :rest.ui/groups ref-group)]
        (create-form-element db e)))])
 
-(defmethod create-form-element {:db/valueType :db.type/ref
+#_(defmethod create-form-element {:db/valueType :db.type/ref
                                 :db/cardinality :db.cardinality/one
                                 :rest.ui/type :rest.ui.type/enum-list}
   [db ui-entity]
   (select-field ui-entity (map (fn [e] {:label (-> e :rest.ui/label *lang*)
                                         :value (:db/ident e)})
                                (queries/get-ui-entities db :rest.ui/list (:rest.ui/list ui-entity)))))
+
+
+(defmethod create-form-element {:db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/many
+                                :rest.ui/type :rest.ui.type/enum-list}
+  [db ui-entity]
+  (select-field ui-entity (map (fn [ident] {:label (name ident)
+                                            :value ident})
+                               (:rest.ui/enum-list-values ui-entity))))
+
 
 (defmethod create-form-element {:db/valueType :db.type/ref
                                 :db/cardinality :db.cardinality/one
