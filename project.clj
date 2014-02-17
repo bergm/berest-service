@@ -14,7 +14,7 @@
                  ;; [io.pedestal/pedestal.tomcat "0.2.1"]
 
                  #_[org.infinispan/infinispan-client-hotrod "6.0.0.CR1"]
-                 [com.datomic/datomic-pro "0.8.4270"]
+                 [com.datomic/datomic-pro "0.9.4556"]
                  #_[com.datomic/datomic-free "0.8.4218"]
 
                  [geheimtur "0.1.1"]
@@ -36,9 +36,12 @@
                  [instaparse "1.2.13"]
                  [org.clojure/tools.logging "0.2.6"]
                  [org.clojure/tools.namespace "0.2.4"]
+                 [clojurewerkz/propertied "1.1.0"]
 
                  ]
-
+  :repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"
+                                   :username "michael.berg@zalf.de"
+                                   :password "dfe713b3-62f0-469d-8ac9-07d6b02b0175"}}
   :min-lein-version "2.0.0"
   :resource-paths ["config", "resources"]
   :aliases {"run-dev" ["trampoline" "run" "-m" "berest-service.server/run-dev"]}

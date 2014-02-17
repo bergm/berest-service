@@ -9,9 +9,12 @@
             [clojure.tools.logging :as log]
             [datomic.api :as d :refer [q db]]
             [berest-service.berest.util :as bu]
-            [berest-service.berest.helper :as bh :refer [|->]]))
+            [berest-service.berest.helper :as bh :refer [|->]]
+            [clojurewerkz.propertied.properties :as properties]))
 
 (def ^:dynamic *db-id* "berest")
+
+
 
 (defn datomic-connection-string [base-uri db-id]
   (str base-uri db-id))
@@ -25,9 +28,21 @@
 (def infinispan-local-datomic-base-uri "datomic:inf://localhost:11222/")
 (def infinispan-local-connection-string (partial datomic-connection-string infinispan-local-datomic-base-uri))
 
-(def dynamodb-base-uri "datomic:ddb://eu-west-1/berest-datomic-store/%s?aws_access_key_id=AKIAIKDIFN2XPB7ZE3SA&aws_secret_key=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")
-(defn dynamodb-connection-string [db-id]
-  (format dynamodb-base-uri db-id))
+#_(def dynamodb-base-uri "datomic:ddb://eu-west-1/berest-datomic-store/%s?aws_access_key_id=AKIAIKDIFN2XPB7ZE3SA&aws_secret_key=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")
+#_(defn dynamodb-connection-string [db-id]
+    (format dynamodb-base-uri db-id))
+
+(def dynamodb-base-uri
+  (do
+    ;; set aws credentials
+    (->> "private/db/aws-credentials.properties"
+         cjio/resource
+         properties/load-from
+         properties/properties->map
+         (map (fn [[k v]] (System/setProperty k v)) ,,,)
+         dorun)
+    "datomic:ddb://eu-west-1/berest-datomic-store/"))
+(def dynamodb-connection-string (partial datomic-connection-string dynamodb-base-uri))
 
 (def datomic-connection-string dynamodb-connection-string)
 
@@ -263,5 +278,3 @@
 
 
   )
-
-
