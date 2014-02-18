@@ -139,11 +139,11 @@
                (bd/current-db) "10162" #inst "2014-02-04T00:00:00.000-00:00")
   )
 
-(defn make-prognosis-filename [date]
-  (str "FY60DWLA-" (ctf/unparse (ctf/formatter "yyyyMMdd") date) "_0915.txt"))
 
-(defn make-measured-filename [date]
-  (str "FY60DWLB-" (ctf/unparse (ctf/formatter "yyyyMMdd") date) "_0915.txt"))
+(defn make-filename [kind date & {:keys [h min] :or {h 9, min 15}}]
+  (str "FY60DWL" ({:prognosis "A"
+                   :measured "B"} kind)
+       "-" (ctf/unparse (ctf/formatter "yyyyMMdd") date) "_" (format "%02d%02d" h min) ".txt"))
 
 (comment "instarepl debug code"
   (make-prognosis-filename (ctc/date-time 2013 6 3))
@@ -162,9 +162,7 @@
   (try
     (let [date* (or date (ctc/now))
           url "ftp://tran.zalf.de/pub/net/wetter/"
-          url* (str url (case kind
-                          :prognosis (make-prognosis-filename date*)
-                          :measured (make-measured-filename date*)))
+          url* (str url (make-filename kind date*))
           data (try
                  (slurp url*)
                  (catch Exception e

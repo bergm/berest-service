@@ -63,7 +63,7 @@
                   :lang/de "DWD Wetterstation"}
   :rest.ui/groups :farm
   :rest.ui/type :rest.ui.type/ref-list
-  :rest.ui/list :weather-station/id}
+  :rest.ui/list-values :weather-station/id}
 
  {:db/id :farm/weather-station
   :rest.ui/order-no 10
@@ -142,7 +142,7 @@
 
  {:db/id :contract/state
   :rest.ui/type :rest.ui.type/enum-list
-  :rest.ui/list :contract-state
+  :rest.ui/list-values :contract/state
   :rest.ui/order-no 1
   :rest.ui/label {:lang/en "contract state"
                   :lang/de "Vertragsstatus"}
@@ -160,22 +160,22 @@
                   :lang/de "Vertragsende"}
   :rest.ui/groups :contract}
 
-;; contract state
+;; contract state list elements
 
  {:db/id :contract.state/contact
-  :rest.ui/list :contract-state
+  :rest.ui/list :contract/state
   :rest.ui/order-no 1
   :rest.ui/label {:lang/en "contact"
                   :lang/de "Kontakt"}}
 
  {:db/id :contract.state/consulting
-  :rest.ui/list :contract-state
+  :rest.ui/list :contract/state
   :rest.ui/order-no 2
   :rest.ui/label {:lang/en "consulting"
                   :lang/de "Beratung"}}
 
  {:db/id :contract.state/repeated
-  :rest.ui/list :contract-state
+  :rest.ui/list :contract/state
   :rest.ui/order-no 3
   :rest.ui/label {:lang/en "repeated"
                   :lang/de "Wiederholung"}}
@@ -270,13 +270,36 @@
  {:db/id :user/roles
   :rest.ui/order-no 4
   :rest.ui/label {:lang/en "role"
-                  :lang/de "Role"}
+                  :lang/de "Rolle"}
   :rest.ui/groups :user
   :rest.ui/type :rest.ui.type/enum-list
-  :rest.ui/enum-list-values [:user.role/admin
-                             :user.role/consultant
-                             :user.role/farmer
-                             :user.role/guest]}
+  :rest.ui/list-values :user/roles}
+
+ ;; user roles list elements
+
+ {:db/id :user.role/admin
+  :rest.ui/list :user/roles
+  :rest.ui/order-no 1
+  :rest.ui/label {:lang/en "Admininstrator"
+                  :lang/de "Administrator"}}
+
+ {:db/id :user.role/consultant
+  :rest.ui/list :user/roles
+  :rest.ui/order-no 2
+  :rest.ui/label {:lang/en "Consultant"
+                  :lang/de "Berater"}}
+
+ {:db/id :user.role/farmer
+  :rest.ui/list :user/roles
+  :rest.ui/order-no 3
+  :rest.ui/label {:lang/en "Farmer"
+                  :lang/de "Landwirt"}}
+
+ {:db/id :user.role/guest
+  :rest.ui/list :user/roles
+  :rest.ui/order-no 4
+  :rest.ui/label {:lang/en "Guest"
+                  :lang/de "Gast"}}
 
 
  ;;some test data

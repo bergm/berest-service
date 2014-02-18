@@ -17,24 +17,25 @@
 
 
 
-(jobs/schedule :test-fetch-dwd-climate-data
+#_(jobs/schedule :test-fetch-dwd-climate-data
                (partial dwd/import-dwd-data-into-datomic :measured)
                :in [1 :minute]
                :every [2 :minutes]
                :repeat 3
                :singleton true) ;just one server has to fetch and store the data
 
-#_(jobs/schedule :fetch-dwd-prognosis-data
+(jobs/schedule :fetch-dwd-prognosis-data
                (partial dwd/import-dwd-data-into-datomic :prognosis)
                :at "10:30"
-               :every [3 :days]
+               :every :day #_[3 :days]
                :singleton true)
 
-#_(jobs/schedule :fetch-dwd-measured-data
+(jobs/schedule :fetch-dwd-measured-data
                (partial dwd/import-dwd-data-into-datomic :measured)
-               :at "10:30"
+               :at "10:35"
                :every :day
                :singleton true)
 
 
-
+
+

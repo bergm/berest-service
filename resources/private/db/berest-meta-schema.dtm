@@ -65,7 +65,6 @@
  [:db/add #db/id[:db.part/user] :db/ident :rest.ui.type/ref-list]
  [:db/add #db/id[:db.part/user] :db/ident :rest.ui.type/enum-list]
 
-
  {:db/id #db/id[:db.part/db]
   :db/ident :rest.ui/list
   :db/valueType :db.type/keyword
@@ -79,10 +78,10 @@
   :db.install/_attribute :db.part/db}
 
  {:db/id #db/id[:db.part/db]
-  :db/ident :rest.ui/enum-list-values
+  :db/ident :rest.ui/list-values
   :db/valueType :db.type/keyword
-  :db/cardinality :db.cardinality/many
-  :db/doc "A list of enum values encoded as keywords (:db/idents)."
+  :db/cardinality :db.cardinality/one
+  :db/doc "References with a keyword the ui entities representing the list elements."
   :db.install/_attribute :db.part/db}
 
 

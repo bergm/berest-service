@@ -158,30 +158,41 @@
 
 
 (defmethod create-form-element {:db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/one
+                                :rest.ui/type :rest.ui.type/enum-list}
+  [db ui-entity]
+  (select-field ui-entity (map (fn [e]
+                                 {:label (or (-> e :rest.ui/label *lang*) (:db/id e))
+                                  :value (:db/id e)})
+                               (queries/get-ui-entities db :rest.ui/list (:rest.ui/list-values ui-entity)))))
+
+(defmethod create-form-element {:db/valueType :db.type/ref
                                 :db/cardinality :db.cardinality/many
                                 :rest.ui/type :rest.ui.type/enum-list}
   [db ui-entity]
-  (select-field ui-entity (map (fn [ident] {:label (name ident)
-                                            :value ident})
-                               (:rest.ui/enum-list-values ui-entity))))
+  (select-field ui-entity (map (fn [e]
+                                 {:label (or (-> e :rest.ui/label *lang*) (:db/id e))
+                                  :value (:db/id e)})
+                               (queries/get-ui-entities db :rest.ui/list (:rest.ui/list-values ui-entity)))))
 
 
 (defmethod create-form-element {:db/valueType :db.type/ref
                                 :db/cardinality :db.cardinality/one
                                 :rest.ui/type :rest.ui.type/ref-list}
   [db ui-entity]
-  (let [id-attr (:rest.ui/list ui-entity)
-        id-attr-ns (namespace id-attr)]
+  (let [id-attr (:rest.ui/list-values ui-entity)
+        name-attr (keyword (namespace id-attr) "name")]
     (select-field ui-entity (map (fn [e]
                                    (let [id (id-attr e)
-                                         name-attr (keyword id-attr-ns "name")
                                          label (or (name-attr e) id)]
                                      {:label label
                                       :value id}))
-                                 (queries/get-ui-entities db (:rest.ui/list ui-entity))))))
+                                 (queries/get-ui-entities db id-attr)))))
 
 
-#_(first (map create-form-element (db/current-db) (get-ui-entities (db/current-db) :rest.ui/groups :address)))
+
+#_(require '[berest-service.berest.datomic :as db])
+#_(map create-form-element (db/current-db) (queries/get-ui-entities (db/current-db) :rest.ui/groups :user))
 
 
 

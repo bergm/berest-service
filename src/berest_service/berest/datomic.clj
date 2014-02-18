@@ -51,6 +51,11 @@
        datomic-connection-string
        d/connect))
 
+(defn db-connection [& [db-id]]
+  (->> (or db-id *db-id*)
+       datomic-connection-string
+       d/connect))
+
 (defn current-db [& [db-id]]
   (some->> (or db-id *db-id*)
            datomic-connection
@@ -76,6 +81,10 @@
   (->> db-id
        datomic-connection-string
        d/delete-database))
+
+
+
+
 
 (comment "instarepl debugging code"
 
@@ -233,6 +242,19 @@
                  (dissoc creds :user/password) "\n]")
         nil))))
 
+
+#_(store-credentials (db-connection) "michael" "#zALf!" "Michael Berg" [:admin :guest :farmer :consultant])
+
+ #_(->> (d/q '[:find ?e
+            :in $
+            :where
+            [?e :user/id]]
+          (current-db))
+     ffirst
+     (d/entity (current-db))
+     d/touch)
+
+
 (defn credentials
   [user-id password & [db-id]]
   (let [db (current-db (or db-id *db-id*))
@@ -241,8 +263,9 @@
                            :where
                            [?e :user/id ?user-id]]
                          db user-id)
-        identity (->> user-entity ffirst (d/entity db ,,,) d/touch (into {} ,,,))]
-    (when (pwd/check password (:user/password identity))
+        identity (some->> user-entity ffirst (d/entity db ,,,) d/touch (into {} ,,,))]
+    (when (and identity
+               (pwd/check password (:user/password identity)))
       {:name (:user/id identity)
        :roles (->> (:user/roles identity)
                    (map #(-> % name keyword) ,,,)
@@ -278,3 +301,6 @@
 
 
   )
+
+
+

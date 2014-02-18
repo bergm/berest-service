@@ -120,6 +120,7 @@
          {:get plot/get-rest-plot}]]]]]]]])
 
 
+
 ;; You can use this fn or a per-request fn via io.pedestal.service.http.route/url-for
 (def url-for (route/url-for-routes routes))
 
@@ -149,7 +150,7 @@
               ;; to enable Tomcat)
               ;;::bootstrap/host "localhost"
               ::bootstrap/type :jetty
-              ::bootstrap/port 8080})
+              ::bootstrap/port 9090 #_8080})
 
 (defn service-with [port]
   (assoc service ::bootstrap/port port))

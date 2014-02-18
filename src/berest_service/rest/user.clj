@@ -42,6 +42,10 @@
            }
           [element (or lang common/*lang*)] "UNKNOWN element"))
 
+#_(require '[berest-service.berest.datomic :as db])
+#_(queries/get-ui-entities (db/current-db) :rest.ui/groups :user)
+
+
 (defn create-user-layout [db]
   [:div.container
    (for [e (queries/get-ui-entities db :rest.ui/groups :user)]
