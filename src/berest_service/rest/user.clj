@@ -101,3 +101,13 @@
                          (partial user-layout db)
                          request)))
 
+(defn create-user
+  [request]
+
+  )
+
+(defn update-user
+  [request]
+
+  )
+

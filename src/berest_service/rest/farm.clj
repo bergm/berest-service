@@ -73,7 +73,7 @@
                          request)))
 
 
-(defn create-new-farm [req]
+(defn create-farm [req]
   (rur/response "post to create a new farm"))
 
 (defn get-farm [req]

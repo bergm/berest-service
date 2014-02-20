@@ -109,7 +109,7 @@
 
 
 (defn get-weather-station
-  [{:keys [url-for params] :as request}]
+  [id {:keys [url-for params] :as request}]
   (let [db (db/current-db)]
     (common/standard-get ::get-weather-station
                          (partial weather-station-layout db)

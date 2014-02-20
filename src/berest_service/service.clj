@@ -22,15 +22,6 @@
               [geheimtur.impl.form-based :as gif]))
 
 
-(defn about-page
-  [request]
-  (rur/response (format "Clojure %s" (clojure-version))))
-
-(defn home-page
-  [request]
-  (rur/response "Hello berest service!!!!!!!"))
-
-
 (defon-response access-forbidden-interceptor
   [response]
   (if (or

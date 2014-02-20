@@ -20,6 +20,9 @@
                  [geheimtur "0.1.1"]
                  [crypto-password "0.1.1"]
 
+                 [compojure "1.1.6"]
+                 [liberator "0.10.0"]
+
                  [clj-time "0.6.0"]
                  [clojure-csv "2.0.1"]
                  [org.clojure/algo.generic "0.1.1"]
@@ -42,11 +45,26 @@
   :repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"
                                    :username "michael.berg@zalf.de"
                                    :password "dfe713b3-62f0-469d-8ac9-07d6b02b0175"}}
+
+  :jelastic {:apihoster "app.jelastic.dogato.eu"
+             ;:email "your@mail.com"
+             ;:password "XXXXXXXX"
+             :environment "berest-humanespaces"
+             ; Optionals
+             ; :context "mycontext"
+             ; Custom filename can be set for example to match ring uberwar output
+             ; :custom-filename (fn [proj]
+             ;                    (str (:name proj) "-" (:version proj) "-STANDALONE"))
+             }
   :immutant {:context-path "/"}
+
+  :ring {:handler berest-service.handler/rest-service}
+
   :min-lein-version "2.0.0"
   :resource-paths ["config", "resources"]
   :aliases {"run-dev" ["trampoline" "run" "-m" "berest-service.server/run-dev"]}
-  :repl-options  {:init-ns user
+
+  :repl-options  nil #_{:init-ns user
                   :init (try
                           (use 'io.pedestal.service-tools.dev)
                           (require 'berest-service.service)

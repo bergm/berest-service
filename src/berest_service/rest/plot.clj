@@ -74,8 +74,6 @@
                          request)))
 
 
-
-
 (defn get-plot-ids [{:keys [path-params] :as request}]
   (let [{:keys [farm-id user-id]} path-params]
     (-> (plot/rest-plot-ids :edn user-id farm-id)
@@ -87,6 +85,12 @@
       (cs/split ,,, #"\.")
       (#(split-at (-> % count dec (max 1 ,,,)) %) ,,,)
       (#(map (partial cs/join ".") %) ,,,)))
+
+(defn get-plot [farm-id id data]
+  (let [user-id "berest"]
+    (-> (plot/calc-plot :user-id user-id :farm-id farm-id :plot-id id :data data)
+        rur/response
+        (rur/content-type ,,, "text/csv"))))
 
 (defn get-rest-plot [req]
   (let [{sim :sim
@@ -107,3 +111,12 @@
                   rur/response
                   (rur/content-type ,,, "text/csv"))
         (rur/not-found (str "Format '" format "' is not supported!"))))))
+
+(defn create-plot
+  [request]
+  "create plot")
+
+(defn update-plot
+  [request]
+  "update plot")
+
