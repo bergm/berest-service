@@ -1,11 +1,9 @@
 (ns berest-service.rest.login
   (:require [berest-service.berest.core :as bc]
-            [berest-service.berest.datomic :as bd]
-            [berest-service.rest.common :as rc]
-            [berest-service.rest.queries :as rq]
-            #_[berest-service.service :as bs]
+            [berest-service.berest.datomic :as db]
+            [berest-service.rest.common :as common]
+            [berest-service.rest.queries :as queries]
             [datomic.api :as d]
-            #_[io.pedestal.service.http.route :as route]
             [ring.util.response :as rur]
             [hiccup.element :as he]
             [hiccup.def :as hd]
@@ -29,7 +27,7 @@
                       :lang/en "username"}
            :pwd {:lang/de "Passwort"
                  :lang/en "password"}}
-          [element (or lang rc/*lang*)] "UNKNOWN element"))
+          [element (or lang common/*lang*)] "UNKNOWN element"))
 
 (defn login-form
   [return has-error]
@@ -54,9 +52,8 @@
   [{:keys [params] :as request}]
   (let [has-error (contains? params :error)]
     (->> (login-form (:return params) has-error)
-         (rc/body nil (gua/get-identity request) ,,,)
-         (hp/html5 (rc/head) ,,,)
-         rur/response)))
+         (common/body (gua/get-identity request) ,,,)
+         (hp/html5 (common/head) ,,,))))
 
 
 

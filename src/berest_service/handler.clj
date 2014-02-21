@@ -4,15 +4,16 @@
             [compojure.route :as route]
             [liberator.core :refer [resource defresource]]
             [ring.middleware.params :refer [wrap-params]]
-            [berest-service.rest
-             [farm :as farm]
-             [home :as home]
-             [login :as login]
-             [common :as common]
-             [weather-station :as wstation]
-             [api :as api]
-             [plot :as plot]
-             [user :as user]]))
+            [berest-service.berest.datomic :as db]
+            [berest-service.rest.farm :as farm]
+            [berest-service.rest.home :as home]
+            [berest-service.rest.login :as login]
+            [berest-service.rest.common :as common]
+            [berest-service.rest.weather-station :as wstation]
+            [berest-service.rest.api :as api]
+            [berest-service.rest.data :as data]
+            [berest-service.rest.plot :as plot]
+            [berest-service.rest.user :as user]))
 
 (defresource api
   :allowed-methods [:get]
@@ -61,15 +62,14 @@
   :allowed-methods [:post :get]
   :available-media-types ["text/html"]
   :handle-ok #(wstation/get-weather-stations (:request %))
-  :post! #(wstation/post-weather-stations (:request %))
+  :post! #(wstation/create-weather-station (:request %))
   :post-redirect? (fn [ctx] nil #_{:location (format "/postbox/%s" (::id ctx))}))
 
 (defresource weather-station [id]
   :allowed-methods [:put :get]
   :available-media-types ["text/html"]
-  :handle-ok #(wstation/get-weather-station (:request %) id)
-  :post! wstation/post-weather-stations
-  :post-redirect? (fn [ctx] nil #_{:location (format "/postbox/%s" (::id ctx))}))
+  :handle-ok #(wstation/get-weather-station id (:request %))
+  :put! #(wstation/update-weather-station id (:request %)))
 
 (defroutes weather-station-routes
   (ANY "/" [] weather-stations)
@@ -88,7 +88,7 @@
   :allowed-methods [:put :get]
   :available-media-types ["text/html"]
   :handle-ok #(farm/get-farm id (:request %))
-  :put! #(farm/update-farm (:request %)))
+  :put! #(farm/update-farm id (:request %)))
 
 (defresource plots
   :allowed-methods [:post :get]
@@ -102,7 +102,7 @@
   :allowed-methods [:put :get]
   :available-media-types ["text/html"]
   :handle-ok #(plot/get-plot farm-id id (get-in % [:request :query-params]))
-  :put! #(plot/update-plot (:request %)))
+  :put! #(plot/update-plot farm-id id (:request %)))
 
 (defroutes farm-routes
   (ANY "/" [] farms)
@@ -117,16 +117,15 @@
 (defresource data
   :allowed-methods [:get]
   :available-media-types ["text/html"]
-  :handle-ok "data")
+  :handle-ok #(data/get-data (:request %)))
 
 
 
 (defroutes data-routes
   (ANY "/" [] data)
   (context "/users" [] user-routes)
-  (context "/weather-station" [] weather-station-routes)
+  (context "/weather-stations" [] weather-station-routes)
   (context "/farms" [] farm-routes))
-
 
 
 
@@ -151,8 +150,8 @@
 
 (defroutes service-routes
   (ANY "/" [] home)
-  (ANY "/" [] login)
-  (ANY "/" [] logout)
+  (ANY "/login/" [] login)
+  (ANY "/logout/" [] logout)
   (context "/api" [] api-routes)
   (context "/data" [] data-routes)
   (route/resources "/")

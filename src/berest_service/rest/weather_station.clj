@@ -64,14 +64,14 @@
 
 
 (defn get-weather-stations
-  [{:keys [url-for params] :as request}]
+  [request]
   (let [db (db/current-db)]
-    (common/standard-get ::get-weather-stations
-                         (partial weather-stations-layout db)
+    (common/standard-get (partial weather-stations-layout db)
                          request)))
 
 
-(defn post-weather-stations [{:keys [form-params] :as request}]
+(defn create-weather-station
+  [{:keys [form-params] :as request}]
   (let [db (db/current-db)
         form-data (into {} (map (fn [[k v]]
                                   (let [attr (common/id->ns-attr k)]
@@ -109,14 +109,17 @@
 
 
 (defn get-weather-station
-  [id {:keys [url-for params] :as request}]
+  [id request]
   (let [db (db/current-db)]
-    (common/standard-get ::get-weather-station
-                         (partial weather-station-layout db)
+    (str "get weather station with id: " id ", full request: " request)
+    #_(common/standard-get (partial weather-station-layout db)
                          request)))
 
-(defn put-weather-station [{:keys [form-params] :as request}]
-  (let [db (db/current-db)
+(defn update-weather-station
+  [id request]
+  (str "put to update weather station with id: " id ", full request: " request)
+
+  #_(let [db (db/current-db)
         form-data (into {} (map (fn [[k v]]
                                   (let [attr (common/id->ns-attr k)]
                                     [attr (queries/string->value db attr v)]))

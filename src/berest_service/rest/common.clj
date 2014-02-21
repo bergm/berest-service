@@ -288,12 +288,10 @@
 
 
 (defn standard-get
-  [route-name layout-fn {:keys [url-for params] :as request}]
-  (let [url (url-for route-name :app-name :rest) ]
-    (->> (layout-fn url)
-         (body (auth/get-identity request) ,,,)
-         (hp/html5 (head (str "GET | POST " url)) ,,,)
-         rur/response)))
+  [layout-fn {:keys [uri params] :as request}]
+  (->> (layout-fn uri)
+       (body (auth/get-identity request) ,,,)
+       (hp/html5 (head (str "GET | POST " uri)) ,,,)))
 
 
 

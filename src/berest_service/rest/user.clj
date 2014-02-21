@@ -71,10 +71,9 @@
 
 
 (defn get-users
-  [{:keys [url-for params] :as request}]
+  [request]
   (let [db (db/current-db)]
-    (common/standard-get ::get-users
-                         (partial users-layout db)
+    (common/standard-get (partial users-layout db)
                          request)))
 
 
@@ -95,10 +94,9 @@
                                :post-layout-fn (partial create-user-layout db)})])
 
 (defn get-user
-  [{:keys [url-for params] :as request}]
+  [request]
   (let [db (db/current-db)]
-    (common/standard-get ::get-user
-                         (partial user-layout db)
+    (common/standard-get (partial user-layout db)
                          request)))
 
 (defn create-user

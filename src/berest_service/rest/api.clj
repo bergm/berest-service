@@ -1,11 +1,5 @@
 (ns berest-service.rest.api
   (:require [clojure.string :as cs]
-            [berest-service.berest.core :as bc]
-            [berest-service.berest.plot :as plot]
-            [berest-service.rest.common :as rc]
-            [berest-service.berest.datomic :as bd]
-            [berest-service.rest.queries :as rq]
-            #_[berest-service.service :as bs]
             [datomic.api :as d]
             [io.pedestal.service.http.route :as route]
             [ring.util.response :as rur]
@@ -16,7 +10,13 @@
             [clojure.pprint :as pp]
             [clojure.edn :as edn]
             [clojure.tools.logging :as log]
-            [geheimtur.util.auth :as auth]))
+            [geheimtur.util.auth :as auth]
+            [berest-service.berest.core :as bc]
+            [berest-service.berest.plot :as plot]
+            [berest-service.berest.datomic :as db]
+            [berest-service.rest.common :as common]
+            [berest-service.rest.queries :as queries]
+            [berest-service.rest.template :as temp]))
 
 ;; page translations
 
@@ -35,13 +35,13 @@
                            :lang/en "Create"}
 
            }
-          [element (or lang rc/*lang*)] "UNKNOWN element"))
+          [element (or lang common/*lang*)] "UNKNOWN element"))
 
 ;; page layouts
 
-(defn api-layout [url]
+(defn api-layout [db url]
   [:div.container
-   [:h3 (str "GET | POST " url)]
+   (temp/standard-get-post-h3 url)
 
    #_[:div
     [:h4 (str (vocab :farms) " (GET " url ")")]
@@ -66,13 +66,10 @@
     ]])
 
 (defn get-api
-  [{:keys [url-for params] :as request}]
-  (let [url (url-for ::get-api :app-name :rest) ]
-    (->> (api-layout url)
-         (rc/body (auth/get-identity request) ,,,)
-         (hp/html5 (rc/head (str "GET | POST " url)) ,,,)
-         rur/response)))
-
+  [request]
+  (let [db (db/current-db)]
+    (common/standard-get (partial api-layout db)
+                         request)))
 
 ;; api functions
 

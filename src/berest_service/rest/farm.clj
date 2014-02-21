@@ -66,22 +66,23 @@
                                :post-layout-fn (partial create-farms-layout db)})])
 
 (defn get-farms
-  [{:keys [url-for params] :as request}]
+  [request]
   (let [db (db/current-db)]
-    (common/standard-get ::get-farms
-                         (partial farms-layout db)
+    (common/standard-get (partial farms-layout db)
                          request)))
 
 
-(defn create-farm [req]
-  (rur/response "post to create a new farm"))
+(defn create-farm
+  [request]
+  "post to create a new farm")
 
-(defn get-farm [req]
-  (rur/response (str "Farm no: " (get-in req [:path-params :farm-id])
-                     " and full req: " req)))
+(defn get-farm
+  [id request]
+  (str "Farm no: " id " and full request: " request))
 
-(defn update-farm [req]
-  (rur/response (str "put to farm id: " (get-in req [:path-params :farm-id]))))
+(defn update-farm
+  [id request]
+  (str "put to farm id: " id " and full request: " request))
 
 
 

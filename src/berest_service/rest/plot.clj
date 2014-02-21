@@ -67,10 +67,9 @@
                                :post-layout-fn (partial create-plots-layout db)})])
 
 (defn get-plots
-  [{:keys [url-for params] :as request}]
+  [request]
   (let [db (db/current-db)]
-    (common/standard-get ::get-plots
-                         (partial plots-layout db)
+    (common/standard-get (partial plots-layout db)
                          request)))
 
 
@@ -88,9 +87,7 @@
 
 (defn get-plot [farm-id id data]
   (let [user-id "berest"]
-    (-> (plot/calc-plot :user-id user-id :farm-id farm-id :plot-id id :data data)
-        rur/response
-        (rur/content-type ,,, "text/csv"))))
+    (plot/calc-plot :user-id user-id :farm-id farm-id :plot-id id :data data)))
 
 (defn get-rest-plot [req]
   (let [{sim :sim
@@ -114,9 +111,9 @@
 
 (defn create-plot
   [request]
-  "create plot")
+  (str "post to create a new plot, full request: " request))
 
 (defn update-plot
-  [request]
-  "update plot")
+  [farm-id id request]
+  (str "put to update an plot on farm (id: " farm-id ") with id " id ", full request: " request))
 
