@@ -5,17 +5,13 @@
             [berest-service.rest.queries :as queries]
             [berest-service.rest.util :as util]
             [berest-service.rest.template :as temp]
-            #_[berest-service.service :as bs]
-
             [datomic.api :as d]
-            #_[io.pedestal.service.http.route :as route]
             [ring.util.response :as rur]
             [hiccup.element :as he]
             [hiccup.def :as hd]
             [hiccup.form :as hf]
             [hiccup.page :as hp]
-            [clojure.edn :as edn]
-            [geheimtur.util.auth :as auth]))
+            [clojure.edn :as edn]))
 
 (comment "for instarepl"
 

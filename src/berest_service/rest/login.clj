@@ -10,7 +10,7 @@
             [hiccup.form :as hf]
             [hiccup.page :as hp]
             [clojure.edn :as edn]
-            [geheimtur.util.auth :as gua]))
+            #_[geheimtur.util.auth :as gua]))
 
 (comment "for instarepl"
 
@@ -52,7 +52,7 @@
   [{:keys [params] :as request}]
   (let [has-error (contains? params :error)]
     (->> (login-form (:return params) has-error)
-         (common/body (gua/get-identity request) ,,,)
+         (common/body nil #_(gua/get-identity request) ,,,)
          (hp/html5 (common/head) ,,,))))
 
 

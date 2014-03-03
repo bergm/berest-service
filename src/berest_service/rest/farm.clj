@@ -13,8 +13,7 @@
             [hiccup.def :as hd]
             [hiccup.form :as hf]
             [hiccup.page :as hp]
-            [clojure.edn :as edn]
-            [geheimtur.util.auth :as gua]))
+            [clojure.edn :as edn]))
 
 (comment "for instarepl"
 

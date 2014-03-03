@@ -10,7 +10,7 @@
             [berest-service.rest.queries :as queries]
             [berest-service.rest.util :as util]
             [ring.util.response :as rur]
-            [geheimtur.util.auth :as auth]))
+            #_[geheimtur.util.auth :as auth]))
 
 (def ^:dynamic *lang* :lang/de)
 
@@ -290,7 +290,7 @@
 (defn standard-get
   [layout-fn {:keys [uri params] :as request}]
   (->> (layout-fn uri)
-       (body (auth/get-identity request) ,,,)
+       (body nil #_(auth/get-identity request) ,,,)
        (hp/html5 (head (str "GET | POST " uri)) ,,,)))
 
 

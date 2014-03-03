@@ -3,13 +3,12 @@
             [berest-service.rest.common :as common]
             [berest-service.berest.datomic :as db]
             [datomic.api :as d]
-            [io.pedestal.service.http.route :as route]
             [ring.util.response :as rur]
             [hiccup.element :as he]
             [hiccup.def :as hd]
             [hiccup.form :as hf]
             [hiccup.page :as hp]
-            [geheimtur.util.auth :as auth]))
+            #_[geheimtur.util.auth :as auth]))
 
 (defn vocab
   "translatable vocabulary for this page"
@@ -51,7 +50,7 @@
 (defn get-home
   [{:keys [uri] :as request}]
   (->> (home-layout uri)
-       (common/body (auth/get-identity request) ,,,)
+       (common/body nil #_(auth/get-identity request) ,,,)
        (hp/html5 (common/head "Berest REST service") ,,,)))
 
 

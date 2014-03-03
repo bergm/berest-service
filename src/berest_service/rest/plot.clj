@@ -1,6 +1,5 @@
 (ns berest-service.rest.plot
   (:require [clojure.string :as cs]
-            [io.pedestal.service.http :as http]
             [berest-service.berest.core :as bc]
             [berest-service.berest.datomic :as db]
             [berest-service.berest.plot :as plot]
@@ -9,14 +8,12 @@
             [berest-service.rest.template :as temp]
             #_[berest-service.service :as bs]
             [datomic.api :as d]
-            #_[io.pedestal.service.http.route :as route]
             [ring.util.response :as rur]
             [hiccup.element :as he]
             [hiccup.def :as hd]
             [hiccup.form :as hf]
             [hiccup.page :as hp]
-            [clojure.edn :as edn]
-            [geheimtur.util.auth :as auth]))
+            [clojure.edn :as edn]))
 
 (comment "for instarepl"
 
@@ -76,7 +73,7 @@
 (defn get-plot-ids [{:keys [path-params] :as request}]
   (let [{:keys [farm-id user-id]} path-params]
     (-> (plot/rest-plot-ids :edn user-id farm-id)
-        http/edn-response)))
+        #_http/edn-response)))
 
 
 (defn- split-plot-id-format [plot-id-format]

@@ -5,9 +5,7 @@
             [berest-service.rest.queries :as queries]
             [berest-service.rest.util :as util]
             [berest-service.rest.template :as temp]
-            #_[berest-service.service :as bs]
             [datomic.api :as d]
-            [io.pedestal.service.http.route :as route]
             [ring.util.response :as rur]
             [hiccup.element :as he]
             [hiccup.def :as hd]
@@ -15,8 +13,7 @@
             [hiccup.page :as hp]
             [clojure.pprint :as pp]
             [clojure.edn :as edn]
-            [clojure.tools.logging :as log]
-            [geheimtur.util.auth :as gua]))
+            [clojure.tools.logging :as log]))
 
 (defn vocab
   "translatable vocabulary for this page"

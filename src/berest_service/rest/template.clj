@@ -9,8 +9,7 @@
             [berest-service.berest.datomic :as bd]
             [berest-service.rest.queries :as rq]
             [berest-service.rest.util :as util]
-            [ring.util.response :as rur]
-            [geheimtur.util.auth :as auth]))
+            [ring.util.response :as rur]))
 
 
 (defn url->link-segments

@@ -4,24 +4,30 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [io.pedestal/pedestal.service "0.2.2"]
-                 [io.pedestal/pedestal.service-tools "0.2.2"]
-                 #_[ring/ring-core "1.2.0"] ;pedestal dependency
 
+                 #_[io.pedestal/pedestal.service "0.2.2"]
+                 #_[io.pedestal/pedestal.service-tools "0.2.2"]
+                 #_[ring/ring-core "1.2.0"] ;pedestal dependency
                  ;; Remove this line and uncomment the next line to
                  ;; use Tomcat instead of Jetty:
-                 [io.pedestal/pedestal.jetty "0.2.2"]
+                 #_[io.pedestal/pedestal.jetty "0.2.2"]
                  ;; [io.pedestal/pedestal.tomcat "0.2.1"]
 
                  #_[org.infinispan/infinispan-client-hotrod "6.0.0.CR1"]
                  [com.datomic/datomic-pro "0.9.4556"]
                  #_[com.datomic/datomic-free "0.8.4218"]
 
-                 [geheimtur "0.1.1"]
+                 #_[com.cemerick/friend "0.2.0"]
+                 #_[geheimtur "0.1.1"]
                  [crypto-password "0.1.1"]
 
+                 [ring "1.2.1"]
+
                  [compojure "1.1.6"]
+                 [bidi "1.10.2"]
                  [liberator "0.10.0"]
+
+                 [hiccup "1.0.4"]
 
                  [clj-time "0.6.0"]
                  [clojure-csv "2.0.1"]
@@ -29,11 +35,9 @@
                  [org.clojure/math.numeric-tower "0.0.2"]
                  [com.taoensso/timbre "2.6.3"]
                  [egamble/let-else "1.0.6"]
-                 [com.cemerick/friend "0.2.0"]
                  [org.clojars.pallix/analemma "1.0.0"]
                  [org.clojure/core.match "0.2.0"]
                  [com.keminglabs/c2 "0.2.3"]
-                 [hiccup "1.0.4"]
                  [formative "0.3.2"]
                  [com.velisco/clj-ftp "0.3.0"]
                  [instaparse "1.2.13"]
@@ -75,7 +79,8 @@
                             (clojure.stacktrace/print-stack-trace t)
                             (println)))
                   :welcome (println "Welcome to pedestal-service! Run (tools-help) to see a list of useful functions.")}
-  :main ^{:skip-aot true} berest-service.server)
+  ;:main ^{:skip-aot true} berest-service.server
+  )
 
 
 

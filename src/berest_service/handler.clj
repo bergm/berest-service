@@ -1,9 +1,12 @@
 (ns berest-service.handler
-  (:require [compojure.core :refer [ANY defroutes context] :as cc]
+  (:require [ring.middleware.keyword-params :refer [wrap-keyword-params]]
+            [ring.middleware.nested-params :refer [wrap-nested-params]]
+            [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.resource :refer [wrap-resource]]
+            [compojure.core :refer [ANY defroutes context] :as cc]
             [compojure.handler :as handler]
             [compojure.route :as route]
             [liberator.core :refer [resource defresource]]
-            [ring.middleware.params :refer [wrap-params]]
             [berest-service.berest.datomic :as db]
             [berest-service.rest.farm :as farm]
             [berest-service.rest.home :as home]
@@ -13,7 +16,8 @@
             [berest-service.rest.api :as api]
             [berest-service.rest.data :as data]
             [berest-service.rest.plot :as plot]
-            [berest-service.rest.user :as user]))
+            [berest-service.rest.user :as user]
+            [bidi.bidi :as bidi]))
 
 (defresource api
   :allowed-methods [:get]
@@ -35,8 +39,10 @@
   (ANY "/simulate" [] simulate)
   (ANY "/calculate" [] calculate))
 
-
-
+(def api-subroutes
+  {"a" api
+   "simulate" simulate
+   "calculate" calculate})
 
 (defresource users
   :allowed-methods [:post :get]
@@ -57,6 +63,10 @@
   (ANY "/" [] users)
   (ANY "/:id" [id] (user id)))
 
+(def user-subroutes
+  {"" users
+   [:id] user})
+
 
 (defresource weather-stations
   :allowed-methods [:post :get]
@@ -75,20 +85,13 @@
   (ANY "/" [] weather-stations)
   (ANY "/:id" [id] (weather-station id)))
 
+(def weather-station-subroutes
+  {"" weather-stations
+   [:id] weather-station})
 
 
-(defresource farms
-  :allowed-methods [:post :get]
-  :available-media-types ["text/html"]
-  :handle-ok #(farm/get-farms (:request %))
-  :post! #(farm/create-farm (:request %))
-  :post-redirect? (fn [ctx] nil #_{:location (format "/postbox/%s" (::id ctx))}))
 
-(defresource farm [id]
-  :allowed-methods [:put :get]
-  :available-media-types ["text/html"]
-  :handle-ok #(farm/get-farm id (:request %))
-  :put! #(farm/update-farm id (:request %)))
+
 
 (defresource plots
   :allowed-methods [:post :get]
@@ -104,12 +107,40 @@
   :handle-ok #(plot/get-plot farm-id id (get-in % [:request :query-params]))
   :put! #(plot/update-plot farm-id id (:request %)))
 
+(def plot-subroutes
+  {"" plots
+   [:plot-id "/"] plot})
+
+
+
+
+
+(defresource farms
+  :allowed-methods [:post :get]
+  :available-media-types ["text/html"]
+  :handle-ok #(farm/get-farms (:request %))
+  :post! #(farm/create-farm (:request %))
+  :post-redirect? (fn [ctx] nil #_{:location (format "/postbox/%s" (::id ctx))}))
+
+(defresource farm [id]
+  :allowed-methods [:put :get]
+  :available-media-types ["text/html"]
+  :handle-ok #(farm/get-farm id (:request %))
+  :put! #(farm/update-farm id (:request %)))
+
 (defroutes farm-routes
   (ANY "/" [] farms)
   (ANY "/:id" [id] (farm id))
   (context "/:farm-id/plots" [farm-id]
            (ANY "/" [] plots)
            (ANY "/:id" [id] (plot farm-id id))))
+
+(def farm-subroutes
+  {"" farms
+   [:farm-id] {"/" farm
+               "/plots/" plot-subroutes}})
+
+
 
 
 
@@ -119,8 +150,6 @@
   :available-media-types ["text/html"]
   :handle-ok #(data/get-data (:request %)))
 
-
-
 (defroutes data-routes
   (ANY "/" [] data)
   (context "/users" [] user-routes)
@@ -128,6 +157,11 @@
   (context "/farms" [] farm-routes))
 
 
+(def data-subroutes
+  {"" data
+   "users/" user-subroutes
+   "weather-stations/" weather-station-subroutes
+   "farms/" farm-subroutes})
 
 
 (defresource home
@@ -148,7 +182,7 @@
   :handle-ok "logout")
 
 
-(defroutes service-routes
+(defroutes compojure-service-routes
   (ANY "/" [] home)
   (ANY "/login/" [] login)
   (ANY "/logout/" [] logout)
@@ -157,6 +191,25 @@
   (route/resources "/")
   (route/not-found "Not Found"))
 
+(def compojure-rest-service
+  (handler/api compojure-service-routes))
+
+
+(def bidi-service-routes
+  ["/" {"" home
+        "login/" login
+        "logout/" logout
+        "api/" api-subroutes
+        "data/" data-subroutes}])
+
+#_(bidi/match-route bidi-service-routes "/data/farms/123/plots/345/")
+#_(bidi/path-for bidi-service-routes plot :farm-id 123 :plot-id 123)
 
 (def rest-service
-  (handler/api service-routes))
+  (-> bidi-service-routes
+      bidi/make-handler
+      (wrap-resource ,,, "public")
+      wrap-keyword-params
+      wrap-nested-params
+      wrap-params))
+

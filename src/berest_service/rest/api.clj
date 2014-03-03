@@ -1,7 +1,6 @@
 (ns berest-service.rest.api
   (:require [clojure.string :as cs]
             [datomic.api :as d]
-            [io.pedestal.service.http.route :as route]
             [ring.util.response :as rur]
             [hiccup.element :as he]
             [hiccup.def :as hd]
@@ -10,7 +9,6 @@
             [clojure.pprint :as pp]
             [clojure.edn :as edn]
             [clojure.tools.logging :as log]
-            [geheimtur.util.auth :as auth]
             [berest-service.berest.core :as bc]
             [berest-service.berest.plot :as plot]
             [berest-service.berest.datomic :as db]
