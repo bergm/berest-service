@@ -1,8 +1,8 @@
 (ns berest-service.rest.plot
   (:require [clojure.string :as cs]
-            [berest-service.berest.core :as bc]
-            [berest-service.berest.datomic :as db]
-            [berest-service.berest.plot :as plot]
+            [berest.core :as bc]
+            [berest.datomic :as db]
+            [berest.plot :as plot]
             [berest-service.rest.common :as common]
             [berest-service.rest.queries :as queries]
             [berest-service.rest.template :as temp]
@@ -68,6 +68,11 @@
   (let [db (db/current-db)]
     (common/standard-get (partial plots-layout db)
                          request)))
+
+
+(defn get-plots-edn
+  [request]
+  ["aaaa" "bbbb" "ccccc" "dddd"])
 
 
 (defn get-plot-ids [{:keys [path-params] :as request}]

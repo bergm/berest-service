@@ -6,7 +6,7 @@
             [hiccup.def :as hd]
             [hiccup.util :as hu]
             [datomic.api :as d]
-            [berest-service.berest.datomic :as bd]
+            [berest.datomic :as bd]
             [berest-service.rest.queries :as rq]
             [berest-service.rest.util :as util]
             [ring.util.response :as rur]))
@@ -39,7 +39,8 @@
 (defn standard-get-layout [{:keys [url
                                    get-title description
                                    get-id-fn get-name-fn
-                                   entities sub-entity-path]}]
+                                   entities sub-entity-path
+                                   leaf-sub-entities?]}]
   [:div
    [:h4 (str get-title " (GET " url ")")]
    [:p description]
@@ -48,7 +49,7 @@
     (for [e entities]
       [:li [:a {:href (str (util/drop-path-segment url) "/"
                            (cs/join "/" sub-entity-path) "/"
-                           (get-id-fn e) "/")}
+                           (get-id-fn e) (if leaf-sub-entities? "" "/"))}
             (or (get-name-fn e) (get-id-fn e))]])]
    [:hr]
    [:h4 "application/edn"]

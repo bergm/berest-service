@@ -6,7 +6,7 @@
             [hiccup.def :as hd]
             [hiccup.util :as hu]
             [datomic.api :as d]
-            #_[berest-service.berest.datomic :as db]
+            #_[berest.datomic :as db]
             [berest-service.rest.queries :as queries]
             [berest-service.rest.util :as util]
             [ring.util.response :as rur]

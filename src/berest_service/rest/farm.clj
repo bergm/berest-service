@@ -1,6 +1,6 @@
 (ns berest-service.rest.farm
-  (:require [berest-service.berest.core :as bc]
-            [berest-service.berest.datomic :as db]
+  (:require [berest.core :as bc]
+            [berest.datomic :as db]
             [berest-service.rest.common :as common]
             [berest-service.rest.queries :as queries]
             [berest-service.rest.util :as util]

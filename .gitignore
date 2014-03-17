@@ -5,3 +5,5 @@ logs/
 /.nrepl-port
 /FY60DWLB-20130526_0815.txt
 /FY60DWLA-20130530_0815.txt
+/.idea
+/berest_service.iml

@@ -9,12 +9,15 @@
             [clojure.pprint :as pp]
             [clojure.edn :as edn]
             [clojure.tools.logging :as log]
-            [berest-service.berest.core :as bc]
-            [berest-service.berest.plot :as plot]
-            [berest-service.berest.datomic :as db]
+            [berest.core :as bc]
+            [berest.plot :as plot]
+            [berest.datomic :as db]
+            [berest.util :as bu]
+            [berest.climate.climate :as climate]
             [berest-service.rest.common :as common]
             [berest-service.rest.queries :as queries]
-            [berest-service.rest.template :as temp]))
+            [berest-service.rest.template :as temp]
+            [let-else :as le :refer [let?]]))
 
 ;; page translations
 
@@ -71,11 +74,75 @@
 
 ;; api functions
 
+
+(defn calculate-plot-from-db
+  [& {:keys [user-id farm-id plot-id weather-station-id
+             until-julian-day year
+             irrigation-donations dc-assertions]}]
+  (let? [db (db/current-db user-id)
+         :else [:div#error "Fehler: Konnte keine Verbindung zur Datenbank herstellen!"]
+
+         plot (bc/db-read-plot db plot-id year)
+         :else [:div#error "Fehler: Konnte Schlag mit Nummer: " plot-id " nicht laden!"]
+
+         ;plot could be updated with given dc-assertions
+         ;plot* (update-in plot [])
+
+         weather (climate/weather-data db weather-station-id year)
+         sorted-weather-map (into (sorted-map) (map #(vector (bu/date-to-doy (:weather-data/date %))
+                                                             %)))
+
+         inputs (bc/create-input-seq| :plot plot
+                                      :sorted-weather-map weather
+                                      :irrigation-donations irrigation-donations
+                                      :until-abs-day (+ until-julian-day 7)
+                                      :irrigation-mode :sprinkle-losses)
+         inputs-7 (drop-last 7 inputs)
+
+         ;xxx (map (|-> (--< :abs-day :irrigation-amount) str) inputs-7)
+         ;_ (println xxx)
+
+         prognosis-inputs (take-last 7 inputs)
+         days (range (-> inputs first :abs-day) (+ until-julian-day 7 1))
+
+         sms-7* (bc/calc-soil-moistures* inputs-7 (:plot.annual/initial-soil-moistures plot))
+         {soil-moistures-7 :soil-moistures
+          :as sms-7} (last sms-7*)
+         #_(bc/calc-soil-moistures inputs-7 (:plot.annual/initial-soil-moistures plot))
+
+         prognosis* (bc/calc-soil-moisture-prognosis* 7 prognosis-inputs soil-moistures-7)
+         prognosis (last prognosis*)
+         #_(bc/calc-soil-moisture-prognosis 7 prognosis-inputs soil-moistures-7)
+         ]
+
+        {:soil-moistures-7 sms-7*
+         :prognosis prognosis*}))
+
 (defn- split-plot-id-format [plot-id-format]
   (-> plot-id-format
       (cs/split ,,, #"\.")
       (#(split-at (-> % count dec (max 1 ,,,)) %) ,,,)
       (#(map (partial cs/join ".") %) ,,,)))
+
+
+(defn calculate
+  [{{:keys [farm-id plot-id
+            weather-station-id year
+            until-day until-month
+            irrigation-data]} :params
+    {:keys [user-id]} :identity}]
+  (let [year* (Integer/parseInt year)
+        until-julian-day (bu/date-to-doy (Integer/parseInt until-day)
+                                         (Integer/parseInt until-month)
+                                         year*)
+        irrigation-donations (for [[day month amount] (edn/read-string irrigation-data)]
+                               {:irrigation/abs-day (bu/date-to-doy day month year*)
+                                :irrigation/amount amount})]
+    (calculate-plot-from-db :user-id user-id :farm-id farm-id :plot-id plot-id
+                            :until-julian-day until-julian-day :year year*
+                            :weather-station-id weather-station-id
+                            :irrigation-donations irrigation-donations)))
+
 
 (defn simulate
   [{:keys [query-params path-params] :as request}]
@@ -84,25 +151,53 @@
          plot-id-format :plot-id-format} path-params
         [plot-id format*] (split-plot-id-format plot-id-format)
         plot-id "zalf"]
-    (-> (plot/simulate-plot :user-id "guest" :farm-id farm-id :plot-id plot-id :data data)
+    #_(-> (simulate-plot :user-id "guest" :farm-id farm-id :plot-id plot-id :data data)
         rur/response
         (rur/content-type ,,, "text/csv"))))
 
-(defn calculate
-  [{:keys [query-params path-params] :as request}]
-  (let [{format :format :as data} query-params
-        {farm-id :farm-id
-         plot-id-format :plot-id-format} path-params
-        [plot-id format*] (split-plot-id-format plot-id-format)
-        plot-id "zalf"]
-    (case (or format* format)
-      "csv" (-> (plot/calc-plot :user-id "guest" :farm-id farm-id :plot-id plot-id :data data)
-                rur/response
-                (rur/content-type ,,, "text/csv"))
-      (rur/not-found (str "Format '" format "' is not supported!")))))
 
 
+#_(defn simulate-plot
+  [& {:keys [user-id farm-id plot-id]
+      {:keys [until-day until-month
+              weather-year
+              #_dc-state-data]} :data
+      :as all}]
+  (let? [db (bd/current-db user-id)
+         :else [:div#error "Fehler: Konnte keine Verbindung zur Datenbank herstellen!"]
 
+         weather-year* (Integer/parseInt weather-year)
+         weathers (get bc/weather-map weather-year*)
+
+         plot (bc/db-read-plot db plot-id weather-year*)
+         :else [:div#error "Fehler: Konnte Schlag mit Nummer: " plot-id " nicht laden!"]
+
+         until-julian-day (bu/date-to-doy (Integer/parseInt until-day)
+                                          (Integer/parseInt until-month)
+                                          weather-year*)
+
+         inputs (bc/create-input-seq| :plot plot
+                                      :sorted-weather-map weathers
+                                      :until-abs-day until-julian-day #_(+ until-julian-day 7)
+                                      :irrigation-mode :sprinkle-losses)
+
+         ;xxx (map (|-> (--< :abs-day :irrigation-amount) str) inputs)
+         ;_ (println xxx)
+
+         days (range (-> inputs first :abs-day) (+ until-julian-day 1))
+
+         sms* (bc/calculate-soil-moistures-by-auto-donations* inputs (:plot.annual/initial-soil-moistures plot)
+                                                              (:plot/slope plot) (:plot.annual/technology plot) 5)
+         {soil-moistures :soil-moistures
+          :as sms} (last sms*)
+         #_(bc/calc-soil-moistures inputs-7 (:plot.annual/initial-soil-moistures plot))
+
+         ;_ (map pp/pprint sms*)
+         ]
+
+        ;use rest on sms-7* etc. to skip the initial value prepended by reductions
+        ;which doesn't fit to the input list
+        (csv/write-csv (bc/create-csv-output inputs (rest sms*)) :delimiter ";")))
 
 
 

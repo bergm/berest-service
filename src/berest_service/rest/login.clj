@@ -1,6 +1,6 @@
 (ns berest-service.rest.login
-  (:require [berest-service.berest.core :as bc]
-            [berest-service.berest.datomic :as db]
+  (:require [berest.core :as bc]
+            [berest.datomic :as db]
             [berest-service.rest.common :as common]
             [berest-service.rest.queries :as queries]
             [datomic.api :as d]
@@ -11,14 +11,6 @@
             [hiccup.page :as hp]
             [clojure.edn :as edn]
             #_[geheimtur.util.auth :as gua]))
-
-(comment "for instarepl"
-
-  (require '[berest-service.service :as s])
-
-  ::get-farms
-
-  )
 
 (defn vocab
   "translatable vocabulary for this page"
@@ -48,13 +40,12 @@
      [:div {:class "form-group"}
       [:button {:type "submit" :class "btn btn-default btn-block"} "Sign in"]]]]])
 
-(defn login-page
+(defn get-login
   [{:keys [params] :as request}]
   (let [has-error (contains? params :error)]
     (->> (login-form (:return params) has-error)
          (common/body nil #_(gua/get-identity request) ,,,)
          (hp/html5 (common/head) ,,,))))
-
 
 
 

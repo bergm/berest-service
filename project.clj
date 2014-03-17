@@ -19,13 +19,15 @@
 
                  #_[com.cemerick/friend "0.2.0"]
                  #_[geheimtur "0.1.1"]
+                 [buddy "0.1.0-beta4"]
                  [crypto-password "0.1.1"]
 
                  [ring "1.2.1"]
+                 [fogus/ring-edn "0.2.0"]
 
-                 [compojure "1.1.6"]
+                 #_[compojure "1.1.6"]
                  [bidi "1.10.2"]
-                 [liberator "0.10.0"]
+                 [liberator "0.11.0"]
 
                  [hiccup "1.0.4"]
 
@@ -50,6 +52,8 @@
                                    :username "michael.berg@zalf.de"
                                    :password "dfe713b3-62f0-469d-8ac9-07d6b02b0175"}}
 
+  :source-paths ["src" "../berest/src"]
+
   :jelastic {:apihoster "app.jelastic.dogato.eu"
              ;:email "your@mail.com"
              ;:password "XXXXXXXX"
@@ -68,17 +72,6 @@
   :resource-paths ["config", "resources"]
   :aliases {"run-dev" ["trampoline" "run" "-m" "berest-service.server/run-dev"]}
 
-  :repl-options  nil #_{:init-ns user
-                  :init (try
-                          (use 'io.pedestal.service-tools.dev)
-                          (require 'berest-service.service)
-                          ;; Nasty trick to get around being unable to reference non-clojure.core symbols in :init
-                          (eval '(init berest-service.service/service #'berest-service.service/routes))
-                          (catch Throwable t
-                            (println "ERROR: There was a problem loading io.pedestal.service-tools.dev")
-                            (clojure.stacktrace/print-stack-trace t)
-                            (println)))
-                  :welcome (println "Welcome to pedestal-service! Run (tools-help) to see a list of useful functions.")}
   ;:main ^{:skip-aot true} berest-service.server
   )
 

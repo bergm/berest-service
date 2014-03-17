@@ -1,6 +1,6 @@
 (ns berest-service.rest.user
-  (:require [berest-service.berest.core :as bc]
-            [berest-service.berest.datomic :as db]
+  (:require [berest.core :as bc]
+            [berest.datomic :as db]
             [berest-service.rest.common :as common]
             [berest-service.rest.queries :as queries]
             [berest-service.rest.util :as util]
@@ -59,7 +59,8 @@
                               :get-id-fn :user/id
                               :get-name-fn :user/name
                               :entities (queries/get-entities db :user/id)
-                              :sub-entity-path ["users"]})
+                              :sub-entity-path ["users"]
+                              :leaf-sub-entities? true})
 
    (temp/standard-post-layout {:url url
                                :post-title (vocab :create)
@@ -92,7 +93,9 @@
 (defn get-user
   [request]
   (let [db (db/current-db)]
-    (common/standard-get (partial user-layout db)
+    (str "user data for user-id: request: " request)
+
+    #_(common/standard-get (partial user-layout db)
                          request)))
 
 (defn create-user

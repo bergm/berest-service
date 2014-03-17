@@ -2,7 +2,7 @@
   (:require [clojure.string :as cs]
             [clojure.edn :as edn]
             [datomic.api :as d]
-            [berest-service.berest.datomic :as db])
+            [berest.datomic :as db])
   #_(:import java.math.BigInteger))
 
 (defmulti string->value* (fn [db-type _] db-type))

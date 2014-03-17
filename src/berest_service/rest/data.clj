@@ -9,9 +9,8 @@
             [clojure.pprint :as pp]
             [clojure.edn :as edn]
             [clojure.tools.logging :as log]
-            [berest-service.berest.core :as bc]
-            [berest-service.berest.plot :as plot]
-            [berest-service.berest.datomic :as db]
+            [berest.core :as bc]
+            [berest.datomic :as db]
             [berest-service.rest.common :as common]
             [berest-service.rest.queries :as queries]
             [berest-service.rest.template :as temp]))

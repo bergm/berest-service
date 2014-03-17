@@ -1,7 +1,7 @@
 (ns berest-service.rest.home
-  (:require [berest-service.berest.core :as bc]
+  (:require [berest.core :as bc]
             [berest-service.rest.common :as common]
-            [berest-service.berest.datomic :as db]
+            [berest.datomic :as db]
             [datomic.api :as d]
             [ring.util.response :as rur]
             [hiccup.element :as he]

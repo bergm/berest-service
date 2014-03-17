@@ -1,7 +1,7 @@
 (ns berest-service.rest.weather-station
-  (:require [berest-service.berest.core :as bc]
+  (:require [berest.core :as bc]
+            [berest.datomic :as db]
             [berest-service.rest.common :as common]
-            [berest-service.berest.datomic :as db]
             [berest-service.rest.queries :as queries]
             [berest-service.rest.util :as util]
             [berest-service.rest.template :as temp]
