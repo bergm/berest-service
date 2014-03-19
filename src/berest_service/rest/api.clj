@@ -74,7 +74,6 @@
 
 ;; api functions
 
-
 (defn calculate-plot-from-db
   [& {:keys [user-id farm-id plot-id weather-station-id
              until-julian-day year
@@ -89,8 +88,8 @@
          ;plot* (update-in plot [])
 
          weather (climate/weather-data db weather-station-id year)
-         sorted-weather-map (into (sorted-map) (map #(vector (bu/date-to-doy (:weather-data/date %))
-                                                             %)))
+         sorted-weather-map (into (sorted-map) (map #(vector (bu/date-to-doy (:weather-data/date %)) %)
+                                                    weather))
 
          inputs (bc/create-input-seq| :plot plot
                                       :sorted-weather-map weather
