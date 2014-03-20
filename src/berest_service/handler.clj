@@ -37,7 +37,7 @@
   "create a default resource which is just authorized for any of the the given roles (or connected)"
   [& authorized-roles]
   {:authorized? (fn [{:keys [request] :as context}]
-                  (let [user-roles (some-> request :session :identity :roles)
+                  (let [user-roles (some-> request :session :identity :user/roles)
                         authorized-roles* (into #{} authorized-roles)]
                     (if user-roles
                       (not-empty (set/intersection authorized-roles* user-roles))
@@ -67,6 +67,30 @@
 
 
 
+(defresource auth-api
+  (authorized-default-resource :admin :farmer :consultant)
+  :allowed-methods [:get]
+  :available-media-types ["text/html"]
+  :handle-ok #(api/get-auth-api (:request %)))
+
+(defresource auth-simulate
+  (authorized-default-resource :admin :farmer :consultant)
+  :allowed-methods [:get]
+  :available-media-types ["text/html" "text/csv" "application/edn" "application/json"]
+  :handle-ok #(api/auth-simulate (:request %)))
+
+(defresource auth-calculate
+  (authorized-default-resource :admin :farmer :consultant)
+  :allowed-methods [:get]
+  :available-media-types ["text/html" "text/csv" "application/edn" "application/json"]
+  :handle-ok #(api/auth-calculate (:request %)))
+
+(def auth-api-subroutes
+  {"" auth-api
+   "simulate" auth-simulate
+   "calculate" auth-calculate})
+
+
 
 (defresource users
   (authorized-default-resource :admin)
@@ -80,7 +104,7 @@
   ;authorize right now just the :admin role and the user itself for a path with the users-id
   :authorized? (fn [{{{route-user-id :id} :route-params
                       {{user-roles :roles
-                        user-id :user-id} :identity} :session :as request} :request :as context}]
+                        user-id :user/id} :identity} :session :as request} :request :as context}]
                  (println "request: " request " route-user-id: " route-user-id " user-roles: " user-roles " user-id: " user-id)
                  (let [authorized-roles #{:admin}]
                    (if (or (= route-user-id user-id)
@@ -101,7 +125,8 @@
 
 
 
-(defresource weather-stations
+(defresource
+  weather-stations
   (authorized-default-resource :admin :consultant :farmer :guest)
   :allowed-methods [:post :get]
   :available-media-types ["text/html"]
@@ -237,6 +262,7 @@
         "login" login
         "logout" logout
         "api/" api-subroutes
+        "auth-api/" auth-api-subroutes
         "data/" data-subroutes}])
 
 
@@ -285,5 +311,5 @@
         wrap-edn-params
         wrap-params
         wrap-session
-        (wrap-trace :header :ui))))
+        #_(wrap-trace :header :ui))))
 

@@ -1,5 +1,5 @@
 (defproject berest-service "0.0.1-SNAPSHOT"
-  :description "BEREST pedestal based web service"
+  :description "REST based BEREST web service"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
@@ -23,6 +23,7 @@
                  [crypto-password "0.1.1"]
 
                  [ring "1.2.1"]
+                 [ring-server "0.3.1"]
                  [fogus/ring-edn "0.2.0"]
 
                  #_[compojure "1.1.6"]
@@ -70,9 +71,8 @@
 
   :min-lein-version "2.0.0"
   :resource-paths ["config" "resources"]
-  :aliases {"run-dev" ["trampoline" "run" "-m" "berest-service.server/run-dev"]}
 
-  ;:main ^{:skip-aot true} berest-service.server
+  ;:main ^{:skip-aot true} berest-service.handler
   )
 
 

@@ -68,20 +68,27 @@
 
 (defn get-api
   [request]
-  (let [db (db/current-db)]
+  "get-api"
+  #_(let [db (db/current-db)]
     (common/standard-get (partial api-layout db)
                          request)))
+
+
+(defn get-auth-api
+  [request]
+  "get-auth-api"
+  #_(let [db (db/current-db)]
+    (common/standard-get (partial api-layout db)
+                         request)))
+
 
 ;; api functions
 
 (defn calculate-plot-from-db
-  [& {:keys [user-id farm-id plot-id weather-station-id
+  [& {:keys [db farm-id plot-id weather-station-id
              until-julian-day year
              irrigation-donations dc-assertions]}]
-  (let? [db (db/current-db user-id)
-         :else [:div#error "Fehler: Konnte keine Verbindung zur Datenbank herstellen!"]
-
-         plot (bc/db-read-plot db plot-id year)
+  (let? [plot (bc/db-read-plot db plot-id year)
          :else [:div#error "Fehler: Konnte Schlag mit Nummer: " plot-id " nicht laden!"]
 
          ;plot could be updated with given dc-assertions
@@ -125,12 +132,13 @@
 
 
 (defn calculate
-  [{{:keys [farm-id plot-id
-            weather-station-id year
-            until-day until-month
-            irrigation-data]} :params
+  [{{:keys [farm-data plot-data
+            weather-data
+            irrigation-data
+            dc-assertion-data]} :params
     {:keys [user-id]} :identity}]
-  (let [year* (Integer/parseInt year)
+  false
+  #_(let [year* (Integer/parseInt year)
         until-julian-day (bu/date-to-doy (Integer/parseInt until-day)
                                          (Integer/parseInt until-month)
                                          year*)
@@ -138,6 +146,27 @@
                                {:irrigation/abs-day (bu/date-to-doy day month year*)
                                 :irrigation/amount amount})]
     (calculate-plot-from-db :user-id user-id :farm-id farm-id :plot-id plot-id
+                            :until-julian-day until-julian-day :year year*
+                            :weather-station-id weather-station-id
+                            :irrigation-donations irrigation-donations)))
+
+(defn auth-calculate
+  "use calculation service, but mainly using a users data taken from database"
+  [{{:keys [farm-id plot-id
+            weather-station-id year
+            until-day until-month
+            irrigation-data]} :params
+    {user-id :user/id} :identity}]
+  (let [db (db/current-db user-id)
+        year* (Integer/parseInt year)
+        until-julian-day (bu/date-to-doy (Integer/parseInt until-day)
+                                         (Integer/parseInt until-month)
+                                         year*)
+        irrigation-donations (for [[day month amount] (edn/read-string irrigation-data)]
+                               {:irrigation/abs-day (bu/date-to-doy day month year*)
+                                :irrigation/amount amount})]
+    (calculate-plot-from-db :db db
+                            :farm-id farm-id :plot-id plot-id
                             :until-julian-day until-julian-day :year year*
                             :weather-station-id weather-station-id
                             :irrigation-donations irrigation-donations)))
@@ -150,10 +179,22 @@
          plot-id-format :plot-id-format} path-params
         [plot-id format*] (split-plot-id-format plot-id-format)
         plot-id "zalf"]
+    false
     #_(-> (simulate-plot :user-id "guest" :farm-id farm-id :plot-id plot-id :data data)
         rur/response
         (rur/content-type ,,, "text/csv"))))
 
+(defn auth-simulate
+  [{:keys [query-params path-params] :as request}]
+  (let [{format :format :as data} query-params
+        {farm-id :farm-id
+         plot-id-format :plot-id-format} path-params
+        [plot-id format*] (split-plot-id-format plot-id-format)
+        plot-id "zalf"]
+    false
+    #_(-> (simulate-plot :user-id "guest" :farm-id farm-id :plot-id plot-id :data data)
+        rur/response
+        (rur/content-type ,,, "text/csv"))))
 
 
 #_(defn simulate-plot
