@@ -37,6 +37,7 @@
     <orderEntry type="library" name="Leiningen: org.clojure/tools.logging:0.2.6" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.namespace:0.2.4" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.nrepl:0.2.3" level="project" />
+    <orderEntry type="library" name="Leiningen: prismatic/plumbing:0.2.2" level="project" />
     <orderEntry type="library" name="Leiningen: ring-server:0.3.1" level="project" />
     <orderEntry type="library" name="Leiningen: ring:1.2.1" level="project" />
     <orderEntry type="library" name="Leiningen: clojurewerkz/scrypt:1.1.0" level="project" />
@@ -89,6 +90,9 @@
     <orderEntry type="library" name="Leiningen: org.clojure/data.csv:0.1.2" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/data.json:0.2.1" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.trace:0.7.3" level="project" />
+    <orderEntry type="library" name="Leiningen: de.kotka/lazymap:3.1.0" level="project" />
+    <orderEntry type="library" name="Leiningen: prismatic/schema:0.2.1" level="project" />
+    <orderEntry type="library" name="Leiningen: potemkin:0.3.2" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/core.incubator:0.1.0" level="project" />
     <orderEntry type="library" name="Leiningen: ring-refresh:0.1.2" level="project" />
     <orderEntry type="library" name="Leiningen: compojure:1.1.5" level="project" />

@@ -5,9 +5,7 @@
             [berest-service.rest.queries :as queries]
             [berest-service.rest.util :as util]
             [berest-service.rest.template :as temp]
-            #_[berest-service.service :as bs]
             [datomic.api :as d]
-            #_[io.pedestal.service.http.route :as route]
             [ring.util.response :as rur]
             [hiccup.element :as he]
             [hiccup.def :as hd]
@@ -63,6 +61,16 @@
    (temp/standard-post-layout {:url url
                                :post-title (vocab :create)
                                :post-layout-fn (partial create-farms-layout db)})])
+
+(defn get-farms-edn
+  [user-id]
+  (->> (d/q '[:find ?farm-id
+              :in $
+              :where
+              [?f-e :farm/id ?farm-id]]
+            (db/current-db user-id))
+       (map first ,,,)))
+
 
 (defn get-farms
   [request]

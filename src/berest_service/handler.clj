@@ -27,22 +27,44 @@
             [buddy.auth :refer [authenticated? throw-unauthorized]]
             [buddy.auth.backends.session :refer [session-backend]]
             [buddy.auth.backends.token :refer [signed-token-backend]]
+            [buddy.sign.generic :refer [sign unsign]]
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]))
 
 
 (defn pp [& xs]
   (println (with-out-str (apply pp/pprint xs))))
 
+(defn- default-authorized?
+  [authorized-roles {:keys [request] :as context}
+   & {single-user? :single-user?
+      single-user-id-route-params-key :single-user-id-route-params-key
+      single-user-id-fn :get-single-user-id-fn
+      :or {single-user? false
+           single-user-id-route-params-key :id
+           single-user-id-fn (fn [context id-key]
+                               (-> context :request :route-params id-key))}}]
+  ;options requests don't need authentication
+  (if (= :options (:request-method request))
+    true
+    (let [authorized-roles* (into #{} authorized-roles)
+          auth-token (some-> request :headers (get ,,, "x-auth-token"))
+          identity (or (and auth-token
+                            (db/check-session-token auth-token))
+                       (some-> request :session :identity))
+          {user-id :user/id
+           user-roles :user/roles} identity
+          single-user-id (when single-user?
+                           (single-user-id-fn context single-user-id-route-params-key))]
+      (if (or (and single-user? user-id single-user-id (= user-id single-user-id))
+              (and user-roles (not-empty (set/intersection authorized-roles* user-roles))))
+        {:identity identity}
+        (throw-unauthorized)))))
+
+
 (defn authorized-default-resource
   "create a default resource which is just authorized for any of the the given roles (or connected)"
   [& authorized-roles]
-  {:authorized? (fn [{:keys [request] :as context}]
-                  (let [user-roles (some-> request :session :identity :user/roles)
-                        authorized-roles* (into #{} authorized-roles)]
-                    (if user-roles
-                      (not-empty (set/intersection authorized-roles* user-roles))
-                      (throw-unauthorized))))})
-
+  {:authorized? (partial default-authorized? authorized-roles)})
 
 
 (defresource api
@@ -81,7 +103,7 @@
 
 (defresource auth-calculate
   (authorized-default-resource :admin :farmer :consultant)
-  :allowed-methods [:get]
+  :allowed-methods [:get :options]
   :available-media-types ["text/html" "text/csv" "application/edn" "application/json"]
   :handle-ok #(api/auth-calculate (:request %)))
 
@@ -102,15 +124,9 @@
 
 (defresource user
   ;authorize right now just the :admin role and the user itself for a path with the users-id
-  :authorized? (fn [{{{route-user-id :id} :route-params
-                      {{user-roles :roles
-                        user-id :user/id} :identity} :session :as request} :request :as context}]
-                 (println "request: " request " route-user-id: " route-user-id " user-roles: " user-roles " user-id: " user-id)
-                 (let [authorized-roles #{:admin}]
-                   (if (or (= route-user-id user-id)
-                           (not-empty (set/intersection authorized-roles user-roles)))
-                     true
-                     (throw-unauthorized))))
+  :authorized? #(default-authorized? [:admin] %
+                                     :single-user? true
+                                     :single-user-id-route-params-key :id)
 
   :allowed-methods [:put :get]
   :available-media-types ["text/html"]
@@ -149,11 +165,12 @@
 
 
 (defresource plots
-  :allowed-methods [:post :get]
+  (authorized-default-resource :admin :farmer :consultant)
+  :allowed-methods [:post :get :options]
   :available-media-types ["text/html" "application/edn"]
   :handle-ok (fn [{request :request
-                   {media-type :media-type} :representation}]
-               (pp request)
+                   {media-type :media-type} :representation
+                   :as context}]
                (condp = media-type
                  "application/edn" (plot/get-plots-edn request)
                  "text/html" (plot/get-plots request)))
@@ -162,6 +179,7 @@
 
 
 (defresource plot [farm-id id]
+  (authorized-default-resource :admin :consultant :farmer)
   :allowed-methods [:put :get]
   :available-media-types ["text/html"]
   :handle-ok #(plot/get-plot farm-id id (get-in % [:request :query-params]))
@@ -176,14 +194,21 @@
 
 
 (defresource farms
-  #_(authorized-default-resource :admin :consultant :farmer)
-  :allowed-methods [:post :get]
+  (authorized-default-resource :admin :consultant :farmer)
+  :allowed-methods [:post :get :options]
   :available-media-types ["text/html"]
-  :handle-ok #(farm/get-farms (:request %))
+  :handle-ok (fn [{request :request
+                   {media-type :media-type} :representation
+                   :as context}]
+               (condp = media-type
+                 "application/edn" (farm/get-farms-edn (-> context :identity :user/id) request)
+                 "text/html" (farm/get-farms request)))
+
   :post! #(farm/create-farm (:request %))
   :post-redirect? (fn [ctx] nil #_{:location (format "/postbox/%s" (::id ctx))}))
 
 (defresource farm [id]
+  (authorized-default-resource :admin :consultant :farmer)
   :allowed-methods [:put :get]
   :available-media-types ["text/html"]
   :handle-ok #(farm/get-farm id (:request %))
@@ -228,9 +253,10 @@
 
   :handle-ok (fn [{request :request
                    {media-type :media-type} :representation}]
-               (condp = media-type
-                 "application/edn" {:authenticated-successfully? (-> request :session :identity nil? not)}
-                 "text/html" (login/get-login request)))
+               (let [user-id (some-> request :session :identity :user/id)]
+                 (condp = media-type
+                   "application/edn" {:session-token (db/create-session-token user-id)}
+                   "text/html" (login/get-login request))))
 
   :post! (fn [{{{user-id :username
                  pwd :password} :params} :request}]
@@ -294,7 +320,7 @@
     (when-let [response (handler request)]
       (-> response
           (ring-resp/header ,,, "Access-Control-Allow-Origin" "*")
-          (ring-resp/header ,,, "Access-Control-Allow-Headers" "origin, x-csrf-token, content-type, accept")
+          (ring-resp/header ,,, "Access-Control-Allow-Headers" "origin, x-auth-token, x-csrf-token, content-type, accept")
           #_(#(do (println %) %))))))
 
 
@@ -303,9 +329,9 @@
     (-> bidi-service-routes
         bidi/make-handler
         (wrap-resource ,,, "public")
+        wrap-access-control-allow-*
         (wrap-authorization ,,, backend)
         (wrap-authentication ,,, backend)
-        wrap-access-control-allow-*
         wrap-keyword-params
         wrap-nested-params
         wrap-edn-params

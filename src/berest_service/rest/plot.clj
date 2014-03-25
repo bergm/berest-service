@@ -71,8 +71,16 @@
 
 
 (defn get-plots-edn
-  [request]
-  ["aaaa" "bbbb" "ccccc" "dddd"])
+  [user-id farm-id]
+  (->> (d/q '[:find ?plot-id
+              :in $ ?farm-id
+              :where
+              [?farm-e :farm/id ?farm-id]
+              [?plot-e :farm/_plots ?farm-e]
+              [?plot-e :plot/id ?plot-id]]
+            (db/current-db user-id) farm-id)
+       (map first ,,,)))
+
 
 
 (defn get-plot-ids [{:keys [path-params] :as request}]

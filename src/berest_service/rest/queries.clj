@@ -1,9 +1,9 @@
 (ns berest-service.rest.queries
+  (:import (java.math BigInteger BigDecimal))
   (:require [clojure.string :as cs]
             [clojure.edn :as edn]
             [datomic.api :as d]
-            [berest.datomic :as db])
-  #_(:import java.math.BigInteger))
+            [berest.datomic :as db]))
 
 (defmulti string->value* (fn [db-type _] db-type))
 

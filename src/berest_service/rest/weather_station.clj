@@ -74,7 +74,7 @@
                                   (let [attr (common/id->ns-attr k)]
                                     [attr (queries/string->value db attr v)]))
                                 form-params))
-        transaction-data (assoc form-data :db/id (d/tempid :db.part/user))]
+        transaction-data (assoc form-data :db/id (db/new-entity-id :climate))]
     #_(try
         (d/transact (db/datomic-connection) transaction-data)
         (catch Exception e
@@ -121,7 +121,7 @@
                                   (let [attr (common/id->ns-attr k)]
                                     [attr (queries/string->value db attr v)]))
                                 form-params))
-        transaction-data (assoc form-data :db/id (d/tempid :db.part/user))]
+        transaction-data (assoc form-data :db/id (new-entity-id :climate))]
     #_(try
       (d/transact (db/datomic-connection) transaction-data)
       (catch Exception e
