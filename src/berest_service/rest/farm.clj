@@ -1,6 +1,7 @@
 (ns berest-service.rest.farm
   (:require [berest.core :as bc]
             [berest.datomic :as db]
+            [berest.helper :as bh :refer [rcomp]]
             [berest-service.rest.common :as common]
             [berest-service.rest.queries :as queries]
             [berest-service.rest.util :as util]
@@ -13,13 +14,6 @@
             [hiccup.page :as hp]
             [clojure.edn :as edn]))
 
-(comment "for instarepl"
-
-  (require '[berest-service.service :as s])
-
-  ::get-farms
-
-  )
 
 (defn vocab
   "translatable vocabulary for this page"
@@ -55,7 +49,7 @@
                               :description (vocab :show)
                               :get-id-fn :farm/id
                               :get-name-fn :farm/name
-                              :entities (queries/get-entities db :farm/id)
+                              :entities (db/query-entities db :farm/id)
                               :sub-entity-path ["farms"]})
 
    (temp/standard-post-layout {:url url
@@ -63,14 +57,16 @@
                                :post-layout-fn (partial create-farms-layout db)})])
 
 (defn get-farms-edn
-  [user-id]
-  (->> (d/q '[:find ?farm-id
-              :in $
-              :where
-              [?f-e :farm/id ?farm-id]]
-            (db/current-db user-id))
-       (map first ,,,)))
-
+  [user-id request]
+  (let [db (db/current-db)]
+    (->> (d/q '[:find ?farm-e
+                :in $ ?user-id
+                :where
+                [?user-e :user/id ?user-id]
+                [?user-e :user/farms ?farm-e]]
+              db user-id)
+         (map (rcomp first (partial d/entity db)),,,)
+         (map #(select-keys % [:farm/id :farm/name]),,,))))
 
 (defn get-farms
   [request]

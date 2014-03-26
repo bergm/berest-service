@@ -3,6 +3,7 @@
             [berest.core :as bc]
             [berest.datomic :as db]
             [berest.plot :as plot]
+            [berest.helper :as bh :refer [rcomp]]
             [berest-service.rest.common :as common]
             [berest-service.rest.queries :as queries]
             [berest-service.rest.template :as temp]
@@ -71,16 +72,19 @@
 
 
 (defn get-plots-edn
-  [user-id farm-id]
-  (->> (d/q '[:find ?plot-id
-              :in $ ?farm-id
-              :where
-              [?farm-e :farm/id ?farm-id]
-              [?plot-e :farm/_plots ?farm-e]
-              [?plot-e :plot/id ?plot-id]]
-            (db/current-db user-id) farm-id)
-       (map first ,,,)))
-
+  [user-id request]
+  (let [db (db/current-db)
+        farm-id (-> request :route-params :farm-id)]
+    (->> (d/q '[:find ?plot-e
+                :in $ ?user-id ?farm-id
+                :where
+                [?user-e :user/id ?user-id]
+                [?user-e :user/farms ?farm-e]
+                [?farm-e :farm/id ?farm-id]
+                [?farm-e :farm/plots ?plot-e]]
+              (db/current-db) user-id farm-id)
+         (map (rcomp first (partial d/entity db)) ,,,)
+         (map #(select-keys % [:plot/id :plot/name]) ,,,))))
 
 
 (defn get-plot-ids [{:keys [path-params] :as request}]

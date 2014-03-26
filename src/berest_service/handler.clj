@@ -172,7 +172,7 @@
                    {media-type :media-type} :representation
                    :as context}]
                (condp = media-type
-                 "application/edn" (plot/get-plots-edn request)
+                 "application/edn" (plot/get-plots-edn (-> context :identity :user/id) request)
                  "text/html" (plot/get-plots request)))
   :post! #(plot/create-plot (:request %))
   :post-redirect? (fn [ctx] nil #_{:location (format "/postbox/%s" (::id ctx))}))
@@ -180,8 +180,8 @@
 
 (defresource plot [farm-id id]
   (authorized-default-resource :admin :consultant :farmer)
-  :allowed-methods [:put :get]
-  :available-media-types ["text/html"]
+  :allowed-methods [:put :get :options]
+  :available-media-types ["text/html" "application/edn"]
   :handle-ok #(plot/get-plot farm-id id (get-in % [:request :query-params]))
   :put! #(plot/update-plot farm-id id (:request %)))
 
@@ -196,7 +196,7 @@
 (defresource farms
   (authorized-default-resource :admin :consultant :farmer)
   :allowed-methods [:post :get :options]
-  :available-media-types ["text/html"]
+  :available-media-types ["text/html" "application/edn"]
   :handle-ok (fn [{request :request
                    {media-type :media-type} :representation
                    :as context}]
@@ -209,7 +209,7 @@
 
 (defresource farm [id]
   (authorized-default-resource :admin :consultant :farmer)
-  :allowed-methods [:put :get]
+  :allowed-methods [:put :get :options]
   :available-media-types ["text/html"]
   :handle-ok #(farm/get-farm id (:request %))
   :put! #(farm/update-farm id (:request %)))
@@ -337,5 +337,5 @@
         wrap-edn-params
         wrap-params
         wrap-session
-        #_(wrap-trace :header :ui))))
+        (wrap-trace ,,, :header :ui))))
 
