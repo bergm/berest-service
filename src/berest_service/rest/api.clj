@@ -17,7 +17,8 @@
             [berest-service.rest.common :as common]
             [berest-service.rest.queries :as queries]
             [berest-service.rest.template :as temp]
-            [let-else :as le :refer [let?]]))
+            [let-else :as le :refer [let?]]
+            [simple-time.core :as time]))
 
 ;; page translations
 
@@ -152,18 +153,18 @@
 
 (defn auth-calculate
   "use calculation service, but mainly using a users data taken from database"
-  [{{:keys [farm-id plot-id
-            weather-station-id year
-            until-day until-month
-            irrigation-data]} :params
-    {user-id :user/id} :identity}]
-  (let [db (db/current-db user-id)
-        year* (Integer/parseInt year)
-        until-julian-day (bu/date-to-doy (Integer/parseInt until-day)
-                                         (Integer/parseInt until-month)
-                                         year*)
+  [request]
+  (let [user-id (-> request :session :identity :user/id)
+        {:keys [farm-id
+                plot-id
+                until-date
+                irrigation-data]} (-> request :path-params)
+        db (db/current-db user-id)
+        until-date* (time/parse until-date)
+        year (time/datetime->year until-date*)
+        until-julian-day (time/datetime->day-of-year until-date*)
         irrigation-donations (for [[day month amount] (edn/read-string irrigation-data)]
-                               {:irrigation/abs-day (bu/date-to-doy day month year*)
+                               {:irrigation/abs-day (time/datetime->day-of-year (time)) (bu/date-to-doy day month year*)
                                 :irrigation/amount amount})]
     (calculate-plot-from-db :db db
                             :farm-id farm-id :plot-id plot-id
