@@ -95,12 +95,10 @@
          ;plot could be updated with given dc-assertions
          ;plot* (update-in plot [])
 
-         weather (climate/weather-data db weather-station-id year)
-         sorted-weather-map (into (sorted-map) (map #(vector (bu/date-to-doy (:weather-data/date %)) %)
-                                                    weather))
+         sorted-weather-map (climate/final-sorted-weather-data-map-for-plot db year weather-station-id)
 
          inputs (bc/create-input-seq| :plot plot
-                                      :sorted-weather-map weather
+                                      :sorted-weather-map sorted-weather-map
                                       :irrigation-donations irrigation-donations
                                       :until-abs-day (+ until-julian-day 7)
                                       :irrigation-mode :sprinkle-losses)
@@ -159,7 +157,7 @@
                 plot-id
                 until-date
                 irrigation-data]} (-> request :path-params)
-        db (db/current-db user-id)
+        db (db/current-db)
         until-date* (time/parse until-date)
         year (time/datetime->year until-date*)
         until-julian-day (time/datetime->day-of-year until-date*)
