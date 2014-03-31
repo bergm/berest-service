@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/config" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/immutant-src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/checkouts" />
     </content>
     <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />

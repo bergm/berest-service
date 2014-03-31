@@ -55,7 +55,7 @@
                                    :username "michael.berg@zalf.de"
                                    :password "dfe713b3-62f0-469d-8ac9-07d6b02b0175"}}
 
-  :source-paths ["src"]
+  :source-paths ["src" "immutant-src"]
 
   :jelastic {:apihoster "app.jelastic.dogato.eu"
              ;:email "your@mail.com"

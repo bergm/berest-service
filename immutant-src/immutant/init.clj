@@ -1,19 +1,19 @@
 (ns immutant.init
   (:require [immutant.web :as web]
             [immutant.jobs :as jobs]
-            [io.pedestal.service.http :as http]
-            [berest-service.service :as service]
-            [berest-service.climate.dwd :as dwd]))
+            #_[io.pedestal.service.http :as http]
+            #_[berest-service.service :as service]
+            [berest.climate.dwd :as dwd]
+            #_[ring.middleware.resource :refer [wrap-resource]]
+            #_[ring.util.response :refer [redirect]]))
 
 ;for ring handlers
-#_(:use [ring.middleware.resource :only [wrap-resource]]
-        [ring.util.response :only [redirect]])
 #_(defn handler [request]
   (redirect "/index.html"))
 #_(immutant.web/start (wrap-resource handler "public"))
 
 ;for pedestal service apps
-(web/start-servlet "/" (::http/servlet (http/create-servlet service/service)))
+;(web/start-servlet "/" (::http/servlet (http/create-servlet service/service)))
 
 
 
