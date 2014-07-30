@@ -48,6 +48,9 @@
 
    :farms nil
 
+   ;will only be available if user has role #admin
+   :users nil
+
    :weather-stations {}
 
    :full-selected-weather-stations {}
@@ -90,6 +93,8 @@
                                                                   (data/db->a-farms-plots db farm-id))))])
                       (data/db->a-users-farms db user-id)))]
     (assoc state-template :farms farms-with-plots
+                          :users (when ((:user/roles cred) :admin)
+                                   (data/db->all-users db))
                           :weather-stations (data/db->a-users-weather-stations db user-id)
                           :user-credentials cred)))
 
@@ -200,6 +205,22 @@
                (:user @*session*))]
     (when cred
       (first (data/db->full-selected-crops db [crop-id])))))
+
+(defrpc create-new-user
+  [new-user-id new-user-pwd & [user-id pwd]]
+  {:rpc/pre [(nil? user-id)
+             (rules/logged-in?)]}
+  (let [db (db/current-db)
+
+        cred (if user-id
+               (db/credentials* db user-id pwd)
+               (:user @*session*))]
+    (when cred
+      (try
+        (db/register-user (db/connection) new-user-id new-user-pwd new-user-id [:guest])
+        (stem-cell-state (db/current-db) cred)
+        (catch Exception e
+          (throw (ex error "Couldn't create new farm!")))))))
 
 
 (defrpc create-new-farm
@@ -472,7 +493,7 @@
     (when cred
       {:recommendation recommendation*
        :soil-moistures soil-moistures
-       :inputs (map #(select-keys % [:abs-day :precipitation :evaporation :donation :qu-target])
+       :inputs (map #(select-keys % [:abs-day :precipitation :evaporation :donation :qu-target :extraction-depth-cm])
                     inputs)})))
 
 
