@@ -93,7 +93,7 @@
                                                                   (data/db->a-farms-plots db farm-id))))])
                       (data/db->a-users-farms db user-id)))]
     (assoc state-template :farms farms-with-plots
-                          :users (when ((:user/roles cred) :admin)
+                          :users (when ((:user/roles cred) :user.role/admin)
                                    (data/db->all-users db))
                           :weather-stations (data/db->a-users-weather-stations db user-id)
                           :user-credentials cred)))
@@ -221,6 +221,21 @@
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
           (throw (ex error "Couldn't create new farm!")))))))
+
+(defrpc set-new-password
+  [pwd-user-id new-user-pwd & [user-id pwd]]
+  {:rpc/pre [(nil? user-id)
+             (rules/logged-in?)]}
+  (let [db (db/current-db)
+
+        cred (if user-id
+               (db/credentials* db user-id pwd)
+               (:user @*session*))]
+    (when cred
+      (try
+        (db/update-password (db/connection) pwd-user-id new-user-pwd)
+        (catch Exception e
+          (throw (ex error "Couldn't update password!")))))))
 
 
 (defrpc create-new-farm

@@ -9,3 +9,4 @@ logs/
 /checkouts
 /castra/resources/public
 /castra/checkouts
+*.nrepl-port
