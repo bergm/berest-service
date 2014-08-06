@@ -237,6 +237,22 @@
         (catch Exception e
           (throw (ex error "Couldn't update password!")))))))
 
+(defrpc update-user-roles
+  [update-user-id new-roles & [user-id pwd]]
+  {:rpc/pre [(nil? user-id)
+             (rules/logged-in?)]}
+  (let [db (db/current-db)
+
+        cred (if user-id
+               (db/credentials* db user-id pwd)
+               (:user @*session*))]
+    (when cred
+      (try
+        (db/update-user-roles (db/connection) update-user-id new-roles)
+        (stem-cell-state (db/current-db) cred)
+        (catch Exception e
+          (throw (ex error "Couldn't update user to new roles!")))))))
+
 
 (defrpc create-new-farm
   [temp-farm-name & [user-id pwd]]
