@@ -104,7 +104,9 @@
                                :slopes (data/db->all-slopes db)
                                :substrate-groups (data/db->all-substrate-groups db)
                                :ka5-soil-types (data/db->all-ka5-soil-types db)
-                               :crop->dcs (data/db->all-crop->dcs db)))
+                               :crop->dcs (data/db->all-crop->dcs db)
+                               :all-weather-stations (data/db->all-weather-stations db)
+                               :minimal-all-crops (data/db->min-all-crops db)))
 
 (defrpc get-berest-state
   [& [user-id pwd]]
@@ -132,7 +134,7 @@
       (static-stem-cell-state db))))
 
 
-(defrpc get-minimal-all-crops
+#_(defrpc get-minimal-all-crops
   "returns the minimal version of all crops, a list of
   [{:crop/id :id
     :crop/name :name
@@ -253,6 +255,37 @@
         (catch Exception e
           (throw (ex error "Couldn't update user to new roles!")))))))
 
+(defrpc add-user-weather-stations
+  [update-user-id new-weather-station-ids & [user-id pwd]]
+  {:rpc/pre [(nil? user-id)
+             (rules/logged-in?)]}
+  (let [db (db/current-db)
+
+        cred (if user-id
+               (db/credentials* db user-id pwd)
+               (:user @*session*))]
+    (when cred
+      (try
+        (db/add-user-weather-stations (db/connection) update-user-id new-weather-station-ids)
+        (stem-cell-state (db/current-db) cred)
+        (catch Exception e
+          (throw (ex error "Couldn't add new user weather-stations!")))))))
+
+(defrpc remove-user-weather-stations
+  [update-user-id weather-station-ids & [user-id pwd]]
+  {:rpc/pre [(nil? user-id)
+             (rules/logged-in?)]}
+  (let [db (db/current-db)
+
+        cred (if user-id
+               (db/credentials* db user-id pwd)
+               (:user @*session*))]
+    (when cred
+      (try
+        (db/remove-user-weather-stations (db/connection) update-user-id weather-station-ids)
+        (stem-cell-state (db/current-db) cred)
+        (catch Exception e
+          (throw (ex error "Couldn't remove user weather-stations!")))))))
 
 (defrpc create-new-farm
   [temp-farm-name & [user-id pwd]]
@@ -315,7 +348,7 @@
       (try
         (data/create-new-soil-data-layer (db/connection) (:user/id cred)
                                          id-attr id (int depth) type (case type
-                                                                       [:pwp :fc :sm] (double value)
+                                                                       (:pwp :fc :sm) (double value)
                                                                        :ka5 value))
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
