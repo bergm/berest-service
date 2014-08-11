@@ -417,7 +417,7 @@
                                       (int abs-dc-day) (int dc) #_(int at-abs-day))
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't create new crop intance!")))))))
+          (throw (ex error "Couldn't create new dc assertion!")))))))
 
 (defrpc update-db-entity
   [entity-id attr value & {:keys [user-id pwd value-type]
