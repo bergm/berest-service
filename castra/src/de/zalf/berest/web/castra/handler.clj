@@ -9,21 +9,7 @@
             [ring.middleware.not-modified :refer [wrap-not-modified]]
             [ring.middleware.resource :refer [wrap-resource]]
             [tailrecursion.castra.handler :refer [castra]]
-            [immutant.jobs :as jobs]
             [de.zalf.berest.core.import.dwd-data :as dwd]))
-
-#_(jobs/schedule :fetch-dwd-data
-               dwd/import-dwd-data-into-datomic
-               :at "11:00"
-               :every :day #_[3 :days]
-               :singleton true)
-
-#_(jobs/schedule :test
-               #(println "test")
-               :in [10 :seconds]
-               :every [10 :seconds]
-               :repeat 30
-               :singleton true)
 
 (def server (atom nil))
 
