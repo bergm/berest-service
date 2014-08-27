@@ -555,7 +555,10 @@
 
         {:keys [inputs inputs-7
                 soil-moistures soil-moistures-7
-                prognosis]} (api/calculate-plot-from-db db plot-id until-abs-day year donations [])
+                prognosis]
+         :as res} (api/calculate-plot-from-db db plot-id until-abs-day year donations [])
+
+        ;_ (println "res: " (pr-str res))
 
         {slope :plot/slope
          annuals :plot/annuals
