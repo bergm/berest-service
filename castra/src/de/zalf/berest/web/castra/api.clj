@@ -189,8 +189,9 @@
                                                     :weather-data/average-temperature
                                                     :weather-data/precipitation
                                                     :weather-data/evaporation
-                                                    :weather-data/prognosis-data?]) data)]
-                    [year data*]))
+                                                    :weather-data/prognosis-date]) data)
+                        data** (filter (comp not :weather-data/prognosis-date) data*)]
+                    [year data**]))
              ,,,)
            (into {} ,,,)
            (#(assoc {} :weather-station-id weather-station-id
@@ -525,7 +526,7 @@
         donations (for [{:keys [day month amount]} donations]
                     {:donation/abs-day (util/date-to-doy day month year)
                      :donation/amount amount})
-        {:keys [inputs soil-moistures]} (f db plot-id until-julian-day year donations [])]
+        {:keys [inputs soil-moistures]} (f db plot-id until-julian-day 6 year donations [])]
     (->> soil-moistures
          (api/create-csv-output inputs ,,,)
          (#(csv/write-csv % :delimiter \tab) ,,,))))
@@ -542,7 +543,7 @@
 
 
 (defrpc calculate-from-db
-  [plot-id until-abs-day year & [user-id pwd]]
+  [plot-id calculation-doy year & [user-id pwd]]
   {:rpc/pre [(nil? user-id)
              (rules/logged-in?)]}
   (let [db (db/current-db)
@@ -551,12 +552,16 @@
                (db/credentials* db user-id pwd)
                (:user @*session*))
 
+        prognosis-days 6
+
         donations (data/db->donations db plot-id year)
 
-        {:keys [inputs inputs-7
-                soil-moistures soil-moistures-7
-                prognosis]
-         :as res} (api/calculate-plot-from-db db plot-id until-abs-day year donations [])
+        {:keys [inputs
+                soil-moistures]
+         :as res} (api/calculate-plot-from-db db plot-id calculation-doy prognosis-days year donations [])
+
+        measured-soil-moistures (drop-last prognosis-days soil-moistures)
+        ;prognosis-soil-moistures (take-last prognosis-days soil-moistures)
 
         ;_ (println "res: " (pr-str res))
 
@@ -566,11 +571,11 @@
         annual-for-year (first (filter #(= year (:plot.annual/year %)) annuals))
         tech (:plot.annual/technology annual-for-year)
 
-        recommendation (bc/calc-recommendation 5
+        recommendation (bc/calc-recommendation prognosis-days
                                                (:slope/key slope)
-                                               (:plot.annual/technology annual-for-year)
-                                               (take-last 5 inputs)
-                                               (:soil-moistures (last soil-moistures-7)))
+                                               tech
+                                               (take-last prognosis-days inputs)
+                                               (:soil-moistures (last measured-soil-moistures)))
         recommendation* (merge recommendation (bc/recommendation-states (:state recommendation)))
         ]
     (when cred
