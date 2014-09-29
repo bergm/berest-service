@@ -7,7 +7,7 @@
 
                  [de.zalf.berest/berest-core "0.0.1-SNAPSHOT"]
 
-                 [tailrecursion/castra "2.1.1"]
+                 [tailrecursion/castra "2.2.1"]
 
                  [com.datomic/datomic-pro "0.9.4766.11"]
 
