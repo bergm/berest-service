@@ -421,6 +421,23 @@
         (catch Exception e
           (throw (ex error "Couldn't create new dc assertion!")))))))
 
+(defrpc create-new-weather-data
+        [plot-id date tavg globrad evap precip prog-date & [user-id pwd]]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))]
+          (when cred
+            (try
+              (data/create-new-weather-data (db/connection) (:user/id cred)
+                                            plot-id date tavg globrad evap precip prog-date)
+              (stem-cell-state (db/current-db) cred)
+              (catch Exception e
+                (throw (ex error "Couldn't create new weather-data!")))))))
+
 (defrpc update-db-entity
   [entity-id attr value & {:keys [user-id pwd value-type]
                            :or {value-type :identity}}]
@@ -465,6 +482,30 @@
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
           (throw (ex error (str "Couldn't retract entity! tx-data:\n" tx-data))))))))
+
+(defrpc retract-db-value
+        [entity-id attr value & {:keys [user-id pwd value-type]
+                                 :or {value-type :identity}}]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))
+
+              value* (case value-type
+                       :double (double value)
+                       :int (int value)
+                       value)
+
+              tx-data [[:db/retract entity-id (d/entid db attr) value*]]]
+          (when cred
+            (try
+              (d/transact (db/connection) tx-data)
+              (stem-cell-state (db/current-db) cred)
+              (catch Exception e
+                (throw (ex error (str "Couldn't retract information on entity! tx-data:\n" tx-data))))))))
 
 (defrpc set-substrate-group-fcs-and-pwps
   [plot-id substrate-group-key & [user-id pwd]]
