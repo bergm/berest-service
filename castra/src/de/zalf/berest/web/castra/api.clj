@@ -304,6 +304,22 @@
         (catch Exception e
           (throw (ex error "Couldn't create new farm!")))))))
 
+(defrpc create-new-local-user-weather-station
+        [temp-weather-station-name & [user-id pwd]]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))]
+          (when cred
+            (try
+              (data/create-new-local-user-weather-station (db/connection) (:user/id cred) temp-weather-station-name)
+              (stem-cell-state (db/current-db) cred)
+              (catch Exception e
+                (throw (ex error "Couldn't create new weather-station!")))))))
+
 (defrpc create-new-plot
   [farm-id & [user-id pwd]]
   {:rpc/pre [(nil? user-id)
