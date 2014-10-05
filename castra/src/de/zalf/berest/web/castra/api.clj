@@ -320,6 +320,8 @@
               (catch Exception e
                 (throw (ex error "Couldn't create new weather-station!")))))))
 
+
+
 (defrpc create-new-plot
   [farm-id & [user-id pwd]]
   {:rpc/pre [(nil? user-id)
@@ -438,7 +440,7 @@
           (throw (ex error "Couldn't create new dc assertion!")))))))
 
 (defrpc create-new-weather-data
-        [plot-id date tavg globrad evap precip prog-date & [user-id pwd]]
+        [id-attr id date tavg globrad evap precip prog-date & [user-id pwd]]
         {:rpc/pre [(nil? user-id)
                    (rules/logged-in?)]}
         (let [db (db/current-db)
@@ -448,8 +450,10 @@
                      (:user @*session*))]
           (when cred
             (try
+              #_(println "(create-new-weather-data " id-attr " " id " " date " " tavg " " globrad " " evap
+                       " " precip " " prog-date ")")
               (data/create-new-weather-data (db/connection) (:user/id cred)
-                                            plot-id date tavg globrad evap precip prog-date)
+                                            id-attr id date tavg globrad evap precip prog-date)
               (stem-cell-state (db/current-db) cred)
               (catch Exception e
                 (throw (ex error "Couldn't create new weather-data!")))))))
