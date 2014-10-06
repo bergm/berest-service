@@ -651,7 +651,9 @@
     (when cred
       {:recommendation recommendation*
        :soil-moistures soil-moistures
-       :inputs (map #(select-keys % [:abs-day :precipitation :evaporation :donation :qu-target :extraction-depth-cm])
+       :inputs (map #(select-keys % [:abs-day :precipitation :evaporation
+                                     :donation :profit-per-dt :avg-additional-yield-per-mm
+                                     :qu-target :extraction-depth-cm])
                     inputs)})))
 
 
