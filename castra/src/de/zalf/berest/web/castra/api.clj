@@ -383,7 +383,7 @@
       (try
         (data/create-new-soil-data-layer (db/connection) (:user/id cred)
                                          id-attr id (int depth) type (case type
-                                                                       (:pwp :fc :sm) (double value)
+                                                                       (:pwp :fc :sm :ism) (double value)
                                                                        :ka5 value))
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
@@ -405,6 +405,22 @@
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
           (throw (ex error "Couldn't create new donation!")))))))
+
+(defrpc create-new-soil-moisture
+        [annual-plot-entity-id & [user-id pwd]]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))]
+          (when cred
+            (try
+              (data/create-new-soil-moisture (db/connection) (:user/id cred) annual-plot-entity-id)
+              (stem-cell-state (db/current-db) cred)
+              (catch Exception e
+                (throw (ex error "Couldn't create new soil-moistures entity!")))))))
 
 (defrpc create-new-crop-instance
   [annual-plot-entity-id crop-template-id & [user-id pwd]]

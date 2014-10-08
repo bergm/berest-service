@@ -9,7 +9,7 @@
 
                  [tailrecursion/castra "2.2.1"]
 
-                 [com.datomic/datomic-pro "0.9.4766.11"]
+                 [com.datomic/datomic-pro "0.9.4899"]
 
                  [clojurewerkz/quartzite "1.3.0"]
 
