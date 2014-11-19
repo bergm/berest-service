@@ -370,6 +370,22 @@
         (catch Exception e
           (throw (ex error "Couldn't create new farm address!")))))))
 
+(defrpc create-new-farm-contact
+        [farm-id & [user-id pwd]]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))]
+          (when cred
+            (try
+              (data/create-new-farm-contact (db/connection) (:user/id cred) farm-id)
+              (stem-cell-state (db/current-db) cred)
+              (catch Exception e
+                (throw (ex error "Couldn't create new farm contact!")))))))
+
 (defrpc create-new-soil-data-layer
   [id-attr id depth type value & [user-id pwd]]
   {:rpc/pre [(nil? user-id)
@@ -390,7 +406,7 @@
           (throw (ex error "Couldn't create new fc, pwp or ka5 layer!")))))))
 
 (defrpc create-new-donation
-  [annual-plot-entity-id abs-day amount locked-recommendation? & [user-id pwd]]
+  [annual-plot-entity-id abs-start-day abs-end-day amount & [user-id pwd]]
   {:rpc/pre [(nil? user-id)
              (rules/logged-in?)]}
   (let [db (db/current-db)
@@ -401,7 +417,7 @@
     (when cred
       (try
         (data/create-new-donation (db/connection) (:user/id cred) annual-plot-entity-id
-                                  (int abs-day) (double amount) locked-recommendation?)
+                                  (int abs-start-day) (int abs-end-day) (double amount))
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
           (throw (ex error "Couldn't create new donation!")))))))
@@ -602,7 +618,8 @@
         until-julian-day (.getDayOfYear ud)
         year (ctc/year ud)
         donations (for [{:keys [day month amount]} donations]
-                    {:donation/abs-day (util/date-to-doy day month year)
+                    {:donation/abs-start-day (util/date-to-doy day month year)
+                     :donation/abs-end-day (util/date-to-doy day month year)
                      :donation/amount amount})
         {:keys [inputs soil-moistures]} (f db plot-id until-julian-day 6 year donations [])]
     (->> soil-moistures
@@ -650,26 +667,19 @@
         annual-for-year (first (filter #(= year (:plot.annual/year %)) annuals))
         tech (:plot.annual/technology annual-for-year)
 
-        locked-recommendations (filter :donation/locked-recommendation? donations)
-        locked-rec-abs-days (map :donation/abs-day locked-recommendations)
-        locked-recs-in-cycle-period (filter #(<= % calculation-doy (+ (:technology/cycle-days tech) % -1)) locked-rec-abs-days)
-        ;_ (println "locked-recs-in-cycle-period: " (pr-str locked-recs-in-cycle-period))
-
-        recommendation (if (seq locked-recs-in-cycle-period)
-                         {:state :locked-recommendation-in-place}
-                         (bc/calc-recommendation prognosis-days
-                                                 (:slope/key slope)
-                                                 tech
-                                                 (take-last prognosis-days inputs)
-                                                 (:soil-moistures (last measured-soil-moistures))))
+        recommendation (bc/calc-recommendation prognosis-days
+                                               (:slope/key slope)
+                                               tech
+                                               (take-last prognosis-days inputs)
+                                               (:soil-moistures (last measured-soil-moistures)))
         recommendation* (merge recommendation (bc/recommendation-states (:state recommendation)))
         ]
     (when cred
       {:recommendation recommendation*
        :soil-moistures soil-moistures
-       :inputs (map #(select-keys % [:abs-day :precipitation :evaporation
+       :inputs (map #(select-keys % [:dc :abs-day :precipitation :evaporation
                                      :donation :profit-per-dt :avg-additional-yield-per-mm
-                                     :qu-target :extraction-depth-cm])
+                                     :qu-target :extraction-depth-cm :cover-degree :transpiration-factor])
                     inputs)})))
 
 

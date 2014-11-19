@@ -163,7 +163,8 @@
         year (time/datetime->year until-date*)
         until-julian-day (time/datetime->day-of-year until-date*)
         donations (for [[day month amount] (edn/read-string irrigation-data)]
-                    {:donation/abs-day (time/datetime->day-of-year (time/datetime year month day))
+                    {:donation/abs-start-day (time/datetime->day-of-year (time/datetime year month day))
+                     :donation/abs-end-day (time/datetime->day-of-year (time/datetime year month day))
                      :donation/amount amount})
         {:keys [inputs soil-moistures-7 prognosis] :as result}
         (calculate-plot-from-db db farm-id plot-id until-julian-day year
@@ -240,7 +241,8 @@
         year (time/datetime->year until-date*)
         until-julian-day (time/datetime->day-of-year until-date*)
         irrigation-donations (for [[day month amount] (edn/read-string irrigation-data)]
-                               {:donation/abs-day (time/datetime->day-of-year (time/datetime year month day))
+                               {:donation/abs-start-day (time/datetime->day-of-year (time/datetime year month day))
+                                :donation/abs-end-day (time/datetime->day-of-year (time/datetime year month day))
                                 :donation/amount amount})
         {:keys [inputs soil-moistures] :as result}
         (simulate-plot-from-db db farm-id plot-id until-julian-day year
