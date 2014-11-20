@@ -1,5 +1,6 @@
 (ns de.zalf.berest.web.castra.api
   (:require [tailrecursion.castra :refer [defrpc ex error *session*]]
+            [tailrecursion.cljson :as cljson]
             [de.zalf.berest.web.castra.rules :as rules]
             [de.zalf.berest.core.data :as data]
             [de.zalf.berest.core.util :as util]
@@ -14,6 +15,9 @@
             [clojure-csv.core :as csv]
             [de.zalf.berest.core.core :as bc]))
 
+(cljson/extends-protocol cljson/EncodeTagged
+                         clojure.lang.PersistentTreeMap
+                         (-encode [o] (into ["m"] (map cljson/encode (apply concat o)))))
 
 ;;; utility ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -679,8 +683,12 @@
        :soil-moistures soil-moistures
        :inputs (map #(select-keys % [:dc :abs-day :precipitation :evaporation
                                      :donation :profit-per-dt :avg-additional-yield-per-mm
-                                     :qu-target :extraction-depth-cm :cover-degree :transpiration-factor])
-                    inputs)})))
+                                     :qu-target :extraction-depth-cm :cover-degree :transpiration-factor
+                                     :crop-id])
+                    inputs)
+       :crops (reduce (fn [m {:keys [crop]}]
+                        (assoc m (:crop/id crop) crop))
+                      {} inputs)})))
 
 
 
