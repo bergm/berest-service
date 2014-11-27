@@ -188,7 +188,8 @@
       (->> years
            (map (fn [year]
                   (let [data (:data (climate/weather-station-data db year weather-station-id))
-                        data* (map #(select-keys % [:weather-data/date
+                        data* (map #(select-keys % [:db/id
+                                                    :weather-data/date
                                                     :weather-data/global-radiation
                                                     :weather-data/average-temperature
                                                     :weather-data/precipitation
