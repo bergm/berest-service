@@ -495,6 +495,52 @@
               (catch Exception e
                 (throw (ex error "Couldn't create new weather-data!")))))))
 
+(defrpc create-new-com-con
+        [contact-entity-id com-con-id com-con-type & [user-id pwd]]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))]
+          (when cred
+            (try
+              (data/create-new-com-con (db/connection) (:user/id cred) contact-entity-id
+                                       com-con-id com-con-type)
+              (stem-cell-state (db/current-db) cred)
+              (catch Exception e
+                (throw (ex error "Couldn't create new communication connection!")))))))
+
+#_(defrpc update-is-main-contact?
+        [contact-entity-id is-main-contact? & {:keys [user-id pwd value-type]
+                                               :or {value-type :identity}}]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))
+
+              prev-main-contacts? (d/q '[:find ?c-id
+                                         :in $
+                                         :where
+                                         [?f-id :farm/contacts ?c-id]
+                                         [?c-id :person/is-main-contact true]]
+                                       (db/current-db))
+
+              tx-data nil #_[[:db/add entity-id (d/entid db attr) value*]]
+
+              ]
+          (when cred
+            (try
+              (d/transact (db/connection) tx-data)
+              (stem-cell-state (db/current-db) cred)
+              (catch Exception e
+                (throw (ex error (str "Couldn't update entity! tx-data:\n" tx-data))))))))
+
+
 (defrpc update-db-entity
   [entity-id attr value & {:keys [user-id pwd value-type]
                            :or {value-type :identity}}]
