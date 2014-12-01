@@ -496,7 +496,7 @@
                 (throw (ex error "Couldn't create new weather-data!")))))))
 
 (defrpc create-new-com-con
-        [contact-entity-id com-con-id com-con-type & [user-id pwd]]
+        [contact-entity-id com-con-id com-con-desc com-con-type & [user-id pwd]]
         {:rpc/pre [(nil? user-id)
                    (rules/logged-in?)]}
         (let [db (db/current-db)
@@ -507,7 +507,7 @@
           (when cred
             (try
               (data/create-new-com-con (db/connection) (:user/id cred) contact-entity-id
-                                       com-con-id com-con-type)
+                                       com-con-id com-con-desc com-con-type)
               (stem-cell-state (db/current-db) cred)
               (catch Exception e
                 (throw (ex error "Couldn't create new communication connection!")))))))
