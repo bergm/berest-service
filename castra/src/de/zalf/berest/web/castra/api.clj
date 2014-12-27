@@ -103,14 +103,14 @@
                           :user-credentials cred)))
 
 (defn- static-stem-cell-state
-  [db]
+  [db {user-id :user/id :as cred}]
   (assoc static-state-template :stts (data/db->all-stts db)
                                :slopes (data/db->all-slopes db)
                                :substrate-groups (data/db->all-substrate-groups db)
                                :ka5-soil-types (data/db->all-ka5-soil-types db)
                                :crop->dcs (data/db->all-crop->dcs db)
                                :all-weather-stations (data/db->all-weather-stations db)
-                               :minimal-all-crops (data/db->min-all-crops db)))
+                               :minimal-all-crops (data/db->min-all-crops db user-id)))
 
 (defrpc get-berest-state
   [& [user-id pwd]]
@@ -135,7 +135,7 @@
                (db/credentials* db user-id pwd)
                (:user @*session*))]
     (when cred
-      (static-stem-cell-state db))))
+      (static-stem-cell-state db cred))))
 
 
 #_(defrpc get-minimal-all-crops
@@ -512,6 +512,38 @@
               (catch Exception e
                 (throw (ex error "Couldn't create new communication connection!")))))))
 
+(defrpc create-new-crop
+        [temp-name & [user-id pwd]]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))]
+          (when cred
+            (try
+              (data/create-new-crop (db/connection) (:user/id cred) temp-name)
+              (static-stem-cell-state (db/current-db) cred)
+              (catch Exception e
+                (throw (ex error "Couldn't create new crop!")))))))
+
+(defrpc copy-crop
+        [crop-id temp-name & [user-id pwd]]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))]
+          (when cred
+            (try
+              (data/copy-crop (db/connection) (:user/id cred) crop-id temp-name)
+              (stem-cell-state (db/current-db) cred)
+              (catch Exception e
+                (throw (ex error (str "Couldn't copy crop with id: " crop-id "!"))))))))
+
 #_(defrpc update-is-main-contact?
         [contact-entity-id is-main-contact? & {:keys [user-id pwd value-type]
                                                :or {value-type :identity}}]
@@ -609,6 +641,79 @@
               (stem-cell-state (db/current-db) cred)
               (catch Exception e
                 (throw (ex error (str "Couldn't retract information on entity! tx-data:\n" tx-data))))))))
+
+
+
+(defrpc update-crop-db-entity
+        [crop-id entity-id attr value & {:keys [user-id pwd value-type]
+                                         :or {value-type :identity}}]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))
+
+              value* (case value-type
+                       :double (double value)
+                       :int (int value)
+                       value)
+
+              tx-data [[:db/add entity-id (d/entid db attr) value*]]
+              ;_ (println "tx-data: " (pr-str tx-data))
+              ]
+          (when cred
+            (try
+              (d/transact (db/connection) tx-data)
+              (first (data/db->full-selected-crops (db/current-db) [crop-id]))
+              (catch Exception e
+                (throw (ex error (str "Couldn't update entity! tx-data:\n" tx-data))))))))
+
+(defrpc delete-crop-db-entity
+        [crop-id entity-id?s & [user-id pwd]]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))
+
+              entity-ids (if (sequential? entity-id?s) entity-id?s [entity-id?s])
+
+              tx-data (for [e-id entity-ids]
+                        [:db.fn/retractEntity e-id])]
+          (when cred
+            (try
+              (d/transact (db/connection) tx-data)
+              (first (data/db->full-selected-crops (db/current-db) [crop-id]))
+              (catch Exception e
+                (throw (ex error (str "Couldn't retract entity! tx-data:\n" tx-data))))))))
+
+(defrpc create-new-crop-kv-pair
+        [crop-id crop-attr key-attr key-value value-attr value-value & {:keys [user-id pwd value-type]
+                                                                        :or {value-type :identity}}]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))
+
+              value-value* (case value-type
+                             :double (double value-value)
+                             :int (int value-value)
+                             value-value)
+              ]
+          (when cred
+            (try
+              (data/create-new-crop-kv-pair (db/connection) (:user/id cred) crop-id
+                                            crop-attr key-attr key-value value-attr value-value*)
+              (first (data/db->full-selected-crops (db/current-db) [crop-id]))
+              (catch Exception e
+                (throw (ex error (str "Couldn't create new key-value pair for crop with id: " crop-id "!"))))))))
 
 (defrpc set-substrate-group-fcs-and-pwps
   [plot-id substrate-group-key & [user-id pwd]]
