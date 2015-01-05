@@ -13,7 +13,8 @@
             [clj-time.format :as ctf]
             [clj-time.coerce :as ctcoe]
             [clojure-csv.core :as csv]
-            [de.zalf.berest.core.core :as bc]))
+            [de.zalf.berest.core.core :as bc]
+            [clojure.tools.logging :as log]))
 
 (cljson/extends-protocol cljson/EncodeTagged
                          clojure.lang.PersistentTreeMap
@@ -544,6 +545,25 @@
               (catch Exception e
                 (throw (ex error (str "Couldn't copy crop with id: " crop-id "!"))))))))
 
+(defrpc delete-crop
+        [crop-db-id & [user-id pwd]]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))
+
+              tx-data [[:db.fn/retractEntity crop-db-id]]]
+          (when cred
+            (try
+              (d/transact (db/connection) tx-data)
+              (static-stem-cell-state (db/current-db) cred)
+              (catch Exception e
+                (log/info "Couldn't delete crop entity! tx-data:\n" tx-data)
+                (throw (ex error (str "Couldn't delete crop!"))))))))
+
 
 (defrpc update-db-entity
   [entity-id attr value & {:keys [user-id pwd value-type]
@@ -567,7 +587,8 @@
         (d/transact (db/connection) tx-data)
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error (str "Couldn't update entity! tx-data:\n" tx-data))))))))
+          (log/info "Couldn't update entity! tx-data:\n" tx-data)
+          (throw (ex error (str "Couldn't update entity!"))))))))
 
 (defrpc delete-db-entity
   [entity-id?s & [user-id pwd]]
@@ -588,7 +609,8 @@
         (d/transact (db/connection) tx-data)
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error (str "Couldn't retract entity! tx-data:\n" tx-data))))))))
+          (log/info "Couldn't retract entity! tx-data:\n" tx-data)
+          (throw (ex error (str "Couldn't delete entity!"))))))))
 
 (defrpc retract-db-value
         [entity-id attr value & {:keys [user-id pwd value-type]
@@ -612,7 +634,8 @@
               (d/transact (db/connection) tx-data)
               (stem-cell-state (db/current-db) cred)
               (catch Exception e
-                (throw (ex error (str "Couldn't retract information on entity! tx-data:\n" tx-data))))))))
+                (log/info "Couldn't retract information on entity! tx-data:\n" tx-data)
+                (throw (ex error (str "Couldn't delete information on entity!"))))))))
 
 
 
@@ -640,7 +663,8 @@
               (d/transact (db/connection) tx-data)
               (first (data/db->full-selected-crops (db/current-db) [crop-id]))
               (catch Exception e
-                (throw (ex error (str "Couldn't update entity! tx-data:\n" tx-data))))))))
+                (log/info "Couldn't update entity! tx-data:\n" tx-data)
+                (throw (ex error (str "Couldn't update entity!"))))))))
 
 (defrpc delete-crop-db-entity
         [crop-id entity-id?s & [user-id pwd]]
@@ -661,6 +685,7 @@
               (d/transact (db/connection) tx-data)
               (first (data/db->full-selected-crops (db/current-db) [crop-id]))
               (catch Exception e
+                (log/info "Couldn't retract entity! tx-data:\n" tx-data)
                 (throw (ex error (str "Couldn't retract entity! tx-data:\n" tx-data))))))))
 
 (defrpc create-new-crop-kv-pair
