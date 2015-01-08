@@ -7,6 +7,7 @@
             [de.zalf.berest.core.api :as api]
             [de.zalf.berest.core.datomic :as db]
             [de.zalf.berest.core.climate.climate :as climate]
+            [de.zalf.berest.core.import.zalf-climate-data :as import-csv]
             [datomic.api :as d]
             [simple-time.core :as time]
             [clj-time.core :as ctc]
@@ -175,6 +176,23 @@
       (assoc (stem-cell-state db cred)
         :full-selected-crops (into {} (map (fn [c] [(:crop/id c) c]) crops))))))
 
+(defn get-weather-station-data*
+  [db weather-station-id years]
+  (->> years
+       (map (fn [year]
+              (let [data (:data (climate/weather-station-data db year weather-station-id))
+                    data* (map #(select-keys % [:db/id
+                                                :weather-data/date
+                                                :weather-data/global-radiation
+                                                :weather-data/average-temperature
+                                                :weather-data/precipitation
+                                                :weather-data/evaporation
+                                                :weather-data/prognosis-date]) data)
+                    data** (filter (comp not :weather-data/prognosis-date) data*)]
+                [year data**])),,,)
+       (into {},,,)
+       (#(assoc {} :weather-station-id weather-station-id
+                   :data %),,,)))
 
 (defrpc get-weather-station-data
   [weather-station-id years & [user-id pwd]]
@@ -186,22 +204,34 @@
                (db/credentials* db user-id pwd)
                (:user @*session*))]
     (when cred
-      (->> years
-           (map (fn [year]
-                  (let [data (:data (climate/weather-station-data db year weather-station-id))
-                        data* (map #(select-keys % [:db/id
-                                                    :weather-data/date
-                                                    :weather-data/global-radiation
-                                                    :weather-data/average-temperature
-                                                    :weather-data/precipitation
-                                                    :weather-data/evaporation
-                                                    :weather-data/prognosis-date]) data)
-                        data** (filter (comp not :weather-data/prognosis-date) data*)]
-                    [year data**]))
-             ,,,)
-           (into {} ,,,)
-           (#(assoc {} :weather-station-id weather-station-id
-                       :data %) ,,,)))))
+      (try
+        (get-weather-station-data* db weather-station-id years)
+        (catch Exception e
+          (throw (ex error (str "Couldn't get data from weather station with id: " weather-station-id "!")))))
+      )))
+
+(defrpc import-weather-data
+        [weather-station-id years csv-data & {:keys [user-id pwd
+                                                     separator ignore-lines element-order date-format]
+                                              :or {separator \tab
+                                                   ignore-lines 0
+                                                   element-order [:date :precip :evap]
+                                                   date-format "dd.MM.yyyy"}}]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
+
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))]
+          (when cred
+            (try
+              (import-csv/import-hoplon-client-csv-data (db/connection) (:user/id cred)
+                                                        weather-station-id csv-data
+                                                        separator ignore-lines element-order date-format)
+              (get-weather-station-data* db weather-station-id years)
+              (catch Exception e
+                (throw (ex error "Couldn't import weather data!")))))))
 
 (defrpc get-crop-data
   [crop-id & [user-id pwd]]
