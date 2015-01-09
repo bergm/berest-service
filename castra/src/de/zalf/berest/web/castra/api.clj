@@ -211,7 +211,7 @@
       )))
 
 (defrpc import-weather-data
-        [weather-station-id years csv-data & {:keys [user-id pwd
+        [weather-station-id #_years csv-data & {:keys [user-id pwd
                                                      separator ignore-lines element-order date-format]
                                               :or {separator \tab
                                                    ignore-lines 0
@@ -229,7 +229,8 @@
               (import-csv/import-hoplon-client-csv-data (db/connection) (:user/id cred)
                                                         weather-station-id csv-data
                                                         separator ignore-lines element-order date-format)
-              (get-weather-station-data* db weather-station-id years)
+              (stem-cell-state (db/current-db) cred)
+              #_(get-weather-station-data* db weather-station-id years)
               (catch Exception e
                 (throw (ex error "Couldn't import weather data!")))))))
 
