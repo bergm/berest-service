@@ -211,26 +211,25 @@
       )))
 
 (defrpc import-weather-data
-        [weather-station-id #_years csv-data & {:keys [user-id pwd
-                                                     separator ignore-lines element-order date-format]
-                                              :or {separator \tab
-                                                   ignore-lines 0
-                                                   element-order [:date :precip :evap]
-                                                   date-format "dd.MM.yyyy"}}]
+        [weather-station-id csv-data & {:keys [user-id pwd] :as opts}]
         {:rpc/pre [(nil? user-id)
                    (rules/logged-in?)]}
         (let [db (db/current-db)
 
               cred (if user-id
                      (db/credentials* db user-id pwd)
-                     (:user @*session*))]
+                     (:user @*session*))
+
+              opts* (merge {:separator \tab
+                            :decimal-separator :dot
+                            :ignore-lines 0
+                            :element-order [:date :precip :evap]
+                            :date-format "dd.MM.yyyy"}
+                           opts)]
           (when cred
             (try
-              (import-csv/import-hoplon-client-csv-data (db/connection) (:user/id cred)
-                                                        weather-station-id csv-data
-                                                        separator ignore-lines element-order date-format)
+              (import-csv/import-hoplon-client-csv-data (db/connection) (:user/id cred) weather-station-id csv-data opts*)
               (stem-cell-state (db/current-db) cred)
-              #_(get-weather-station-data* db weather-station-id years)
               (catch Exception e
                 (throw (ex error "Couldn't import weather data!")))))))
 
