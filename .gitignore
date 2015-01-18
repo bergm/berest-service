@@ -11,3 +11,4 @@ logs/
 /castra/checkouts
 *.nrepl-port
 /castra/resources__
+*.lein-repl-history
