@@ -788,7 +788,7 @@
 (defrpc login
   [user-id pwd]
   {:rpc/pre [(rules/login! user-id pwd)]}
-  (println "login user-id: " user-id)
+  #_(println "login user-id: " user-id)
   (get-berest-state))
 
 (defrpc logout
@@ -872,47 +872,93 @@
                       {} inputs)})))
 
 (defn calculate-from-remote-data*
-  [db crop-id {:keys [weather-data fcs pwps]}]
-  (let [sorted-climate-data (into (sorted-map)
-                                  (map (fn [[year years-data]]
-                                         [year (into (sorted-map)
-                                                     (for [[doy precip evap] years-data]
-                                                       [doy {:weather-data/precipitation precip
-                                                             :weather-data/evaporation evap}]))])
-                                       weather-data))
+  [db run-id crop-id {:keys [weather-data fcs-mm pwps-mm isms-mm ka5s lambdas layer-sizes slope]}]
+  (binding [de.zalf.berest.core.core/*layer-sizes* (or layer-sizes (repeat 20 10))]
+    (let [sorted-climate-data (into (sorted-map)
+                                    (map (fn [[year years-data]]
+                                           [year (into (sorted-map)
+                                                       (for [[doy precip evap] years-data]
+                                                         [doy {:weather-data/precipitation precip
+                                                               :weather-data/evaporation evap}]))])
+                                         weather-data))
 
-        ;_ (println "sorted-climate-data: ")
-        ;_ (pp/pprint sorted-climate-data)
+          ;_ (println "sorted-climate-data: ")
+          ;_ (pp/pprint sorted-climate-data)
 
-        plot (bc/deep-db->plot db #uuid "539ee6fc-762f-40ae-8c7d-7827ea61f709" 1994 #_"53a3f382-dae7-4fff-9d68-b3c7782fcae7" #_2014)
+          plot (bc/deep-db->plot db #uuid "539ee6fc-762f-40ae-8c7d-7827ea61f709" 1994 #_"53a3f382-dae7-4fff-9d68-b3c7782fcae7" #_2014)
 
-        plot* (assoc plot :plot/field-capacities fcs
-                          :plot/permanent-wilting-points pwps)
+          plot** {:plot/ka5-soil-types ka5s
 
-        ;_ (println "plot*: ")
-        ;_ (pp/pprint plot*)
+                  :plot/field-capacities fcs-mm
+                  :plot/fc-pwp-unit :soil-moisture.unit/mm
 
-        res (map (fn [[year sorted-weather-map]]
-                   (println "calculating year: " year)
-                   [year (let [inputs (bc/create-input-seq plot*
-                                                           sorted-weather-map
-                                                           365
-                                                           []
-                                                           (-> plot :plot.annual/technology :technology/type))]
-                           #_(println "inputs:")
-                           #_(pp/pprint inputs)
-                           (bc/calculate-sum-donations-by-auto-donations
-                             inputs (:plot.annual/initial-soil-moistures plot*)
-                             (-> plot* :plot/slope :slope/key)
-                             (:plot.annual/technology plot*)
-                             5))])
-                 sorted-climate-data)
-        ;_ (println "res: " res)
-        ]
-    (mapv second res)))
+                  :plot/permanent-wilting-points pwps-mm
+                  :plot/pwp-unit :soil-moisture.unit/mm
+
+                  :plot.annual/abs-day-of-initial-soil-moisture-measurement 90
+                  :plot.annual/initial-soil-moistures isms-mm
+                  :plot.annual/initial-sm-unit :soil-moisture.unit/mm
+
+                  :lambdas lambdas
+
+                  :plot.annual/crop-instances (:plot.annual/crop-instances plot)
+
+                  :fallow (data/db->crop-by-name db 0 :cultivation-type 0 :usage 0)
+
+                  :plot.annual/technology {:donation/step-size 5,
+                                           :donation/opt 20,
+                                           :donation/max 30,
+                                           :donation/min 5,
+                                           :technology/type :technology.type/sprinkler,
+                                           :technology/sprinkle-loss-factor 0.2,
+                                           :technology/cycle-days 1}
+
+                  :plot/slope {:slope/key 1
+                               :slope/description "eben"
+                               :slope/symbol "NFT 01" }
+
+                  :slope slope
+
+                  :plot.annual/donations []
+
+                  :plot/damage-compaction-area 0.0
+                  :plot/damage-compaction-depth 300
+                  :plot/irrigation-area 1.0
+                  :plot/crop-area 1.2
+                  :plot/groundwaterlevel 300
+
+                  ;:plot.annual/year 1994
+                  }
+
+          #_plot* #_(assoc plot :plot/field-capacities fcs
+                            :plot/permanent-wilting-points pwps)
+
+          ;_ (println "plot**: ")
+          ;_ (pp/pprint plot**)
+
+          res (map (fn [[year sorted-weather-map]]
+                     #_(println "calculating year: " year)
+                     [year (let [inputs (bc/create-input-seq plot**
+                                                             sorted-weather-map
+                                                             365
+                                                             []
+                                                             (-> plot :plot.annual/technology :technology/type))]
+                             #_(println "inputs:")
+                             #_(pp/pprint inputs)
+                             (bc/calculate-sum-donations-by-auto-donations
+                               inputs (:plot.annual/initial-soil-moistures plot**)
+                               (int slope) #_(-> plot** :plot/slope :slope/key)
+                               (:plot.annual/technology plot**)
+                               5))])
+                   sorted-climate-data)
+          ;_ (println "res: " res)
+          ]
+      {:run-id run-id
+       :result (into {} res)}
+      #_(mapv second res))))
 
 (defrpc calculate-from-remote-data
-        [crop-id data & {:keys [user-id pwd]}]
+        [run-id crop-id data & {:keys [user-id pwd]}]
         {:rpc/pre [(nil? user-id)
                    (rules/logged-in?)]}
         (let [db (db/current-db)
@@ -925,8 +971,7 @@
               ;_ (pp/pprint climate-data)
               ]
           (when cred
-            (binding [de.zalf.berest.core.core/*layer-sizes* (repeat 20 10)]
-              (calculate-from-remote-data* db crop-id data)))))
+            (calculate-from-remote-data* db run-id crop-id data))))
 
 
 
