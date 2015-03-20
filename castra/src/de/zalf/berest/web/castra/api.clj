@@ -872,7 +872,7 @@
                       {} inputs)})))
 
 (defn calculate-from-remote-data*
-  [db run-id crop-id {:keys [weather-data fcs-mm pwps-mm isms-mm ka5s lambdas layer-sizes slope]}]
+  [db run-id crop-id {:keys [weather-data fcs-mm pwps-mm isms-mm ka5s lambdas layer-sizes slope dc-assertions]}]
   (binding [de.zalf.berest.core.core/*layer-sizes* (or layer-sizes (repeat 20 10))]
     (let [sorted-climate-data (into (sorted-map)
                                     (map (fn [[year years-data]]
@@ -885,7 +885,9 @@
           ;_ (println "sorted-climate-data: ")
           ;_ (pp/pprint sorted-climate-data)
 
-          plot (bc/deep-db->plot db #uuid "539ee6fc-762f-40ae-8c7d-7827ea61f709" 1994 #_"53a3f382-dae7-4fff-9d68-b3c7782fcae7" #_2014)
+          crop-template (data/db->crop-by-id (db/current-db) crop-id)
+
+          ;plot (bc/deep-db->plot db #uuid "539ee6fc-762f-40ae-8c7d-7827ea61f709" 1994 #_"53a3f382-dae7-4fff-9d68-b3c7782fcae7" #_2014)
 
           plot** {:plot/ka5-soil-types ka5s
 
@@ -901,7 +903,13 @@
 
                   :lambdas lambdas
 
-                  :plot.annual/crop-instances (:plot.annual/crop-instances plot)
+                  ;:plot.annual/crop-instances (:plot.annual/crop-instances plot)
+
+                  :plot.annual/crop-instances [{:crop.instance/name "dummy name"
+                                                :crop.instance/template crop-template
+                                                :crop.instance/dc-assertions (for [[abs-day dc] dc-assertions]
+                                                                               {:assertion/abs-assert-dc-day abs-day
+                                                                                :assertion/assert-dc dc})}]
 
                   :fallow (data/db->crop-by-name db 0 :cultivation-type 0 :usage 0)
 
@@ -930,11 +938,8 @@
                   ;:plot.annual/year 1994
                   }
 
-          #_plot* #_(assoc plot :plot/field-capacities fcs
-                            :plot/permanent-wilting-points pwps)
-
-          ;_ (println "plot**: ")
-          ;_ (pp/pprint plot**)
+          _ (println "plot**: ")
+          _ (pp/pprint plot**)
 
           res (map (fn [[year sorted-weather-map]]
                      #_(println "calculating year: " year)
