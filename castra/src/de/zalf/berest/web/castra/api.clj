@@ -376,7 +376,7 @@
           (throw (ex error "Couldn't create new plot!")))))))
 
 (defrpc create-new-plot-annual
-  [plot-id new-year copy-data? copy-year & [user-id pwd]]
+  [plot-id new-year copy-data? copy-annual-id & [user-id pwd]]
   {:rpc/pre [(nil? user-id)
              (rules/logged-in?)]}
   (let [db (db/current-db)
@@ -386,7 +386,7 @@
                (:user @*session*))]
     (when cred
       (try
-        (data/create-new-plot-annual (db/connection) (:user/id cred) plot-id new-year copy-data? copy-year)
+        (data/create-new-plot-annual (db/connection) (:user/id cred) plot-id new-year copy-data? copy-annual-id)
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
           (throw (ex error "Couldn't create new plot annual!")))))))
@@ -823,7 +823,7 @@
 
 
 (defrpc calculate-from-db
-  [plot-id calculation-doy year & [user-id pwd]]
+  [plot-id plot-annual-id calculation-doy & [user-id pwd]]
   {:rpc/pre [(nil? user-id)
              (rules/logged-in?)]}
   (let [db (db/current-db)
@@ -834,12 +834,12 @@
 
         prognosis-days 6
 
-        donations (data/db->donations db plot-id year)
+        donations (data/db->donations db plot-id plot-annual-id)
         ;_ (println "donations: " (pr-str donations))
 
         {:keys [inputs
                 soil-moistures]
-         :as res} (api/calculate-plot-from-db db plot-id calculation-doy prognosis-days year donations [])
+         :as res} (api/calculate-plot-from-db db plot-id plot-annual-id calculation-doy prognosis-days donations [])
 
         measured-soil-moistures (drop-last prognosis-days soil-moistures)
         ;prognosis-soil-moistures (take-last prognosis-days soil-moistures)
@@ -849,8 +849,8 @@
         {slope :plot/slope
          annuals :plot/annuals
          :as plot} (data/db->plot db plot-id)
-        annual-for-year (first (filter #(= year (:plot.annual/year %)) annuals))
-        tech (:plot.annual/technology annual-for-year)
+        annual-for-id (first (filter #(=  plot-annual-id (:plot.annual/id %)) annuals))
+        tech (:plot.annual/technology annual-for-id)
 
         recommendation (bc/calc-recommendation prognosis-days
                                                (:slope/key slope)
