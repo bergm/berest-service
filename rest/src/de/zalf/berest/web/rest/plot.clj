@@ -2,7 +2,7 @@
   (:require [clojure.string :as cs]
             [de.zalf.berest.core.core :as bc]
             [de.zalf.berest.core.datomic :as db]
-            [de.zalf.berest.core.plot :as plot]
+            #_[de.zalf.berest.core.plot :as plot]
             [de.zalf.berest.core.helper :as bh :refer [rcomp]]
             [de.zalf.berest.web.rest.common :as common]
             [de.zalf.berest.web.rest.queries :as queries]
@@ -89,7 +89,7 @@
 
 (defn get-plot-ids [{:keys [path-params] :as request}]
   (let [{:keys [farm-id user-id]} path-params]
-    (-> (plot/rest-plot-ids :edn user-id farm-id)
+    (-> #_(plot/rest-plot-ids :edn user-id farm-id)
         #_http/edn-response)))
 
 
@@ -101,7 +101,7 @@
 
 (defn get-plot [farm-id id data]
   (let [user-id "berest"]
-    (plot/calc-plot :user-id user-id :farm-id farm-id :plot-id id :data data)))
+    #_(plot/calc-plot :user-id user-id :farm-id farm-id :plot-id id :data data)))
 
 (defn get-rest-plot [req]
   (let [{sim :sim
@@ -114,11 +114,11 @@
         user-id "berest"
         plot-id "zalf"]
     (if simulate?
-      (-> (plot/simulate-plot :user-id user-id :farm-id farm-id :plot-id plot-id :data data)
+      (-> #_(plot/simulate-plot :user-id user-id :farm-id farm-id :plot-id plot-id :data data)
           rur/response
           (rur/content-type ,,, "text/csv"))
       (case (or format* format)
-        "csv" (-> (plot/calc-plot :user-id user-id :farm-id farm-id :plot-id plot-id :data data)
+        "csv" (-> #_(plot/calc-plot :user-id user-id :farm-id farm-id :plot-id plot-id :data data)
                   rur/response
                   (rur/content-type ,,, "text/csv"))
         (rur/not-found (str "Format '" format "' is not supported!"))))))

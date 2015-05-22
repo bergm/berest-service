@@ -9,18 +9,51 @@
             [ring.middleware.not-modified :refer [wrap-not-modified]]
             [ring.middleware.resource :refer [wrap-resource]]
             [tailrecursion.castra.handler :refer [castra]]
-            [de.zalf.berest.core.import.dwd-data :as dwd]))
+            [de.zalf.berest.core.import.dwd-data :as dwd]
+            [ring.util.response :as ring-resp]
+            [ring.middleware.cors :as cors :refer [wrap-cors]]))
 
 (def server (atom nil))
 
+#_(defn wrap-access-control-allow-*
+  [handler]
+  (fn [request]
+    (when-let [response (handler request)]
+      (-> response
+          (ring-resp/header ,,, "Access-Control-Allow-Origin" "*")
+          #_(ring-resp/header ,,, "Access-Control-Allow-Headers" "origin, x-auth-token, x-csrf-token, content-type, accept")
+          #_(ring-resp/header ,,, "X-Dev-Mode" "true")
+          #_(#(do (println %) %))))))
+
+(defn wrap-access-control-allow-*
+  [handler]
+  (fn [request]
+    (when-let [response (handler request)]
+      (-> response
+          (ring-resp/header ,,, "Access-Control-Allow-Credentials" "true")
+          #_(ring-resp/header ,,, "Access-Control-Allow-Headers" "origin, x-auth-token, x-csrf-token, content-type, accept")
+          #_(ring-resp/header ,,, "X-Dev-Mode" "true")
+          #_(#(do (println %) %))))))
+
+(defn print**
+  [handler]
+  (fn [request]
+    (println "request: " (pr-str request))
+    (let [response (handler request)]
+      (println "response: " (pr-str response))
+      response)))
+
 (def castra-service
   (-> (castra 'de.zalf.berest.web.castra.api)
-      (wrap-session {:store (cookie-store {:key "a 16-byte secret"})})
+      (wrap-session ,,, {:store (cookie-store {:key "a 16-byte secret"})})
       #_(wrap-file "resources/public")
-      (wrap-resource "public")
-      (wrap-not-modified)
-      (wrap-content-type)
-      #_(wrap-file-info)))
+      (wrap-resource ,,, "public")
+      (wrap-cors ,,, :access-control-allow-origin [#".*"]
+                     :access-control-allow-methods [:post])
+      wrap-access-control-allow-*
+      #_print**
+      wrap-not-modified
+      wrap-content-type))
 
 (defn app [port public-path]
   (-> (castra 'de.zalf.berest.web.castra.api)

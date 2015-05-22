@@ -7,7 +7,7 @@
 
                  [de.zalf.berest/berest-core "0.0.1-SNAPSHOT"]
 
-                 [tailrecursion/castra "2.2.1"]
+                 [tailrecursion/castra "2.2.2"]
 
                  [com.datomic/datomic-pro "0.9.4899"]
 
@@ -15,6 +15,7 @@
 
                  [ring "1.2.1"]
                  [ring-server "0.3.1"]
+                 [ring-cors "0.1.7"]
                  [fogus/ring-edn "0.2.0"]
 
                  [simple-time "0.1.1"]
@@ -36,7 +37,7 @@
          :init de.zalf.berest.core.import.dwd-data/start-import-scheduler
          :destroy de.zalf.berest.core.import.dwd-data/stop-import-scheduler}
 
-  ;:main ^{:skip-aot true} berest.core
+  :main de.zalf.berest.web.castra.run-dev-server
   )
 
 

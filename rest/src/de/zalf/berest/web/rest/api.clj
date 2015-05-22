@@ -11,7 +11,7 @@
             [clojure.tools.logging :as log]
             [de.zalf.berest.core.core :as bc]
             [de.zalf.berest.core.api :as api]
-            [de.zalf.berest.core.plot :as plot]
+            #_[de.zalf.berest.core.plot :as plot]
             [de.zalf.berest.core.datomic :as db]
             [de.zalf.berest.core.data :as data]
             [de.zalf.berest.core.util :as bu]

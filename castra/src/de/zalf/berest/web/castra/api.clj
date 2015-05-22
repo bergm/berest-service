@@ -786,10 +786,16 @@
 
 
 (defrpc login
-  [user-id pwd]
-  {:rpc/pre [(rules/login! user-id pwd)]}
-  #_(println "login user-id: " user-id)
-  (get-berest-state))
+        [user-id pwd]
+        {:rpc/pre [(rules/login! user-id pwd)]}
+        #_(println "login user-id: " user-id)
+        (get-berest-state))
+
+(defrpc rpc-login
+        [user-id pwd]
+        {:rpc/pre [(rules/login! user-id pwd)]}
+        (println "rpc login user-id: " user-id)
+        {:login-successful true})
 
 (defrpc logout
   []
@@ -905,8 +911,8 @@
 
                   ;:plot.annual/crop-instances (:plot.annual/crop-instances plot)
 
-                  :plot.annual/crop-instances [{:crop.instance/name "dummy name"
-                                                :crop.instance/template crop-template
+                  :plot.annual/crop-instances [{:crop.instance/template crop-template
+                                                ;:crop.instance/name "dummy name"
                                                 :crop.instance/dc-assertions (for [[abs-day dc] dc-assertions]
                                                                                {:assertion/abs-assert-dc-day abs-day
                                                                                 :assertion/assert-dc dc})}]
@@ -938,8 +944,8 @@
                   ;:plot.annual/year 1994
                   }
 
-          _ (println "plot**: ")
-          _ (pp/pprint plot**)
+          ;_ (println "plot**: ")
+          ;_ (pp/pprint plot**)
 
           res (map (fn [[year sorted-weather-map]]
                      #_(println "calculating year: " year)
@@ -947,7 +953,7 @@
                                                              sorted-weather-map
                                                              365
                                                              []
-                                                             (-> plot :plot.annual/technology :technology/type))]
+                                                             (-> plot** :plot.annual/technology :technology/type))]
                              #_(println "inputs:")
                              #_(pp/pprint inputs)
                              (bc/calculate-sum-donations-by-auto-donations
@@ -957,6 +963,7 @@
                                5))])
                    sorted-climate-data)
           ;_ (println "res: " res)
+          _ (println "calculated run-id: " run-id)
           ]
       {:run-id run-id
        :result (into {} res)}
