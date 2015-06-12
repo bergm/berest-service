@@ -7,6 +7,7 @@
             [de.zalf.berest.core.api :as api]
             [de.zalf.berest.core.datomic :as db]
             [de.zalf.berest.core.climate.climate :as climate]
+            [de.zalf.berest.core.import.dwd-data :as import-dwd]
             [de.zalf.berest.core.import.zalf-climate-data :as import-csv]
             [datomic.api :as d]
             [simple-time.core :as time]
@@ -985,9 +986,34 @@
           (when cred
             (calculate-from-remote-data* db run-id crop-id data))))
 
+(defrpc set-climate-data-import-time
+        [hour minute & {:keys [user-id pwd]}]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
 
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))
+              ]
+          (when cred
+            (import-dwd/set-import-time-settings hour minute))))
 
+(defrpc bulk-import-dwd-data-into-datomic
+        [from to & {:keys [user-id pwd]}]
+        {:rpc/pre [(nil? user-id)
+                   (rules/logged-in?)]}
+        (let [db (db/current-db)
 
+              cred (if user-id
+                     (db/credentials* db user-id pwd)
+                     (:user @*session*))
+              ]
+          #_(println "from: " (pr-str (ctf/parse (ctf/formatters :date) from))
+                   " to: " (pr-str (ctf/parse (ctf/formatters :date) to)))
+          (when cred
+            (import-dwd/bulk-import-dwd-data-into-datomic (ctf/parse (ctf/formatter :date) from)
+                                                          (ctf/parse (ctf/formatter :date) to)))))
 
 
 
