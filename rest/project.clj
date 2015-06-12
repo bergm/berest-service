@@ -8,7 +8,7 @@
                  #_[berest-core/berest-core "0.0.1-SNAPSHOT"]
 
                  #_[org.infinispan/infinispan-client-hotrod "6.0.0.CR1"]
-                 [com.datomic/datomic-pro "0.9.4766.11"]
+                 [com.datomic/datomic-pro "0.9.5173"]
                  #_[com.datomic/datomic-free "0.8.4218"]
 
                  [buddy "0.1.0-beta4"]

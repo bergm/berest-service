@@ -11,4 +11,4 @@
                                              :reload-paths ["D:\\git-repos\\github\\bergm\\berest-core\\src"
                                                             "D:\\git-repos\\github\\bergm\\berest-service\\castra\\src"]}))
 
-#_(-main)
+(-main)

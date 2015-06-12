@@ -48,6 +48,7 @@
       (wrap-session ,,, {:store (cookie-store {:key "a 16-byte secret"})})
       #_(wrap-file "resources/public")
       (wrap-resource ,,, "public")
+      (wrap-resource ,,, "website")
       (wrap-cors ,,, :access-control-allow-origin [#".*"]
                      :access-control-allow-methods [:post])
       wrap-access-control-allow-*
