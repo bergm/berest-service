@@ -40,7 +40,7 @@
     <orderEntry type="library" name="Leiningen: ring-server:0.3.1" level="project" />
     <orderEntry type="library" name="Leiningen: ring:1.2.1" level="project" />
     <orderEntry type="library" name="Leiningen: simple-time:0.1.1" level="project" />
-    <orderEntry type="library" name="Leiningen: tailrecursion/cljson:1.0.6" level="project" />
+    <orderEntry type="library" name="Leiningen: tailrecursion/cljson:1.0.7" level="project" />
     <orderEntry type="library" name="Leiningen: clojurewerkz/scrypt:1.1.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.taoensso/nippy:2.4.1" level="project" />
     <orderEntry type="library" name="Leiningen: commons-codec:1.8" level="project" />

@@ -8,7 +8,9 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
 
                  [de.zalf.berest/berest-core "0.0.3"]
-        
+
+                 [tailrecursion/cljson "1.0.7"]
+
                  [com.datomic/datomic-pro "0.9.5173" :exclusions [joda-time]]
 
                  [org.zeromq/jeromq "0.3.4"]
