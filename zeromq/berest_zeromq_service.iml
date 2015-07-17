@@ -15,6 +15,7 @@
     <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Leiningen: buddy:0.1.0-beta4" level="project" />
+    <orderEntry type="library" name="Leiningen: cheshire:5.5.0" level="project" />
     <orderEntry type="library" name="Leiningen: clj-time:0.9.0" level="project" />
     <orderEntry type="library" name="Leiningen: clojure-complete:0.2.3" level="project" />
     <orderEntry type="library" name="Leiningen: clojure-csv:2.0.1" level="project" />
@@ -40,7 +41,7 @@
     <orderEntry type="library" name="Leiningen: ring-server:0.3.1" level="project" />
     <orderEntry type="library" name="Leiningen: ring:1.2.1" level="project" />
     <orderEntry type="library" name="Leiningen: simple-time:0.1.1" level="project" />
-    <orderEntry type="library" name="Leiningen: tailrecursion/cljson:1.0.7" level="project" />
+    <orderEntry type="library" name="Leiningen: tailrecursion/cljson:1.0.6" level="project" />
     <orderEntry type="library" name="Leiningen: clojurewerkz/scrypt:1.1.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.taoensso/nippy:2.4.1" level="project" />
     <orderEntry type="library" name="Leiningen: commons-codec:1.8" level="project" />
@@ -55,6 +56,10 @@
     <orderEntry type="library" name="Leiningen: commons-io:2.4" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.reader:0.7.3" level="project" />
     <orderEntry type="library" name="Leiningen: ring/ring-codec:1.0.0" level="project" />
+    <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.core/jackson-core:2.5.3" level="project" />
+    <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.dataformat/jackson-dataformat-cbor:2.5.3" level="project" />
+    <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.dataformat/jackson-dataformat-smile:2.5.3" level="project" />
+    <orderEntry type="library" name="Leiningen: tigris:0.1.1" level="project" />
     <orderEntry type="library" name="Leiningen: clojurewerkz/support:0.17.0" level="project" />
     <orderEntry type="library" name="Leiningen: org.quartz-scheduler/quartz:2.1.7" level="project" />
     <orderEntry type="library" name="Leiningen: c3p0:0.9.1.1" level="project" />
@@ -118,10 +123,6 @@
     <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-io:7.6.8.v20121106" level="project" />
     <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-util:7.6.8.v20121106" level="project" />
     <orderEntry type="library" name="Leiningen: joda-time:2.3" level="project" />
-    <orderEntry type="library" name="Leiningen: cheshire:5.2.0" level="project" />
-    <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.core/jackson-core:2.2.1" level="project" />
-    <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.dataformat/jackson-dataformat-smile:2.2.1" level="project" />
-    <orderEntry type="library" name="Leiningen: tigris:0.1.1" level="project" />
-    <orderEntry type="module" module-name="berest-core" />
+    <orderEntry type="module" module-name="berest_core" />
   </component>
 </module>

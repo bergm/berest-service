@@ -5,10 +5,10 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
 
-                 #_[berest-core/berest-core "0.0.1-SNAPSHOT"]
+                 #_[berest-core/berest-core "0.0.7"]
 
                  #_[org.infinispan/infinispan-client-hotrod "6.0.0.CR1"]
-                 [com.datomic/datomic-pro "0.9.5173"]
+                 [com.datomic/datomic-pro "0.9.5173" :exclusions [joda-time]]
                  #_[com.datomic/datomic-free "0.8.4218"]
 
                  [buddy "0.1.0-beta4"]

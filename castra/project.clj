@@ -1,5 +1,5 @@
 (defproject
-  de.zalf.berest/berest-castra-service "0.0.4"
+  de.zalf.berest/berest-castra-service "0.0.7"
 
   :description "BEREST CASTRA service"
   :url "http://example.com/FIXME"
@@ -7,7 +7,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
 
-                 [de.zalf.berest/berest-core "0.0.4"]
+                 [de.zalf.berest/berest-core "0.0.7"]
 
                  [tailrecursion/castra "2.2.2"]
 

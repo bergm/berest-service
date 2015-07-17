@@ -2,7 +2,7 @@
   (refer-clojure :exclude [send])
   (require [zeromq.zmq :as zmq]
            [zeromq.device :as zmqd]
-           [tailrecursion.cljson :as cljson]
+           #_[tailrecursion.cljson :as cljson]
            [de.zalf.berest.core.data :as data]
            [de.zalf.berest.core.api :as api]
            [de.zalf.berest.core.datomic :as db]
@@ -14,31 +14,27 @@
            #_[clojure-csv.core :as csv]
            [de.zalf.berest.core.core :as bc]
            #_[clojure.tools.logging :as log]
-           [clojure.pprint :as pp]))
+           [clojure.pprint :as pp]
+           [cheshire.core :as json]))
 
-(cljson/extends-protocol
+#_(cljson/extends-protocol
   cljson/EncodeTagged
   clojure.lang.PersistentTreeMap
   (-encode [o] (into ["m"] (map cljson/encode (apply concat o)))))
 
 
-(defn calculate-from-remote-data*
-  [db run-id crop-id {:keys [weather-data fcs-mm pwps-mm isms-mm ka5s lambdas layer-sizes slope dc-assertions]}]
+(defn calculate-recommendation-from-remote-data
+  [db {:keys [crop-id weather-data fcs-mm pwps-mm isms-mm ka5s lambdas layer-sizes slope dc-assertions]}]
   (binding [de.zalf.berest.core.core/*layer-sizes* (or layer-sizes (repeat 20 10))]
-    (let [sorted-climate-data (into (sorted-map)
-                                    (map (fn [[year years-data]]
-                                           [year (into (sorted-map)
-                                                       (for [[doy precip evap] years-data]
-                                                         [doy {:weather-data/precipitation precip
-                                                               :weather-data/evaporation evap}]))])
-                                         weather-data))
+    (let [sorted-weather-map (into (sorted-map)
+                                   (for [[doy precip evap] weather-data]
+                                     [doy {:weather-data/precipitation precip
+                                           :weather-data/evaporation evap}]))
 
-          ;_ (println "sorted-climate-data: ")
-          ;_ (pp/pprint sorted-climate-data)
+          ;_ (println "sorted-weather-map: ")
+          ;_ (pp/pprint sorted-weather-map)
 
           crop-template (data/db->crop-by-id (db/current-db) crop-id)
-
-          ;plot (bc/deep-db->plot db #uuid "539ee6fc-762f-40ae-8c7d-7827ea61f709" 1994 #_"53a3f382-dae7-4fff-9d68-b3c7782fcae7" #_2014)
 
           plot** {:plot/ka5-soil-types ka5s
 
@@ -54,10 +50,7 @@
 
                   :lambdas lambdas
 
-                  ;:plot.annual/crop-instances (:plot.annual/crop-instances plot)
-
                   :plot.annual/crop-instances [{:crop.instance/template crop-template
-                                                ;:crop.instance/name "dummy name"
                                                 :crop.instance/dc-assertions (for [[abs-day dc] dc-assertions]
                                                                                {:assertion/abs-assert-dc-day abs-day
                                                                                 :assertion/assert-dc dc})}]
@@ -72,11 +65,11 @@
                                            :technology/sprinkle-loss-factor 0.2,
                                            :technology/cycle-days 1}
 
-                  :plot/slope {:slope/key 1
+                  #_:plot/slope #_{:slope/key 1
                                :slope/description "eben"
                                :slope/symbol "NFT 01" }
 
-                  :slope slope
+                  ;:slope slope
 
                   :plot.annual/donations []
 
@@ -92,39 +85,19 @@
           ;_ (println "plot**: ")
           ;_ (pp/pprint plot**)
 
-          res (map (fn [[year sorted-weather-map]]
-                     #_(println "calculating year: " year)
-                     [year (let [inputs (bc/create-input-seq plot**
-                                                             sorted-weather-map
-                                                             365
-                                                             []
-                                                             (-> plot** :plot.annual/technology :technology/type))]
-                             #_(println "inputs:")
-                             #_(pp/pprint inputs)
-                             (bc/calculate-sum-donations-by-auto-donations
-                               inputs (:plot.annual/initial-soil-moistures plot**)
-                               (int slope) #_(-> plot** :plot/slope :slope/key)
-                               (:plot.annual/technology plot**)
-                               5))])
-                   sorted-climate-data)
-          ;_ (println "res: " res)
-          _ (println "calculated run-id: " run-id)
+          inputs (bc/base-input-seq plot**
+                                    sorted-weather-map
+                                    []
+                                    (-> plot** :plot.annual/technology :technology/type))
+          ;_ (println "inputs:")
+          ;_ (pp/pprint inputs)
           ]
-      {:run-id run-id
-       :result (into {} res)}
-      #_(mapv second res))))
-
-(defn calculate-from-remote-data
-  [run-id crop-id data]
-  (let [db (db/current-db)]
-    (calculate-from-remote-data* db run-id crop-id data)))
-
-
-
-
-
-
-
+      (bc/calc-recommendation
+        6
+        (int slope)
+        (:plot.annual/technology plot**)
+        inputs
+        (:plot.annual/initial-soil-moistures plot**)))))
 
 
 (defonce context (zmq/context))
@@ -132,7 +105,7 @@
 (defn -main
   []
   (with-open [clients (doto (zmq/socket context :router)
-                        (zmq/bind "tcp://*:5555"))
+                        (zmq/bind "tcp://*:6666"))
               workers (doto (zmq/socket context :dealer)
                         (zmq/bind "inproc://workers"))]
     (dotimes [i 3]
@@ -141,10 +114,19 @@
                      (println "starting worker thread " i)
                      (while true
                        (let [string (zmq/receive-str receiver)
-                             clj (cljson/cljson->clj string)]
-                         (println "received request: " (pr-str clj))
-                         (Thread/sleep 1)
-                         (zmq/send-str receiver (str i " success"))))))
+                             ;_ (println "received request str: " string)
+                             clj (json/parse-string string)
+                             ;_ (println "received request parsed: " (pr-str clj))
+                             data (into {} (map (fn [[k v]] [(keyword k) v]) (second clj)))
+                             _ (println "data: " (pr-str data))
+                             date (:date data)
+                             rec (calculate-recommendation-from-remote-data (db/current-db) data)
+                             rec* (assoc rec :date date)
+                             rec-str (json/generate-string rec*)
+                             _ (println "sending response json-str: " rec-str)
+                             ]
+                         #_(Thread/sleep 1)
+                         (zmq/send-str receiver rec-str)))))
           .start))
     (zmqd/proxy context clients workers)))
 

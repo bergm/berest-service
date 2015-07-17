@@ -7,9 +7,9 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
 
-                 [de.zalf.berest/berest-core "0.0.3"]
+                 [de.zalf.berest/berest-core "0.0.7"]
 
-                 [tailrecursion/cljson "1.0.7"]
+                 #_[tailrecursion/cljson "1.0.7"]
 
                  [com.datomic/datomic-pro "0.9.5173" :exclusions [joda-time]]
 
@@ -18,6 +18,8 @@
 
                  [simple-time "0.1.1"]
                  [clj-time "0.9.0"]
+
+                 [cheshire "5.5.0"]
 
                  [clojure-csv "2.0.1"]
                  [org.clojure/core.match "0.2.0"]]
