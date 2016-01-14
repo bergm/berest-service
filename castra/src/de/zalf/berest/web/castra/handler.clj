@@ -12,7 +12,7 @@
             [castra.core :as cc]
             [compojure.core :as c]
             [compojure.route :as route]
-            [de.zalf.berest.core.import.dwd-data :as dwd]
+            #_[de.zalf.berest.core.import.dwd-data :as dwd]
             [ring.util.response :as ring-resp]
             [ring.middleware.cors :as cors :refer [wrap-cors]]
             )
