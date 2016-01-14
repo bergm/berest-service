@@ -9,8 +9,6 @@
 
                  [de.zalf.berest/berest-core "0.0.7"]
 
-                 #_[tailrecursion/cljson "1.0.7"]
-
                  [com.datomic/datomic-pro "0.9.5173" :exclusions [joda-time]]
 
                  [org.zeromq/jeromq "0.3.4"]
