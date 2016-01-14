@@ -49,7 +49,8 @@
       #_(wrap-file "resources/public")
       (wrap-resource ,,, "public")
       (wrap-resource ,,, "website")
-      (wrap-cors ,,, :access-control-allow-origin [#".*"]
+      (wrap-cors ,,, #".*")
+      #_(wrap-cors ,,, :access-control-allow-origin [#".*"]
                      :access-control-allow-methods [:post])
       wrap-access-control-allow-*
       #_print**
