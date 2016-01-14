@@ -9,7 +9,8 @@
 
                  [de.zalf.berest/berest-core "0.0.7"]
 
-                 [tailrecursion/castra "2.2.2"]
+                 [compojure "1.4.0"]
+                 [hoplon/castra "3.0.0-alpha3"]
 
                  [com.datomic/datomic-pro "0.9.5173" :exclusions [joda-time]]
 

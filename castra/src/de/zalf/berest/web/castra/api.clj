@@ -1,6 +1,8 @@
 (ns de.zalf.berest.web.castra.api
-  (:require [tailrecursion.castra :refer [defrpc ex error *session*]]
-            [tailrecursion.cljson :as cljson]
+  (:require [castra.core :as cc :refer [defrpc ex *session*]]
+            [castra.middleware :as cm]
+            [cognitect.transit :as transit]
+
             [de.zalf.berest.web.castra.rules :as rules]
             [de.zalf.berest.core.data :as data]
             [de.zalf.berest.core.util :as util]
@@ -17,11 +19,20 @@
             [clojure-csv.core :as csv]
             [de.zalf.berest.core.core :as bc]
             [clojure.tools.logging :as log]
-            [clojure.pprint :as pp]))
+            [clojure.pprint :as pp])
+  (:import (java.io ByteArrayOutputStream)))
 
-(cljson/extends-protocol cljson/EncodeTagged
-                         clojure.lang.PersistentTreeMap
-                         (-encode [o] (into ["m"] (map cljson/encode (apply concat o)))))
+(def entity-map-writer
+  (transit/write-handler
+    (constantly "map")
+    (fn [em] (into {:db/id (:db/id em)} (for [[k v] em] [k v])))))
+
+(reset! cm/clj->json
+        #(let [out (ByteArrayOutputStream. 4096)]
+          (transit/write (transit/writer out :json
+                                         {:handlers {datomic.query.EntityMap entity-map-writer}})
+                         %2)
+          (.toString out)))
 
 ;;; utility ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -209,7 +220,7 @@
       (try
         (get-weather-station-data* db weather-station-id years)
         (catch Exception e
-          (throw (ex error (str "Couldn't get data from weather station with id: " weather-station-id "!")))))
+          (throw (ex (str "Couldn't get data from weather station with id: " weather-station-id "!") {}))))
       )))
 
 (defrpc import-weather-data
@@ -233,7 +244,7 @@
               (import-csv/import-hoplon-client-csv-data (db/connection) (:user/id cred) weather-station-id csv-data opts*)
               (stem-cell-state (db/current-db) cred)
               (catch Exception e
-                (throw (ex error "Couldn't import weather data!")))))))
+                (throw (ex "Couldn't import weather data!" {})))))))
 
 (defrpc get-crop-data
   [crop-id & [user-id pwd]]
@@ -261,7 +272,7 @@
         (db/register-user (db/connection) new-user-id new-user-pwd new-user-id [:guest])
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't create new farm!")))))))
+          (throw (ex "Couldn't create new farm!" {})))))))
 
 (defrpc set-new-password
   [pwd-user-id new-user-pwd & [user-id pwd]]
@@ -276,7 +287,7 @@
       (try
         (db/update-password (db/connection) pwd-user-id new-user-pwd)
         (catch Exception e
-          (throw (ex error "Couldn't update password!")))))))
+          (throw (ex "Couldn't update password!" {})))))))
 
 (defrpc update-user-roles
   [update-user-id new-roles & [user-id pwd]]
@@ -292,7 +303,7 @@
         (db/update-user-roles (db/connection) update-user-id new-roles)
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't update user to new roles!")))))))
+          (throw (ex "Couldn't update user to new roles!" {})))))))
 
 (defrpc add-user-weather-stations
   [update-user-id new-weather-station-ids & [user-id pwd]]
@@ -308,7 +319,7 @@
         (db/add-user-weather-stations (db/connection) update-user-id new-weather-station-ids)
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't add new user weather-stations!")))))))
+          (throw (ex "Couldn't add new user weather-stations!" {})))))))
 
 (defrpc remove-user-weather-stations
   [update-user-id weather-station-ids & [user-id pwd]]
@@ -324,7 +335,7 @@
         (db/remove-user-weather-stations (db/connection) update-user-id weather-station-ids)
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't remove user weather-stations!")))))))
+          (throw (ex "Couldn't remove user weather-stations!" {})))))))
 
 (defrpc create-new-farm
   [temp-farm-name & [user-id pwd]]
@@ -340,7 +351,7 @@
         (data/create-new-farm (db/connection) (:user/id cred) temp-farm-name)
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't create new farm!")))))))
+          (throw (ex "Couldn't create new farm!" {})))))))
 
 (defrpc create-new-local-user-weather-station
         [temp-weather-station-name local? & [user-id pwd]]
@@ -356,7 +367,7 @@
               (data/create-new-local-user-weather-station (db/connection) (:user/id cred) temp-weather-station-name :local? local?)
               (stem-cell-state (db/current-db) cred)
               (catch Exception e
-                (throw (ex error "Couldn't create new weather-station!")))))))
+                (throw (ex "Couldn't create new weather-station!" {})))))))
 
 
 
@@ -374,7 +385,7 @@
         (data/create-new-plot (db/connection) (:user/id cred) farm-id)
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't create new plot!")))))))
+          (throw (ex "Couldn't create new plot!" {})))))))
 
 (defrpc create-new-plot-annual
   [plot-id new-year copy-data? copy-annual-id & [user-id pwd]]
@@ -390,7 +401,7 @@
         (data/create-new-plot-annual (db/connection) (:user/id cred) plot-id new-year copy-data? copy-annual-id)
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't create new plot annual!")))))))
+          (throw (ex "Couldn't create new plot annual!" {})))))))
 
 (defrpc create-new-farm-address
   [farm-id & [user-id pwd]]
@@ -406,7 +417,7 @@
         (data/create-new-farm-address (db/connection) (:user/id cred) farm-id)
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't create new farm address!")))))))
+          (throw (ex "Couldn't create new farm address!" {})))))))
 
 (defrpc create-new-farm-contact
         [farm-id & [user-id pwd]]
@@ -422,7 +433,7 @@
               (data/create-new-farm-contact (db/connection) (:user/id cred) farm-id)
               (stem-cell-state (db/current-db) cred)
               (catch Exception e
-                (throw (ex error "Couldn't create new farm contact!")))))))
+                (throw (ex "Couldn't create new farm contact!" {})))))))
 
 (defrpc create-new-soil-data-layer
   [id-attr id depth type value & [user-id pwd]]
@@ -441,7 +452,7 @@
                                                                        :ka5 value))
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't create new fc, pwp or ka5 layer!")))))))
+          (throw (ex "Couldn't create new fc, pwp or ka5 layer!" {})))))))
 
 (defrpc create-new-donation
   [annual-plot-entity-id abs-start-day abs-end-day amount & [user-id pwd]]
@@ -458,7 +469,7 @@
                                   (int abs-start-day) (int abs-end-day) (double amount))
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't create new donation!")))))))
+          (throw (ex "Couldn't create new donation!" {})))))))
 
 (defrpc create-new-soil-moisture
         [annual-plot-entity-id & [user-id pwd]]
@@ -474,7 +485,7 @@
               (data/create-new-soil-moisture (db/connection) (:user/id cred) annual-plot-entity-id)
               (stem-cell-state (db/current-db) cred)
               (catch Exception e
-                (throw (ex error "Couldn't create new soil-moistures entity!")))))))
+                (throw (ex "Couldn't create new soil-moistures entity!" {})))))))
 
 (defrpc create-new-crop-instance
   [annual-plot-entity-id crop-template-id & [user-id pwd]]
@@ -490,7 +501,7 @@
         (data/create-new-crop-instance (db/connection) (:user/id cred) annual-plot-entity-id crop-template-id)
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't create new crop instance!")))))))
+          (throw (ex "Couldn't create new crop instance!" {})))))))
 
 (defrpc create-new-dc-assertion
   [crop-instance-entity-id abs-dc-day dc #_at-abs-day & [user-id pwd]]
@@ -507,7 +518,7 @@
                                       (int abs-dc-day) (int dc) #_(int at-abs-day))
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't create new dc assertion!")))))))
+          (throw (ex "Couldn't create new dc assertion!" {})))))))
 
 (defrpc create-new-weather-data
         [id-attr id date tavg globrad evap precip prog-date & [user-id pwd]]
@@ -526,7 +537,7 @@
                                             id-attr id date tavg globrad evap precip prog-date)
               (stem-cell-state (db/current-db) cred)
               (catch Exception e
-                (throw (ex error "Couldn't create new weather-data!")))))))
+                (throw (ex "Couldn't create new weather-data!" {})))))))
 
 (defrpc create-new-com-con
         [contact-entity-id com-con-id com-con-desc com-con-type & [user-id pwd]]
@@ -543,7 +554,7 @@
                                        com-con-id com-con-desc com-con-type)
               (stem-cell-state (db/current-db) cred)
               (catch Exception e
-                (throw (ex error "Couldn't create new communication connection!")))))))
+                (throw (ex "Couldn't create new communication connection!" {})))))))
 
 (defrpc create-new-crop
         [temp-name & [user-id pwd]]
@@ -559,7 +570,7 @@
               (data/create-new-crop (db/connection) (:user/id cred) temp-name)
               (static-stem-cell-state (db/current-db) cred)
               (catch Exception e
-                (throw (ex error "Couldn't create new crop!")))))))
+                (throw (ex "Couldn't create new crop!" {})))))))
 
 (defrpc copy-crop
         [crop-id temp-name & [user-id pwd]]
@@ -575,7 +586,7 @@
               (data/copy-crop (db/connection) (:user/id cred) crop-id temp-name)
               (static-stem-cell-state (db/current-db) cred)
               (catch Exception e
-                (throw (ex error (str "Couldn't copy crop with id: " crop-id "!"))))))))
+                (throw (ex (str "Couldn't copy crop with id: " crop-id "!") {})))))))
 
 (defrpc delete-crop
         [crop-db-id & [user-id pwd]]
@@ -594,7 +605,7 @@
               (static-stem-cell-state (db/current-db) cred)
               (catch Exception e
                 (log/info "Couldn't delete crop entity! tx-data:\n" tx-data)
-                (throw (ex error (str "Couldn't delete crop!"))))))))
+                (throw (ex (str "Couldn't delete crop!") {})))))))
 
 
 (defrpc update-db-entity
@@ -620,7 +631,7 @@
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
           (log/info "Couldn't update entity! tx-data:\n" tx-data)
-          (throw (ex error (str "Couldn't update entity!"))))))))
+          (throw (ex (str "Couldn't update entity!") {})))))))
 
 (defrpc delete-db-entity
   [entity-id?s & [user-id pwd]]
@@ -642,7 +653,7 @@
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
           (log/info "Couldn't retract entity! tx-data:\n" tx-data)
-          (throw (ex error (str "Couldn't delete entity!"))))))))
+          (throw (ex (str "Couldn't delete entity!") {})))))))
 
 (defrpc retract-db-value
         [entity-id attr value & {:keys [user-id pwd value-type]
@@ -667,7 +678,7 @@
               (stem-cell-state (db/current-db) cred)
               (catch Exception e
                 (log/info "Couldn't retract information on entity! tx-data:\n" tx-data)
-                (throw (ex error (str "Couldn't delete information on entity!"))))))))
+                (throw (ex (str "Couldn't delete information on entity!") {})))))))
 
 
 
@@ -696,7 +707,7 @@
               (first (data/db->full-selected-crops (db/current-db) [crop-id]))
               (catch Exception e
                 (log/info "Couldn't update entity! tx-data:\n" tx-data)
-                (throw (ex error (str "Couldn't update entity!"))))))))
+                (throw (ex (str "Couldn't update entity!") {})))))))
 
 (defrpc delete-crop-db-entity
         [crop-id entity-id?s & [user-id pwd]]
@@ -718,7 +729,7 @@
               (first (data/db->full-selected-crops (db/current-db) [crop-id]))
               (catch Exception e
                 (log/info "Couldn't retract entity! tx-data:\n" tx-data)
-                (throw (ex error (str "Couldn't retract entity! tx-data:\n" tx-data))))))))
+                (throw (ex (str "Couldn't retract entity! tx-data:\n" tx-data) {})))))))
 
 (defrpc create-new-crop-kv-pair
         [crop-id crop-attr key-attr key-value value-attr value-value & {:keys [user-id pwd value-type]
@@ -742,7 +753,7 @@
                                             crop-attr key-attr key-value value-attr value-value*)
               (first (data/db->full-selected-crops (db/current-db) [crop-id]))
               (catch Exception e
-                (throw (ex error (str "Couldn't create new key-value pair for crop with id: " crop-id "!"))))))))
+                (throw (ex (str "Couldn't create new key-value pair for crop with id: " crop-id "!") {})))))))
 
 (defrpc set-substrate-group-fcs-and-pwps
   [plot-id substrate-group-key & [user-id pwd]]
@@ -758,7 +769,7 @@
         (data/set-substrate-group-fcs-and-pwps db (db/connection) (:user/id cred) plot-id substrate-group-key)
         (stem-cell-state (db/current-db) cred)
         (catch Exception e
-          (throw (ex error "Couldn't set/copy substrate group's fcs/pws!")))))))
+          (throw (ex "Couldn't set/copy substrate group's fcs/pws!" {})))))))
 
 
 #_(defrpc update-weather-station
@@ -789,7 +800,7 @@
 (defrpc login
         [user-id pwd]
         {:rpc/pre [(rules/login! user-id pwd)]}
-        #_(println "login user-id: " user-id)
+        (println "login user-id: " user-id)
         (get-berest-state))
 
 (defrpc rpc-login

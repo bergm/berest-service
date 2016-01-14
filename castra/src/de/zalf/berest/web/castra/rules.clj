@@ -8,13 +8,13 @@
 
 (ns de.zalf.berest.web.castra.rules
   (:refer-clojure :exclude [assert])
-  (:require [tailrecursion.castra :refer [ex auth *request* *session*]]
+  (:require [castra.core :refer [ex *request* *session*]]
             [de.zalf.berest.core.datomic :as db]))
 
 ;;; utility ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmacro assert [expr & [msg]]
-  `(when-not ~expr (throw (ex auth (or ~msg "Server error.")))))
+  `(when-not ~expr (throw (ex (or ~msg "Server error.") {}))))
 
 ;;; internal ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -24,10 +24,10 @@
 ;;; public ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn allow       []      (constantly true))
-(defn deny        []      (throw (ex auth "Permission denied.")))
+(defn deny        []      (throw (ex "Permission denied." {})))
 (defn logout!     []      (swap! *session* assoc :user nil))
 (defn logged-in?  []      (or (get @*session* :user)
-                              (throw (ex auth {:state nil} "Please log in."))))
+                              (throw (ex #_{:state nil} "Please log in." {}))))
 
 #_(defn register! [user pwd1 pwd2]
   (assert (= pwd1 pwd2) "Passwords don't match.")
