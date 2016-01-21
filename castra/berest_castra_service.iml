@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module cursive.leiningen.project.LeiningenProjectsManager.displayName="de.zalf.berest/berest-castra-service:0.0.9" cursive.leiningen.project.LeiningenProjectsManager.isLeinModule="true" type="JAVA_MODULE" version="4">
+<module cursive.leiningen.project.LeiningenProjectsManager.displayName="de.zalf.berest/berest-castra-service:0.1.0" cursive.leiningen.project.LeiningenProjectsManager.isLeinModule="true" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/classes" />
@@ -126,5 +126,6 @@
     <orderEntry type="library" name="Leiningen: ring:1.4.0" level="project" />
     <orderEntry type="library" name="Leiningen: simple-time:0.2.1" level="project" />
     <orderEntry type="library" name="Leiningen: watchtower:0.1.1" level="project" />
+    <orderEntry type="module" module-name="berest-core" />
   </component>
 </module>
