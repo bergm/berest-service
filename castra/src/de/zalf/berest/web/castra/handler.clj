@@ -47,7 +47,7 @@
 
 (c/defroutes
   app-routes
-  (c/GET "/" req (ring-resp/content-type (ring-resp/resource-response "index.html") "text/html"))
+  #_(c/GET "/" req (ring-resp/content-type (ring-resp/resource-response "index.html") "text/html"))
   (route/resources "/" {:root ""}))
 
 (def castra-service
@@ -59,6 +59,7 @@
       (wrap-resource ,,, "public")
       (wrap-resource ,,, "website")
       (wrap-cors ,,, #".*")
+      #_print**
       #_(wrap-cors ,,, :access-control-allow-origin [#".*"]
                      :access-control-allow-methods [:post])
       wrap-access-control-allow-*
